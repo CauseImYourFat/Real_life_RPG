@@ -21,25 +21,29 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simple auto-login check
+    // Check authentication and load user data
     const checkAuth = async () => {
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        setCurrentUser(currentUser);
+      if (userDataService.isAuthenticated()) {
+        const username = userDataService.getCurrentUser();
+        setCurrentUser(username);
         setIsAuthenticated(true);
-        console.log(`Auto-login: ${currentUser}`);
+        console.log(`Auto-login: ${username}`);
         
-        // Load user data
-        const userKey = `user_${currentUser}`;
-        const userData = localStorage.getItem(userKey);
-        if (userData) {
-          const data = JSON.parse(userData);
+        try {
+          // Load user data from API
+          const data = await userDataService.loadUserData();
           setUserData({
             skills: data.skills || {},
             health: data.health || {},
             preferences: data.preferences || {},
             lastLogin: new Date().toISOString()
           });
+        } catch (error) {
+          console.error('Failed to load user data:', error);
+          // If loading fails, logout the user
+          userDataService.logout();
+          setIsAuthenticated(false);
+          setCurrentUser(null);
         }
       }
       setLoading(false);
@@ -51,19 +55,14 @@ function App() {
   const handleLogin = async (username) => {
     setLoading(true);
     try {
-      // Simple login - just load user data from localStorage
-      const userKey = `user_${username}`;
-      const userData = localStorage.getItem(userKey);
-      
-      if (userData) {
-        const data = JSON.parse(userData);
-        setUserData({
-          skills: data.skills || {},
-          health: data.health || {},
-          preferences: data.preferences || {},
-          lastLogin: new Date().toISOString()
-        });
-      }
+      // Load user data from API after successful login
+      const data = await userDataService.loadUserData();
+      setUserData({
+        skills: data.skills || {},
+        health: data.health || {},
+        preferences: data.preferences || {},
+        lastLogin: new Date().toISOString()
+      });
       
       setCurrentUser(username);
       setIsAuthenticated(true);
@@ -71,13 +70,15 @@ function App() {
       
     } catch (error) {
       console.error('Failed to load user data:', error);
+      // If loading fails after login, show error but keep user logged in
+      alert('Warning: Failed to load your data. Please try refreshing the page.');
     } finally {
       setLoading(false);
     }
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('currentUser');
+    userDataService.logout();
     setIsAuthenticated(false);
     setCurrentUser(null);
     setUserData({

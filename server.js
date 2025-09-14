@@ -83,6 +83,7 @@ app.post('/api/register', async (req, res) => {
         userData[newUser.id] = {
             skills: {},
             health: {},
+            preferences: {},
             lastSaved: new Date().toISOString()
         };
 
@@ -159,6 +160,7 @@ app.get('/api/user/data', authenticateToken, (req, res) => {
         const data = userData[userId] || {
             skills: {},
             health: {},
+            preferences: {},
             lastSaved: new Date().toISOString()
         };
 
@@ -173,11 +175,12 @@ app.get('/api/user/data', authenticateToken, (req, res) => {
 app.post('/api/user/data', authenticateToken, (req, res) => {
     try {
         const userId = req.user.userId;
-        const { skills, health } = req.body;
+        const { skills, health, preferences } = req.body;
 
         userData[userId] = {
             skills: skills || {},
             health: health || {},
+            preferences: preferences || {},
             lastSaved: new Date().toISOString()
         };
 
@@ -199,7 +202,7 @@ app.post('/api/user/skills/:skillId', authenticateToken, (req, res) => {
         const { level, experience } = req.body;
 
         if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {} };
+            userData[userId] = { skills: {}, health: {}, preferences: {} };
         }
 
         userData[userId].skills[skillId] = { level, experience };
@@ -222,7 +225,7 @@ app.post('/api/user/health', authenticateToken, (req, res) => {
         const healthData = req.body;
 
         if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {} };
+            userData[userId] = { skills: {}, health: {}, preferences: {} };
         }
 
         userData[userId].health = healthData;

@@ -4,6 +4,7 @@ import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';
 import ExportPage from './components/ExportPage';
 import AuthPage from './components/AuthPage';
+import UserMenu from './components/UserMenu';
 import userDataService from './services/UserDataService';
 import './styles/App.css';
 
@@ -152,12 +153,7 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-title">🎮 Life RPG</h1>
-          <div className="user-info">
-            <span className="welcome-text">Welcome, {currentUser}!</span>
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </div>
+          <UserMenu currentUser={currentUser} onLogout={handleLogout} />
         </div>
         <nav className="tab-navigation">
           {tabs.map(tab => (

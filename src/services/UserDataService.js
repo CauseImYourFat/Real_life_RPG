@@ -295,6 +295,36 @@ class UserDataService {
     }
   }
 
+  // Delete user account
+  async deleteAccount(confirmText) {
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/delete`, {
+        method: 'DELETE',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ confirmText })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete account');
+      }
+
+      // Clear local authentication data
+      this.logout();
+      
+      console.log('Account deleted successfully');
+      return data;
+    } catch (error) {
+      console.error('Delete account error:', error);
+      throw error;
+    }
+  }
+
   // Logout
   logout() {
     localStorage.removeItem('authToken');

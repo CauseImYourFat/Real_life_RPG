@@ -238,6 +238,37 @@ app.post('/api/user/health', authenticateToken, (req, res) => {
     }
 });
 
+// Delete user account
+app.delete('/api/user/delete', authenticateToken, (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { confirmText } = req.body;
+
+        // Require confirmation text 'delete'
+        if (confirmText !== 'delete') {
+            return res.status(400).json({ error: 'Must type "delete" to confirm account deletion' });
+        }
+
+        // Find and remove user from users array
+        const userIndex = users.findIndex(u => u.id === userId);
+        if (userIndex !== -1) {
+            users.splice(userIndex, 1);
+        }
+
+        // Remove user data
+        delete userData[userId];
+
+        console.log(`User account deleted: ${userId}`);
+        res.json({ 
+            message: 'Account deleted successfully',
+            deleted: true
+        });
+    } catch (error) {
+        console.error('Delete account error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Serve the main HTML file
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));

@@ -156,10 +156,14 @@ function ProfilePage({ onClose, currentUser, userData }) {
             </div>
           </div>
 
-          {/* Body Visualization */}
+          {/* Body Visualization with Edit Button */}
           <div className="body-visualization">
-            <h4>⚡ Character Status</h4>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h4>⚡ Anatomy & Condition</h4>
+              <button className="edit-anatomy-btn" title="Edit Anatomy" style={{ fontSize: '1.1rem', background: 'none', border: 'none', color: '#00d4aa', cursor: 'pointer' }}>✏️ Edit</button>
+            </div>
             <div className="body-container">
+              {/* Anatomy Image or SVG */}
               <svg className="body-svg" viewBox="0 0 400 600" width="300" height="450">
                 {/* Head */}
                 <circle 
@@ -170,7 +174,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   data-part="head"
                 />
                 <text x="200" y="85" textAnchor="middle" className="body-text">🧠</text>
-
                 {/* Body */}
                 <rect 
                   x="170" 
@@ -182,7 +185,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   data-part="body"
                 />
                 <text x="200" y="180" textAnchor="middle" className="body-text">💪</text>
-
                 {/* Left Arm */}
                 <rect 
                   x="120" 
@@ -193,7 +195,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part arm ${getBodyPartStatus('arms')}`}
                   data-part="left-arm"
                 />
-
                 {/* Right Arm */}
                 <rect 
                   x="230" 
@@ -204,7 +205,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part arm ${getBodyPartStatus('arms')}`}
                   data-part="right-arm"
                 />
-
                 {/* Left Leg */}
                 <rect 
                   x="180" 
@@ -215,7 +215,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part leg ${getBodyPartStatus('legs')}`}
                   data-part="left-leg"
                 />
-
                 {/* Right Leg */}
                 <rect 
                   x="205" 
@@ -226,7 +225,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part leg ${getBodyPartStatus('legs')}`}
                   data-part="right-leg"
                 />
-
                 {/* Feet */}
                 <ellipse 
                   cx="187" 
@@ -243,7 +241,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part foot ${getBodyPartStatus('legs')}`}
                 />
               </svg>
-
               {/* Status Legend */}
               <div className="status-legend">
                 <div className="legend-item">
@@ -270,9 +267,9 @@ function ProfilePage({ onClose, currentUser, userData }) {
             </div>
           </div>
 
-          {/* Skills Overview */}
+          {/* Summary Panels */}
           <div className="skills-overview">
-            <h4>🏆 Top Skills</h4>
+            <h4>⚔️ Skills Summary</h4>
             <div className="skills-list">
               {topSkills.length > 0 ? (
                 topSkills.map((skill, index) => (
@@ -293,6 +290,41 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   <p>Visit the Skills tab to begin your journey.</p>
                 </div>
               )}
+            </div>
+            <div className="summary-panel">
+              <h5>❤️ Health & Anatomy</h5>
+              <div className="summary-content">
+                <div className="health-summary-item">
+                  <span className="summary-label">Health Areas:</span>
+                  <span className="summary-value">{healthCategories}</span>
+                </div>
+                <div className="health-summary-item">
+                  <span className="summary-label">Body Status:</span>
+                  <div className="body-status-circles">
+                    <div className={`status-circle ${getBodyPartStatus('head')}`} title="Head/Brain"></div>
+                    <div className={`status-circle ${getBodyPartStatus('body')}`} title="Core/Body"></div>
+                    <div className={`status-circle ${getBodyPartStatus('arms')}`} title="Arms"></div>
+                    <div className={`status-circle ${getBodyPartStatus('legs')}`} title="Legs"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <h5>🌟 Daily Motivation</h5>
+              <div className="summary-content">
+                <div className="motivation-summary">
+                  <div className="motivation-item">
+                    <span className="summary-label">Current Streak:</span>
+                    <span className="summary-value">0 days</span>
+                  </div>
+                  <div className="motivation-item">
+                    <span className="summary-label">Weekly Goal:</span>
+                    <span className="summary-value">5/7 days</span>
+                  </div>
+                  <div className="motivation-quote">
+                    <p>"Every small step counts towards your greater journey! 🚀"</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -383,11 +415,12 @@ function ProfilePage({ onClose, currentUser, userData }) {
           overflow-y: auto;
           padding: 2rem;
           display: grid;
-          grid-template-columns: 1fr 300px 1fr;
-          grid-template-rows: auto auto;
+          grid-template-columns: 300px 1fr 300px;
+          grid-template-rows: auto auto auto;
           gap: 2rem;
           grid-template-areas: 
-            "stats body skills"
+            "stats body summary"
+            "description body description"
             "description body description";
         }
 
@@ -400,7 +433,7 @@ function ProfilePage({ onClose, currentUser, userData }) {
         }
 
         .skills-overview {
-          grid-area: skills;
+          grid-area: summary;
         }
 
         .character-description {
@@ -638,6 +671,104 @@ function ProfilePage({ onClose, currentUser, userData }) {
           color: #aaa;
           font-style: italic;
           padding: 2rem;
+        }
+
+        .summary-panel {
+          margin-top: 2rem;
+          padding: 1.5rem;
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 10px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-panel h5 {
+          color: white;
+          margin: 0 0 1rem 0;
+          font-size: 1.1rem;
+          font-weight: 600;
+        }
+
+        .summary-content {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .health-summary-item, .motivation-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+        }
+
+        .summary-label {
+          color: #aaa;
+          font-size: 0.9rem;
+        }
+
+        .summary-value {
+          color: #00d4aa;
+          font-weight: bold;
+          font-size: 0.95rem;
+        }
+
+        .body-status-circles {
+          display: flex;
+          gap: 0.5rem;
+        }
+
+        .status-circle {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .status-circle.excellent {
+          background: #27ae60;
+          box-shadow: 0 0 8px rgba(39, 174, 96, 0.5);
+        }
+
+        .status-circle.good {
+          background: #f39c12;
+          box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+        }
+
+        .status-circle.average {
+          background: #3498db;
+          box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+
+        .status-circle.poor {
+          background: #e74c3c;
+          box-shadow: 0 0 8px rgba(231, 76, 60, 0.5);
+        }
+
+        .status-circle.untrained {
+          background: #95a5a6;
+        }
+
+        .motivation-summary {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .motivation-quote {
+          margin-top: 1rem;
+          padding: 1rem;
+          background: rgba(0, 212, 170, 0.1);
+          border-left: 3px solid #00d4aa;
+          border-radius: 5px;
+        }
+
+        .motivation-quote p {
+          margin: 0;
+          color: #ccc;
+          font-style: italic;
+          font-size: 0.9rem;
+          line-height: 1.4;
         }
 
         .character-description h4 {

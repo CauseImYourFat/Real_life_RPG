@@ -194,44 +194,54 @@ class UserDataService {
     }
   }
 
-  // Save skill data specifically
+  // Save skill data and preserve all other user data
   async saveSkillData(skillCategory, skillName, level) {
     const currentData = await this.loadUserData();
-    
     if (!currentData.skills) currentData.skills = {};
     if (!currentData.skills[skillCategory]) currentData.skills[skillCategory] = {};
-    
     currentData.skills[skillCategory][skillName] = level;
-    
-    await this.autoSave({ skills: currentData.skills });
+    // Save the full user data object
+    await this.autoSave({
+      skills: currentData.skills,
+      health: currentData.health || {},
+      preferences: currentData.preferences || {},
+      profile: currentData.profile || {}
+    });
     return currentData;
   }
 
-  // Remove skill data
+  // Remove skill data and preserve all other user data
   async removeSkillData(skillCategory, skillName) {
     const currentData = await this.loadUserData();
-    
     if (currentData.skills && currentData.skills[skillCategory]) {
       delete currentData.skills[skillCategory][skillName];
-      
       // Remove category if empty
       if (Object.keys(currentData.skills[skillCategory]).length === 0) {
         delete currentData.skills[skillCategory];
       }
     }
-    
-    await this.autoSave({ skills: currentData.skills });
+    // Save the full user data object
+    await this.autoSave({
+      skills: currentData.skills,
+      health: currentData.health || {},
+      preferences: currentData.preferences || {},
+      profile: currentData.profile || {}
+    });
     return currentData;
   }
 
-  // Save health data specifically
+  // Save health data and preserve all other user data
   async saveHealthData(category, data) {
     const currentData = await this.loadUserData();
-    
     if (!currentData.health) currentData.health = {};
     currentData.health[category] = data;
-    
-    await this.autoSave({ health: currentData.health });
+    // Save the full user data object
+    await this.autoSave({
+      skills: currentData.skills || {},
+      health: currentData.health,
+      preferences: currentData.preferences || {},
+      profile: currentData.profile || {}
+    });
     return currentData;
   }
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Life Skills Tracker - Real-Life RPG
 
 **Ready for static hosting! Zero-gap mobile optimized.**
@@ -220,3 +221,6 @@ Simply open `index.html` in your web browser - no server required! The app works
 ---
 
 **Start tracking your life skills today and unlock your potential with data-driven personal development!**
+=======
+# Real_life_RPG
+>>>>>>> 70359e2cee0d236d9075c97e4585666a69f98400

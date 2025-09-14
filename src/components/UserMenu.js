@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 
-function UserMenu({ currentUser, onLogout }) {
+function UserMenu({ currentUser, onLogout, onShowProfile, onShowSettings }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState('');
@@ -47,17 +47,15 @@ function UserMenu({ currentUser, onLogout }) {
     {
       label: '👤 Profile',
       onClick: () => {
-        console.log('Profile clicked - Add your profile functionality here');
+        onShowProfile && onShowProfile();
         setIsOpen(false);
-        // TODO: Add profile functionality
       }
     },
     {
       label: '⚙️ Settings', 
       onClick: () => {
-        console.log('Settings clicked - Add your settings functionality here');
+        onShowSettings && onShowSettings();
         setIsOpen(false);
-        // TODO: Add settings functionality
       }
     },
     {

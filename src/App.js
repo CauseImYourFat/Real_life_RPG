@@ -5,6 +5,8 @@ import MotivationPage from './components/MotivationPage';
 import ExportPage from './components/ExportPage';
 import AuthPage from './components/AuthPage';
 import UserMenu from './components/UserMenu';
+import ProfilePage from './components/ProfilePage';
+import SettingsPage from './components/SettingsPage';
 import userDataService from './services/UserDataService';
 import './styles/App.css';
 
@@ -19,6 +21,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     // Check authentication and load user data
@@ -154,7 +158,12 @@ function App() {
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-title">🎮 Life RPG</h1>
-          <UserMenu currentUser={currentUser} onLogout={handleLogout} />
+          <UserMenu 
+            currentUser={currentUser} 
+            onLogout={handleLogout}
+            onShowProfile={() => setShowProfile(true)}
+            onShowSettings={() => setShowSettings(true)}
+          />
         </div>
         <nav className="tab-navigation">
           {tabs.map(tab => (
@@ -194,6 +203,23 @@ function App() {
           <ExportPage userData={userData} />
         )}
       </main>
+
+      {/* Profile Modal */}
+      {showProfile && (
+        <ProfilePage 
+          currentUser={currentUser}
+          userData={userData}
+          onClose={() => setShowProfile(false)}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <SettingsPage 
+          currentUser={currentUser}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
     </div>
   );
 }

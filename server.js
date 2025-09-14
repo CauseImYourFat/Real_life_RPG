@@ -84,6 +84,10 @@ app.post('/api/register', async (req, res) => {
             skills: {},
             health: {},
             preferences: {},
+            profile: {
+                description: '',
+                profileImage: ''
+            },
             lastSaved: new Date().toISOString()
         };
 
@@ -161,6 +165,10 @@ app.get('/api/user/data', authenticateToken, (req, res) => {
             skills: {},
             health: {},
             preferences: {},
+            profile: {
+                description: '',
+                profileImage: ''
+            },
             lastSaved: new Date().toISOString()
         };
 
@@ -175,12 +183,16 @@ app.get('/api/user/data', authenticateToken, (req, res) => {
 app.post('/api/user/data', authenticateToken, (req, res) => {
     try {
         const userId = req.user.userId;
-        const { skills, health, preferences } = req.body;
+        const { skills, health, preferences, profile } = req.body;
 
         userData[userId] = {
             skills: skills || {},
             health: health || {},
             preferences: preferences || {},
+            profile: profile || {
+                description: '',
+                profileImage: ''
+            },
             lastSaved: new Date().toISOString()
         };
 
@@ -202,7 +214,7 @@ app.post('/api/user/skills/:skillId', authenticateToken, (req, res) => {
         const { level, experience } = req.body;
 
         if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {}, preferences: {} };
+            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
         }
 
         userData[userId].skills[skillId] = { level, experience };
@@ -225,7 +237,7 @@ app.post('/api/user/health', authenticateToken, (req, res) => {
         const healthData = req.body;
 
         if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {}, preferences: {} };
+            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
         }
 
         userData[userId].health = healthData;
@@ -237,6 +249,109 @@ app.post('/api/user/health', authenticateToken, (req, res) => {
         });
     } catch (error) {
         console.error('Update health error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Change username
+app.put('/api/user/username', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { newUsername } = req.body;
+
+        // Validation
+        if (!newUsername || newUsername.length < 3) {
+            return res.status(400).json({ error: 'Username must be at least 3 characters long' });
+        }
+
+        // Check if new username already exists
+        if (findUser(newUsername.trim())) {
+            return res.status(409).json({ error: 'Username already exists' });
+        }
+
+        // Find and update user
+        const user = findUserById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.username = newUsername.trim();
+
+        res.json({ 
+            message: 'Username changed successfully',
+            username: user.username
+        });
+
+    } catch (error) {
+        console.error('Change username error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Change password
+app.put('/api/user/password', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { currentPassword, newPassword } = req.body;
+
+        // Validation
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: 'Current password and new password are required' });
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ error: 'New password must be at least 6 characters long' });
+        }
+
+        // Find user
+        const user = findUserById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Verify current password
+        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+        if (!isValidPassword) {
+            return res.status(401).json({ error: 'Current password is incorrect' });
+        }
+
+        // Hash new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedNewPassword;
+
+        res.json({ 
+            message: 'Password changed successfully'
+        });
+
+    } catch (error) {
+        console.error('Change password error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Update profile
+app.put('/api/user/profile', authenticateToken, (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { description, profileImage } = req.body;
+
+        if (!userData[userId]) {
+            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
+        }
+
+        userData[userId].profile = {
+            description: description || '',
+            profileImage: profileImage || ''
+        };
+        userData[userId].lastSaved = new Date().toISOString();
+
+        res.json({ 
+            message: 'Profile updated successfully',
+            profile: userData[userId].profile
+        });
+
+    } catch (error) {
+        console.error('Update profile error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

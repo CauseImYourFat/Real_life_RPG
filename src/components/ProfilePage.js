@@ -241,29 +241,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
                   className={`body-part foot ${getBodyPartStatus('legs')}`}
                 />
               </svg>
-              {/* Status Legend */}
-              <div className="status-legend">
-                <div className="legend-item">
-                  <div className="legend-dot excellent"></div>
-                  <span>Excellent (8-10)</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-dot good"></div>
-                  <span>Good (6-7)</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-dot average"></div>
-                  <span>Average (4-5)</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-dot poor"></div>
-                  <span>Poor (2-3)</span>
-                </div>
-                <div className="legend-item">
-                  <div className="legend-dot untrained"></div>
-                  <span>Untrained (0-1)</span>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -413,15 +390,15 @@ function ProfilePage({ onClose, currentUser, userData }) {
         .profile-content {
           flex: 1;
           overflow-y: auto;
-          padding: 2rem;
+          padding: 1.5rem;
           display: grid;
-          grid-template-columns: 300px 1fr 300px;
-          grid-template-rows: auto auto auto;
+          grid-template-columns: 350px 1fr 350px;
+          grid-template-rows: auto 1fr;
           gap: 2rem;
           grid-template-areas: 
             "stats body summary"
-            "description body description"
             "description body description";
+          min-height: 600px;
         }
 
         .character-stats {
@@ -528,24 +505,39 @@ function ProfilePage({ onClose, currentUser, userData }) {
           font-size: 1.1rem;
         }
 
+        .body-visualization {
+          grid-area: body;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 1rem;
+        }
+
         .body-visualization h4 {
           color: white;
-          margin: 0 0 1rem 0;
+          margin: 0 0 1.5rem 0;
           text-align: center;
+          font-size: 1.2rem;
         }
 
         .body-container {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1rem;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
         }
 
         .body-svg {
           background: rgba(255, 255, 255, 0.05);
-          border-radius: 10px;
+          border-radius: 15px;
           border: 1px solid rgba(255, 255, 255, 0.1);
-          padding: 1rem;
+          padding: 2rem;
+          width: 350px;
+          height: 525px;
+          max-width: 100%;
         }
 
         .body-part {
@@ -585,32 +577,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
           font-size: 16px;
           pointer-events: none;
         }
-
-        .status-legend {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          font-size: 0.8rem;
-        }
-
-        .legend-item {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: #ccc;
-        }
-
-        .legend-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-        }
-
-        .legend-dot.excellent { background: #27ae60; }
-        .legend-dot.good { background: #f39c12; }
-        .legend-dot.average { background: #3498db; }
-        .legend-dot.poor { background: #e74c3c; }
-        .legend-dot.untrained { background: #95a5a6; }
 
         .skills-overview h4 {
           color: white;
@@ -800,16 +766,34 @@ function ProfilePage({ onClose, currentUser, userData }) {
             flex-direction: column;
             grid-template-columns: none;
             grid-template-areas: none;
+            gap: 1.5rem;
+            padding: 1rem;
           }
 
           .body-svg {
-            width: 250px;
-            height: 375px;
+            width: 280px;
+            height: 420px;
           }
 
           .character-info {
             flex-direction: column;
             text-align: center;
+          }
+
+          .body-visualization {
+            order: 1;
+          }
+
+          .character-stats {
+            order: 2;
+          }
+
+          .skills-overview {
+            order: 3;
+          }
+
+          .character-description {
+            order: 4;
           }
         }
       `}</style>

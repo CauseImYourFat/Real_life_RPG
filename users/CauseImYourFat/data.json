@@ -1,0 +1,232 @@
+{
+  "profile": {
+    "username": "CauseImYourFat",
+    "createdAt": "2025-09-14T11:19:54.701Z",
+    "lastLogin": "2025-09-14T11:19:54.701Z",
+    "level": 1,
+    "totalSkillPoints": 0,
+    "lastUpdated": "2025-09-14T12:22:20.544Z"
+  },
+  "skills": {
+    "Physical": {
+      "Boxing": 0
+    }
+  },
+  "health": {},
+  "preferences": {
+    "theme": "dark",
+    "notifications": true,
+    "autoSave": true
+  },
+  "achievements": [],
+  "progressHistory": [
+    {
+      "timestamp": "2025-09-14T11:24:02.164Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 0,
+      "newLevel": 1
+    },
+    {
+      "timestamp": "2025-09-14T11:24:02.299Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 1,
+      "newLevel": 2
+    },
+    {
+      "timestamp": "2025-09-14T12:22:10.123Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 2,
+      "newLevel": 1
+    },
+    {
+      "timestamp": "2025-09-14T12:22:11.083Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 1,
+      "newLevel": 2
+    },
+    {
+      "timestamp": "2025-09-14T12:22:14.291Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 2,
+      "newLevel": 1
+    },
+    {
+      "timestamp": "2025-09-14T12:22:14.492Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 1,
+      "newLevel": 0
+    },
+    {
+      "timestamp": "2025-09-14T12:22:15.324Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 0,
+      "newLevel": 1
+    },
+    {
+      "timestamp": "2025-09-14T12:22:15.516Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 1,
+      "newLevel": 2
+    },
+    {
+      "timestamp": "2025-09-14T12:22:15.696Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 2,
+      "newLevel": 3
+    },
+    {
+      "timestamp": "2025-09-14T12:22:15.887Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 3,
+      "newLevel": 4
+    },
+    {
+      "timestamp": "2025-09-14T12:22:16.067Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 4,
+      "newLevel": 5
+    },
+    {
+      "timestamp": "2025-09-14T12:22:17.159Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 5,
+      "newLevel": 6
+    },
+    {
+      "timestamp": "2025-09-14T12:22:17.338Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 6,
+      "newLevel": 7
+    },
+    {
+      "timestamp": "2025-09-14T12:22:17.642Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 7,
+      "newLevel": 8
+    },
+    {
+      "timestamp": "2025-09-14T12:22:17.866Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 8,
+      "newLevel": 9
+    },
+    {
+      "timestamp": "2025-09-14T12:22:18.069Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 9,
+      "newLevel": 10
+    },
+    {
+      "timestamp": "2025-09-14T12:22:18.871Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 10,
+      "newLevel": 9
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.048Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 9,
+      "newLevel": 8
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.228Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 8,
+      "newLevel": 7
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.409Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 7,
+      "newLevel": 6
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.589Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 6,
+      "newLevel": 5
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.757Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 5,
+      "newLevel": 4
+    },
+    {
+      "timestamp": "2025-09-14T12:22:19.937Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 4,
+      "newLevel": 3
+    },
+    {
+      "timestamp": "2025-09-14T12:22:20.140Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 3,
+      "newLevel": 2
+    },
+    {
+      "timestamp": "2025-09-14T12:22:20.320Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 2,
+      "newLevel": 1
+    },
+    {
+      "timestamp": "2025-09-14T12:22:20.544Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 1,
+      "newLevel": 0
+    }
+  ]
+}

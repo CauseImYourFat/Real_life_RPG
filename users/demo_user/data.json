@@ -1,0 +1,18 @@
+{
+  "profile": {
+    "username": "demo_user",
+    "createdAt": "2025-09-14T00:00:00.000Z",
+    "lastLogin": "2025-09-14T00:00:00.000Z",
+    "level": 1,
+    "totalSkillPoints": 0
+  },
+  "skills": {},
+  "health": {},
+  "preferences": {
+    "theme": "dark",
+    "notifications": true,
+    "autoSave": true
+  },
+  "achievements": [],
+  "progressHistory": []
+}

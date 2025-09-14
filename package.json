@@ -1,0 +1,35 @@
+{
+  "name": "life-rpg-skill-tracker",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "webpack --mode development --watch",
+    "build": "webpack --mode production",
+    "electron": "electron .",
+    "serve": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@electron/packager": "^18.4.4",
+    "chart.js": "^4.5.0",
+    "electron": "^38.1.0",
+    "jszip": "^3.10.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.4",
+    "@babel/preset-react": "^7.27.1",
+    "babel-loader": "^10.0.0",
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1"
+  }
+}

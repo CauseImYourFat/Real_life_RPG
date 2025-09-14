@@ -1,0 +1,32 @@
+{
+  "profile": {
+    "username": "guest_TW96aWxsYS81",
+    "createdAt": "2025-09-14T11:19:41.734Z",
+    "lastLogin": "2025-09-14T11:19:41.734Z",
+    "level": 1,
+    "totalSkillPoints": 1,
+    "lastUpdated": "2025-09-14T11:23:55.932Z"
+  },
+  "skills": {
+    "Physical": {
+      "Boxing": 1
+    }
+  },
+  "health": {},
+  "preferences": {
+    "theme": "dark",
+    "notifications": true,
+    "autoSave": true
+  },
+  "achievements": [],
+  "progressHistory": [
+    {
+      "timestamp": "2025-09-14T11:23:55.932Z",
+      "action": "skill_update",
+      "category": "Physical",
+      "skill": "Boxing",
+      "oldLevel": 0,
+      "newLevel": 1
+    }
+  ]
+}

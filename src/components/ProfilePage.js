@@ -123,7 +123,6 @@ function ProfilePage({ onClose, currentUser, userData }) {
     }
   };
   return (
-  return (
     <div className="profile-page">
       <div className="profile-overlay" onClick={onClose}></div>
       <div className="profile-container">

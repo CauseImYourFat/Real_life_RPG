@@ -7,7 +7,7 @@ class UserDataService {
     }
     try {
       const response = await fetch(`${this.baseURL}/api/user/username`, {
-        method: 'POST',
+        method: 'PUT',
         headers: this.getAuthHeaders(),
         body: JSON.stringify({ newUsername })
       });
@@ -30,7 +30,7 @@ class UserDataService {
     }
     try {
       const response = await fetch(`${this.baseURL}/api/user/password`, {
-        method: 'POST',
+        method: 'PUT',
         headers: this.getAuthHeaders(),
         body: JSON.stringify({ currentPassword, newPassword })
       });

@@ -127,21 +127,13 @@ function MotivationPage({ skillData, lastLogin }) {
       </div>
 
       {dailyQuote && (
-        <div className="daily-quote-card" style={{ position: 'relative' }}>
+        <div className="daily-quote-card">
           <div className="quote-content">
             <blockquote>"{dailyQuote.text}"</blockquote>
             <div className="quote-metadata">
               <span className="quote-category">Based on your {dailyQuote.category} progress</span>
               <span className="quote-author">- {dailyQuote.author}</span>
             </div>
-          </div>
-          {/* Example: Carpenter_Paschalis_Rathskellers.gif mascot, 20% bigger */}
-          <div style={{ position: 'absolute', right: '24px', top: '24px' }}>
-            <img
-              src="/assets/Carpenter_Paschalis_Rathskellers.gif"
-              alt="Carpenter Paschalis Rathskellers Mascot"
-              style={{ width: '96px', height: '96px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
-            />
           </div>
           <button className="share-btn" onClick={generateShareableImage}>
             📸 Share Progress

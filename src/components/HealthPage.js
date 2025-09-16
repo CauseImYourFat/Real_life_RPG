@@ -21,7 +21,7 @@ function HealthPage({ healthData, onUpdateHealth }) {
           <img
             src="/assets/pixel-heart.gif"
             alt="Pixel Heart Mascot"
-            style={{ width: '72px', height: '72px', filter: 'drop-shadow(0 0 8px #ff6b6b)' }}
+            style={{ width: '36px', height: '36px', filter: 'drop-shadow(0 0 8px #ff6b6b)' }}
           />
         </h2>
         <div className="health-status">

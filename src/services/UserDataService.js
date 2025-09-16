@@ -1,8 +1,9 @@
 // API-Based UserDataService - Handles backend communication for cross-device sync
 class UserDataService {
   constructor() {
-    this.currentUser = null;
-    this.authToken = null;
+    // Always load token and user from localStorage on service creation
+    this.authToken = localStorage.getItem('authToken');
+    this.currentUser = localStorage.getItem('currentUser');
     // Use production Railway URL when deployed, localhost for development
     this.baseURL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
       ? '' 
@@ -24,11 +25,10 @@ class UserDataService {
 
   // Check if user is logged in and token is valid
   async isAuthenticated() {
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('currentUser');
-    if (token && user) {
-      this.authToken = token;
-      this.currentUser = user;
+    // Always reload token and user from localStorage
+    this.authToken = localStorage.getItem('authToken');
+    this.currentUser = localStorage.getItem('currentUser');
+    if (this.authToken && this.currentUser) {
       // Check token validity with a lightweight API call
       try {
         const response = await fetch(`${this.baseURL}/api/health`, {
@@ -47,6 +47,17 @@ class UserDataService {
       }
     }
     return false;
+  }
+  // Call this on app load to auto-login if possible
+  async autoLogin() {
+    const isAuth = await this.isAuthenticated();
+    if (!isAuth) {
+      // Trigger login UI or redirect to login page
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    }
+    return isAuth;
   }
 
   // Get current user

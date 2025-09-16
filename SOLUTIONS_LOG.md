@@ -45,4 +45,23 @@
 
 ---
 
+
+---
+
+## [2025-09-16] Gnee!! Point System & Donut Animation
+
+**Problem:**
+- Needed a fun, geeky way to reward users for every meaningful action in the app.
+- Wanted a visible counter and a celebratory animation.
+
+**Solution:**
+- Updated header to "Real Life" and added Gnee.png mascot.
+- Added a Gnee!!'s Points counter styled as a geek badge.
+- Incremented counter on every app change (add skill, health/anatomy, share progress, etc.).
+- Showed donut.gif near the top right of the click location for 1 second when a point is earned.
+
+**Result:**
+- Users now see their Gnee!! points and get a donut celebration for every achievement.
+
+---
 Add new solutions below as needed.

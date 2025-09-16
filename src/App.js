@@ -15,13 +15,11 @@ function App() {
   const [userData, setUserData] = useState({
     skills: {},
     health: {},
-    preferences: {},
+    preferences: { gneePoints: 0 },
     lastLogin: null
   });
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [showProfile, setShowProfile] = useState(false);
+    const [showDonut, setShowDonut] = useState(false);
+    const [donutPosition, setDonutPosition] = useState({ top: 20, right: 20 });
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
@@ -76,7 +74,7 @@ function App() {
       setUserData({
         skills: data.skills || {},
         health: data.health || {},
-        preferences: data.preferences || {},
+        preferences: { ...(data.preferences || {}), gneePoints: data.preferences?.gneePoints || 0 },
         lastLogin: new Date().toISOString()
       });
       
@@ -100,7 +98,7 @@ function App() {
     setUserData({
       skills: {},
       health: {},
-      preferences: {},
+      preferences: { gneePoints: 0 },
       lastLogin: null
     });
     setActiveTab('skills');
@@ -110,7 +108,15 @@ function App() {
   const updateSkillData = async (skillCategory, skillName, level) => {
     try {
       const updatedData = await userDataService.saveSkillData(skillCategory, skillName, level);
-      setUserData(updatedData);
+        setUserData(prev => ({
+          ...updatedData,
+          preferences: {
+            ...updatedData.preferences,
+            gneePoints: (prev.preferences.gneePoints || 0) + 1
+          }
+        }));
+        // Show donut animation
+        triggerDonut();
     } catch (error) {
       console.error('Failed to update skill data:', error);
     }
@@ -119,7 +125,15 @@ function App() {
   const removeSkillData = async (skillCategory, skillName) => {
     try {
       const updatedData = await userDataService.removeSkillData(skillCategory, skillName);
-      setUserData(updatedData);
+        setUserData(prev => ({
+          ...updatedData,
+          preferences: {
+            ...updatedData.preferences,
+            gneePoints: (prev.preferences.gneePoints || 0) + 1
+          }
+        }));
+        // Show donut animation
+        triggerDonut();
     } catch (error) {
       console.error('Failed to remove skill data:', error);
     }
@@ -134,10 +148,28 @@ function App() {
           ...prev.health,
           [category]: data
         }
+          preferences: {
+            ...prev.preferences,
+            gneePoints: (prev.preferences.gneePoints || 0) + 1
+          }
       }));
+        // Show donut animation
+        triggerDonut();
     } catch (error) {
       console.error('Failed to update health data:', error);
     }
+  // Donut animation trigger
+  const triggerDonut = (e) => {
+    // If event, use its clientX/clientY for position, else default to top right
+    let top = 20, right = 20;
+    if (e && e.clientX && e.clientY) {
+      top = e.clientY;
+      right = window.innerWidth - e.clientX;
+    }
+    setDonutPosition({ top, right });
+    setShowDonut(true);
+    setTimeout(() => setShowDonut(false), 1000);
+  };
   };
 
   const tabs = [
@@ -167,10 +199,33 @@ function App() {
 
   return (
     <div className="app">
+        {/* Donut animation */}
+        {showDonut && (
+          <img
+            src={require('../assets/donut.gif')}
+            alt="Donut"
+            style={{
+              position: 'fixed',
+              top: donutPosition.top,
+              right: donutPosition.right,
+              zIndex: 9999,
+              width: '80px',
+              pointerEvents: 'none',
+              transition: 'opacity 0.2s',
+              opacity: showDonut ? 1 : 0
+            }}
+          />
+        )}
       {/* Persistent debug info for token and user */}
       <header className="app-header">
-        <div className="header-content">
-          <h1 className="app-title">🎮 Life RPG</h1>
+        <div className="header-content" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
+          <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+            Real Life
+            <img src={require('../assets/Gnee.png')} alt="Gnee" style={{height: '2.2em', verticalAlign: 'middle'}} />
+            <span className="gnee-points" style={{background: '#222', color: '#fff', borderRadius: '1em', padding: '0.3em 0.8em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.1em', marginLeft: '0.5em', boxShadow: '0 0 6px #ff0'}}>
+              Gnee!!'s Points: {userData.preferences.gneePoints || 0}
+            </span>
+          </h1>
           <UserMenu 
             currentUser={currentUser} 
             onLogout={handleLogout}

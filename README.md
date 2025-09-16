@@ -1,5 +1,5 @@
 <<<<<<< HEAD
-# Life Skills Tracker - Real-Life RPG
+# Real Life RPG - Gnee!! Point System
 
 **Ready for static hosting! Zero-gap mobile optimized.**
 
@@ -35,8 +35,12 @@ if (existingUser) {
 2. **Access via your domain** - works immediately!
 3. **No database or server setup** required
 
+
 ## 🎮 Features
 
+- **Gnee!! Point System**: Earn points for every meaningful action (add skill, health change, share progress, etc.)
+- **Geeky Point Counter**: See your Gnee!!'s Points in the header, styled as a geek badge
+- **Donut Animation**: Every time you earn a Gnee!! point, a donut.gif appears near the top right of your click for 1 second
 - **Secure User System**: Username collision protection
 - **Multiple Users**: Each browser can have multiple accounts
 - **Guest Mode**: Quick access without registration  
@@ -65,6 +69,13 @@ if (existingUser) {
 - **Import/Export**: Easy backup and sharing of your skill data
 
 ## How to Use
+
+
+### Gnee!! Point System
+1. The header now shows "Real Life", the Gnee mascot, and your Gnee!!'s Points counter.
+2. Every time you add a skill, change health/anatomy, or share progress, you earn a Gnee!! point.
+3. When you earn a point, a donut.gif appears near the top right of your click for 1 second.
+4. Points are persistent for your session and reset on logout.
 
 ### Getting Started
 1. Open `index.html` in your web browser

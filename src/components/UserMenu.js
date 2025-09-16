@@ -45,13 +45,6 @@ function UserMenu({ currentUser, onLogout, onShowProfile, onShowSettings }) {
 
   const menuItems = [
     {
-      label: '👤 Profile',
-      onClick: () => {
-        onShowProfile && onShowProfile();
-        setIsOpen(false);
-      }
-    },
-    {
       label: '⚙️ Settings', 
       onClick: () => {
         onShowSettings && onShowSettings();

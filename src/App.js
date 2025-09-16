@@ -1,7 +1,5 @@
 import dragonFireGif from '../assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
-import donutGif from '../assets/donut.gif';
-import gneePng from '../assets/Gnee.png';
 import SkillsPage from './components/SkillsPage';
 import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';

@@ -9,6 +9,8 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 // MongoDB setup
 const mongoose = require('mongoose');
+// Always load .env.local first for local dev, fallback to .env
+require('dotenv').config({ path: '.env.local' });
 require('dotenv').config();
 const { User, UserData } = require('./src/models/mongoModels');
 

@@ -1,3 +1,27 @@
+// Save all user data (skills, health, preferences, profile)
+app.post('/api/user/data', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { skills, health, preferences, profile } = req.body;
+
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
+        }
+
+        if (skills) mongoUserData.skills = skills;
+        if (health) mongoUserData.health = health;
+        if (preferences) mongoUserData.preferences = preferences;
+        if (profile) mongoUserData.profile = profile;
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
+
+        res.json({ message: 'User data saved successfully', lastSaved: mongoUserData.lastSaved });
+    } catch (error) {
+        console.error('Save user data error:', error);
+        res.status(500).json({ error: 'Failed to save user data' });
+    }
+});
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');

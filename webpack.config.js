@@ -2,10 +2,6 @@ const path = require('path');
 
 module.exports = {
   entry: './src/renderer.js',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
-  },
   module: {
     rules: [
       {
@@ -21,6 +17,18 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[hash].[ext]',
+              outputPath: 'assets',
+            },
+          },
+        ],
       }
     ]
   },

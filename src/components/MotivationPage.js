@@ -96,7 +96,7 @@ function MotivationPage({ skillData, lastLogin }) {
         <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
           Daily Motivation
           <img
-            src="/assets/catfly-rainbow.gif"
+            src={require('../../assets/catfly-rainbow.gif')}
             alt="Catfly Rainbow Mascot"
             style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
           />

@@ -146,7 +146,7 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
       <div className="skills-header">
         <h2>Personal Development Skills</h2>
         <img
-          src="/assets/Carpenter_Paschalis_Rathskellers.gif"
+          src={require('../../assets/Carpenter_Paschalis_Rathskellers.gif')}
           alt="Carpenter Paschalis Rathskellers"
           style={{
             display: 'inline-block',

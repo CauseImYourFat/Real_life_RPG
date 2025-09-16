@@ -205,7 +205,7 @@ function App() {
 
   return (
     <div className="app">
-      {/* Sticky dragon-fire.gif at bottom left */}
+      {/* Sticky dragon-fire.gif at bottom left, only one instance */}
       <img
         src={dragonFireGif}
         alt="Dragon Fire"
@@ -218,50 +218,32 @@ function App() {
           pointerEvents: 'none'
         }}
       />
-        {/* Donut animation */}
-        {showDonut && (
-          <img
-            src={donutGif}
-            alt="Donut"
-            style={{
-              position: 'fixed',
-              top: donutPosition.top,
-              right: donutPosition.right,
-              zIndex: 9999,
-              width: '80px',
-              pointerEvents: 'none',
-              transition: 'opacity 0.2s',
-              opacity: showDonut ? 1 : 0
-            }}
-          />
-        )}
-      {/* Persistent debug info for token and user */}
       <header className="app-header">
-        <div className="header-content" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-            <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative'}}>
-              <span style={{display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.15em 0.5em', borderRadius: '1em', position: 'relative'}}>
-                Real Life
-              </span>
-            </h1>
-          <UserMenu 
-            currentUser={currentUser} 
-            onLogout={handleLogout}
-            onShowProfile={() => setShowProfile(true)}
-            onShowSettings={() => setShowSettings(true)}
-          />
+        <div className="header-content" style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1.5rem', padding: '0.5em 1em 0.5em 1em'}}>
+          <h1 className="app-title" style={{margin: 0, fontSize: '2em', fontWeight: 'bold', color: '#fff', whiteSpace: 'nowrap'}}>
+            Real Life
+          </h1>
+          <nav className="tab-navigation" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginLeft: '2em'}}>
+            {tabs.map(tab => (
+              <button
+                key={tab.id}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                <span className="tab-icon">{tab.icon}</span>
+                <span className="tab-name">{tab.name}</span>
+              </button>
+            ))}
+          </nav>
+          <div style={{marginLeft: 'auto'}}>
+            <UserMenu 
+              currentUser={currentUser} 
+              onLogout={handleLogout}
+              onShowProfile={() => setShowProfile(true)}
+              onShowSettings={() => setShowSettings(true)}
+            />
+          </div>
         </div>
-        <nav className="tab-navigation">
-          {tabs.map(tab => (
-            <button
-              key={tab.id}
-              className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
-            >
-              <span className="tab-icon">{tab.icon}</span>
-              <span className="tab-name">{tab.name}</span>
-            </button>
-          ))}
-        </nav>
       </header>
 
       <main className="app-content">

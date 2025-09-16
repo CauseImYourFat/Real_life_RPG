@@ -43,7 +43,18 @@
             </div>
         </div>
     </div>
-    <script src="dist/bundle.js?v=20250914-2045"></script>
+        <script>
+            // Version string should be updated on each deploy
+            const APP_VERSION = '20250916-1';
+            const storedVersion = localStorage.getItem('appVersion');
+            if (storedVersion !== APP_VERSION) {
+                // Force logout if version changed
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                localStorage.setItem('appVersion', APP_VERSION);
+            }
+        </script>
+        <script src="dist/bundle.js?v=20250914-2045"></script>
 </body>
 <style>
         #dragon-fire-sticky {

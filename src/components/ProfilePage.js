@@ -122,6 +122,7 @@ function ProfilePage({ onClose, currentUser, userData }) {
       reader.readAsDataURL(file);
     }
   };
+  return (
     <div className="profile-page">
       <div className="profile-overlay" onClick={onClose}></div>
       <div className="profile-container">

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ahhhGif from '../../assets/ahhh.gif';
-import giphyGif from '../../assets/giphy.gif';
+import zumoBanditRunGif from '../../assets/zumo-bandit-run.gif';
 import userDataService from '../services/UserDataService';
 
 function AuthPage({ onLogin }) {
@@ -79,7 +79,7 @@ function AuthPage({ onLogin }) {
           {isLogin && (
             <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1em', marginBottom: '1em'}}>
               <img src={ahhhGif} alt="Ahhh" style={{width: '120px'}} />
-              <img src={giphyGif} alt="Giphy" style={{width: '120px'}} />
+              <img src={zumoBanditRunGif} alt="Zumo Bandit Run" style={{width: '120px'}} />
             </div>
           )}
           <h2>{isLogin ? 'Welcome Back!' : 'Create Account'}</h2>

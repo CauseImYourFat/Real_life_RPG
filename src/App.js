@@ -205,6 +205,19 @@ function App() {
 
   return (
     <div className="app">
+      {/* Sticky dragon-fire.gif at bottom left */}
+      <img
+        src={dragonFireGif}
+        alt="Dragon Fire"
+        style={{
+          position: 'fixed',
+          left: 0,
+          bottom: 0,
+          width: '120px',
+          zIndex: 999,
+          pointerEvents: 'none'
+        }}
+      />
         {/* Donut animation */}
         {showDonut && (
           <img
@@ -228,10 +241,6 @@ function App() {
             <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative'}}>
               <span style={{display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.15em 0.5em', borderRadius: '1em', position: 'relative'}}>
                 Real Life
-                <img src={gneePng} alt="Gnee" style={{height: '1.2em', verticalAlign: 'middle', marginLeft: '0.3em', filter: 'none', transition: 'none', cursor: 'pointer'}} />
-              </span>
-              <span className="gnee-points" style={{background: '#222', color: '#00d4aa', borderRadius: '1em', padding: '0.15em 0.5em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1em', marginLeft: '0.5em', boxShadow: 'none'}}>
-                Gnee!!'s Points: {userData.preferences.gneePoints || 0}
               </span>
             </h1>
           <UserMenu 

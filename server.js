@@ -133,50 +133,30 @@ app.get('/api/user/data', authenticateToken, async (req, res) => {
 });
 
 // Save user data
-app.post('/api/user/data', authenticateToken, async (req, res) => {
+app.delete('/api/user/delete', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { skills, health, preferences, profile } = req.body;
-        let mongoUserData = await UserData.findOne({ userId });
-        if (!mongoUserData) {
-            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
-        }
-        mongoUserData.skills = skills || {};
-        mongoUserData.health = health || {};
-        mongoUserData.preferences = preferences || {};
-        mongoUserData.profile = profile || { description: '', profileImage: '' };
-        mongoUserData.lastSaved = new Date().toISOString();
-        await mongoUserData.save();
-        res.json({ message: 'Data saved successfully', lastSaved: mongoUserData.lastSaved });
-    } catch (error) {
-        console.error('Save user data error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+        const { confirmText } = req.body;
 
-// Update specific skill
-app.post('/api/user/skills/:skillId', authenticateToken, (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const { skillId } = req.params;
-        const { level, experience } = req.body;
-
-        if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
+        if (confirmText !== 'delete') {
+            return res.status(400).json({ error: 'Must type "delete" to confirm account deletion' });
         }
 
-        userData[userId].skills[skillId] = { level, experience };
-        userData[userId].lastSaved = new Date().toISOString();
+        // Remove user and user data from MongoDB
+        await User.deleteOne({ _id: userId });
+        await UserData.deleteOne({ userId });
 
+        console.log(`User account deleted: ${userId}`);
         res.json({ 
-            message: 'Skill updated successfully',
-            skill: userData[userId].skills[skillId]
+            message: 'Account deleted successfully',
+            deleted: true
         });
     } catch (error) {
-        console.error('Update skill error:', error);
+        console.error('Delete account error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// ...existing code...
 
 // Update health data
 app.post('/api/user/health', authenticateToken, (req, res) => {
@@ -341,12 +321,18 @@ app.get('/', (req, res) => {
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({ 
-        status: 'ok', 
-        timestamp: new Date().toISOString(),
-        users: users.length
-    });
+// Health check endpoint
+app.get('/api/health', async (req, res) => {
+    try {
+        const userCount = await User.countDocuments({});
+        res.json({
+            status: 'ok',
+            timestamp: new Date().toISOString(),
+            users: userCount
+        });
+    } catch (error) {
+        res.status(500).json({ status: 'error', error: error.message });
+    }
 });
 
 // Start server

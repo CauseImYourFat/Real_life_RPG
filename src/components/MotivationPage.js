@@ -112,19 +112,6 @@ function MotivationPage({ skillData, lastLogin }) {
           </div>
         </div>
       </div>
-      <div className="motivation-header">
-        <h2>Daily Motivation</h2>
-        <div className="streak-info">
-          <div className="streak-item">
-            <span className="streak-value">{streakData.current}</span>
-            <span className="streak-label">Day Streak</span>
-          </div>
-          <div className="streak-item">
-            <span className="streak-value">{streakData.longest}</span>
-            <span className="streak-label">Longest Streak</span>
-          </div>
-        </div>
-      </div>
 
       {dailyQuote && (
         <div className="daily-quote-card">

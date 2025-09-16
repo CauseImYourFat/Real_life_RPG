@@ -25,10 +25,6 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
-    // Debug: Show token and user on every page load
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('currentUser');
-    console.log('App load: token', token, 'user', user);
     // Check authentication and load user data
     const checkAuth = async () => {
       const isAuth = await userDataService.isAuthenticated();
@@ -36,7 +32,6 @@ function App() {
         const username = userDataService.getCurrentUser();
         setCurrentUser(username);
         setIsAuthenticated(true);
-        console.log(`Auto-login: ${username}`);
         try {
           // Load user data from API
           const data = await userDataService.loadUserData();
@@ -47,7 +42,6 @@ function App() {
             lastLogin: new Date().toISOString()
           });
         } catch (error) {
-          console.error('Failed to load user data:', error);
           // If loading fails, logout the user
           userDataService.logout();
           setIsAuthenticated(false);
@@ -57,7 +51,22 @@ function App() {
       setLoading(false);
     };
     checkAuth();
-  }, []);
+
+    // Forced save before refresh/close
+    const handleBeforeUnload = async (e) => {
+      if (isAuthenticated) {
+        try {
+          await userDataService.saveUserData(userData);
+        } catch (err) {
+          // Ignore errors to avoid blocking unload
+        }
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isAuthenticated, userData]);
 
   const handleLogin = async (username) => {
     setLoading(true);

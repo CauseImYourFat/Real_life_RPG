@@ -1,3 +1,4 @@
+// ...existing code...
 // Save all user data (skills, health, preferences, profile)
 app.post('/api/user/data', authenticateToken, async (req, res) => {
     try {

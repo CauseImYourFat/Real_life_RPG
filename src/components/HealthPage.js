@@ -16,22 +16,14 @@ function HealthPage({ healthData, onUpdateHealth }) {
   return (
     <div className="health-page">
       <div className="health-header">
-        <h2>Health & Anatomy Tracker</h2>
-      {/* Centered pixel-heart mascot */}
-      <div style={{
-        position: 'absolute',
-        left: '50%',
-        top: '120px',
-        transform: 'translateX(-50%)',
-        zIndex: 1000,
-        pointerEvents: 'none',
-      }}>
-        <img
-          src="/assets/pixel-heart.gif"
-          alt="Pixel Heart Mascot"
-          style={{ width: '72px', height: '72px', filter: 'drop-shadow(0 0 8px #ff6b6b)' }}
-        />
-      </div>
+        <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+          Health & Anatomy Tracker
+          <img
+            src="/assets/pixel-heart.gif"
+            alt="Pixel Heart Mascot"
+            style={{ width: '72px', height: '72px', filter: 'drop-shadow(0 0 8px #ff6b6b)' }}
+          />
+        </h2>
         <div className="health-status">
           <div className="status-indicator">
             <span className="status-label">Overall Health:</span>

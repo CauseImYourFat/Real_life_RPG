@@ -1,15 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 function MotivationPage({ skillData, lastLogin }) {
-  // Centered catfly-rainbow mascot
-  const mascotStyle = {
-    position: 'absolute',
-    left: '50%',
-    top: '120px',
-    transform: 'translateX(-50%)',
-    zIndex: 1000,
-    pointerEvents: 'none',
-  };
   const [dailyQuote, setDailyQuote] = useState(null);
   const [achievements, setAchievements] = useState([]);
   const [streakData, setStreakData] = useState({ current: 0, longest: 0 });
@@ -100,14 +91,26 @@ function MotivationPage({ skillData, lastLogin }) {
   };
 
   return (
-    <div className="motivation-page" style={{ position: 'relative' }}>
-      {/* Centered catfly-rainbow mascot */}
-      <div style={mascotStyle}>
-        <img
-          src="/assets/catfly-rainbow.gif"
-          alt="Catfly Rainbow Mascot"
-          style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
-        />
+    <div className="motivation-page">
+      <div className="motivation-header">
+        <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
+          Daily Motivation
+          <img
+            src="/assets/catfly-rainbow.gif"
+            alt="Catfly Rainbow Mascot"
+            style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
+          />
+        </h2>
+        <div className="streak-info">
+          <div className="streak-item">
+            <span className="streak-value">{streakData.current}</span>
+            <span className="streak-label">Day Streak</span>
+          </div>
+          <div className="streak-item">
+            <span className="streak-value">{streakData.longest}</span>
+            <span className="streak-label">Longest Streak</span>
+          </div>
+        </div>
       </div>
       <div className="motivation-header">
         <h2>Daily Motivation</h2>

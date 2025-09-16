@@ -322,7 +322,9 @@ app.put('/api/user/profile', authenticateToken, async (req, res) => {
 // ...existing code...
 
 // Serve the main HTML file
-app.get('/', (req, res) => {
+
+// Serve index.html for all unknown routes (SPA fallback)
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 

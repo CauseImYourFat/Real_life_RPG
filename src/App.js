@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import donutGif from '../assets/donut.gif';
+import gneePng from '../assets/Gnee.png';
 import SkillsPage from './components/SkillsPage';
 import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';
@@ -11,6 +13,7 @@ import userDataService from './services/UserDataService';
 import './styles/App.css';
 
 function App() {
+  // Image imports for Webpack
   const [activeTab, setActiveTab] = useState('skills');
   const [userData, setUserData] = useState({
     skills: {},
@@ -206,7 +209,7 @@ function App() {
         {/* Donut animation */}
         {showDonut && (
           <img
-            src={require('../assets/donut.gif')}
+            src={donutGif}
             alt="Donut"
             style={{
               position: 'fixed',
@@ -225,7 +228,7 @@ function App() {
         <div className="header-content" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
           <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
             Real Life
-            <img src={require('../assets/Gnee.png')} alt="Gnee" style={{height: '2.2em', verticalAlign: 'middle'}} />
+            <img src={gneePng} alt="Gnee" style={{height: '2.2em', verticalAlign: 'middle'}} />
             <span className="gnee-points" style={{background: '#222', color: '#fff', borderRadius: '1em', padding: '0.3em 0.8em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.1em', marginLeft: '0.5em', boxShadow: '0 0 6px #ff0'}}>
               Gnee!!'s Points: {userData.preferences.gneePoints || 0}
             </span>

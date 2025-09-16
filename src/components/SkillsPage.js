@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import carpenterGif from '../../assets/Carpenter_Paschalis_Rathskellers.gif';
 import SkillCategory from './SkillCategory';
 import SkillModal from './SkillModal';
 
@@ -145,18 +146,18 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
     <div className="skills-page">
       <div className="skills-header">
         <h2>Personal Development Skills</h2>
-        <img
-          src={require('../../assets/Carpenter_Paschalis_Rathskellers.gif')}
-          alt="Carpenter Paschalis Rathskellers"
-          style={{
-            display: 'inline-block',
-            marginLeft: '16px',
-            verticalAlign: 'middle',
-            width: '96px',
-            height: '96px',
-            animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
-          }}
-        />
+          <img
+            src={carpenterGif}
+            alt="Carpenter Paschalis Rathskellers"
+            style={{
+              display: 'inline-block',
+              marginLeft: '16px',
+              verticalAlign: 'middle',
+              width: '96px',
+              height: '96px',
+              animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
+            }}
+          />
         <div className="skills-stats">
           <div className="stat-item">
             <span className="stat-label">Total Skill Points:</span>

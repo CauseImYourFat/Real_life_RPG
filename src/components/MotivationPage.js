@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
 function MotivationPage({ skillData, lastLogin }) {
+  // Centered catfly-rainbow mascot
+  const mascotStyle = {
+    position: 'absolute',
+    left: '50%',
+    top: '120px',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+    pointerEvents: 'none',
+  };
   const [dailyQuote, setDailyQuote] = useState(null);
   const [achievements, setAchievements] = useState([]);
   const [streakData, setStreakData] = useState({ current: 0, longest: 0 });
@@ -91,7 +100,15 @@ function MotivationPage({ skillData, lastLogin }) {
   };
 
   return (
-    <div className="motivation-page">
+    <div className="motivation-page" style={{ position: 'relative' }}>
+      {/* Centered catfly-rainbow mascot */}
+      <div style={mascotStyle}>
+        <img
+          src="/assets/catfly-rainbow.gif"
+          alt="Catfly Rainbow Mascot"
+          style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
+        />
+      </div>
       <div className="motivation-header">
         <h2>Daily Motivation</h2>
         <div className="streak-info">
@@ -107,13 +124,21 @@ function MotivationPage({ skillData, lastLogin }) {
       </div>
 
       {dailyQuote && (
-        <div className="daily-quote-card">
+        <div className="daily-quote-card" style={{ position: 'relative' }}>
           <div className="quote-content">
             <blockquote>"{dailyQuote.text}"</blockquote>
             <div className="quote-metadata">
               <span className="quote-category">Based on your {dailyQuote.category} progress</span>
               <span className="quote-author">- {dailyQuote.author}</span>
             </div>
+          </div>
+          {/* Example: Carpenter_Paschalis_Rathskellers.gif mascot, 20% bigger */}
+          <div style={{ position: 'absolute', right: '24px', top: '24px' }}>
+            <img
+              src="/assets/Carpenter_Paschalis_Rathskellers.gif"
+              alt="Carpenter Paschalis Rathskellers Mascot"
+              style={{ width: '96px', height: '96px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
+            />
           </div>
           <button className="share-btn" onClick={generateShareableImage}>
             📸 Share Progress

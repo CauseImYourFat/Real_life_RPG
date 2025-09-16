@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import catflyRainbowGif from '../../assets/catfly-rainbow.gif';
 
 function MotivationPage({ skillData, lastLogin }) {
   const [dailyQuote, setDailyQuote] = useState(null);
@@ -95,8 +96,8 @@ function MotivationPage({ skillData, lastLogin }) {
       <div className="motivation-header">
         <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
           Daily Motivation
-          <img
-            src={require('../../assets/catfly-rainbow.gif')}
+            <img
+            src={catflyRainbowGif}
             alt="Catfly Rainbow Mascot"
             style={{ width: '80px', height: '80px', filter: 'drop-shadow(0 0 8px #00d4aa)' }}
           />

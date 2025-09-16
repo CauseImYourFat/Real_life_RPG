@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import pixelHeartGif from '../../assets/pixel-heart.gif';
 import BodyVisualization from './BodyVisualization';
 import HealthMetrics from './HealthMetrics';
 import HealthGoals from './HealthGoals';
@@ -19,7 +20,7 @@ function HealthPage({ healthData, onUpdateHealth }) {
         <h2 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
           Health & Anatomy Tracker
           <img
-            src={require('../../assets/pixel-heart.gif')}
+            src={pixelHeartGif}
             alt="Pixel Heart Mascot"
             style={{ width: '36px', height: '36px', filter: 'drop-shadow(0 0 8px #ff6b6b)' }}
           />

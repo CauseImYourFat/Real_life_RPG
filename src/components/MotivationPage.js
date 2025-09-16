@@ -231,8 +231,15 @@ function generateDailyQuote(skillData) {
   });
 
   const categoryQuotes = quotes[topCategory] || quotes.Physical;
-  const selectedQuote = categoryQuotes[Math.floor(Math.random() * categoryQuotes.length)];
-  
+  // Deterministic quote selection: use user and date for seed
+  let seed = 0;
+  try {
+    const user = localStorage.getItem('currentUser') || '';
+    const today = new Date().toISOString().slice(0, 10);
+    seed = user.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) + today.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  } catch (e) {}
+  const idx = categoryQuotes.length > 0 ? seed % categoryQuotes.length : 0;
+  const selectedQuote = categoryQuotes[idx];
   return {
     ...selectedQuote,
     category: topCategory

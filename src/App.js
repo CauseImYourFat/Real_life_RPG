@@ -27,12 +27,12 @@ function App() {
   useEffect(() => {
     // Check authentication and load user data
     const checkAuth = async () => {
-      if (userDataService.isAuthenticated()) {
+      const isAuth = await userDataService.isAuthenticated();
+      if (isAuth) {
         const username = userDataService.getCurrentUser();
         setCurrentUser(username);
         setIsAuthenticated(true);
         console.log(`Auto-login: ${username}`);
-        
         try {
           // Load user data from API
           const data = await userDataService.loadUserData();
@@ -52,7 +52,6 @@ function App() {
       }
       setLoading(false);
     };
-    
     checkAuth();
   }, []);
 

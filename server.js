@@ -29,7 +29,8 @@ app.use(cors());
 app.use(express.json());
 // Serve static files from 'public' if present, otherwise from root
 const staticDir = __dirname;
-app.use(express.static(staticDir));
+const distDir = path.join(__dirname, 'dist');
+app.use(express.static(distDir));
 
 // Remove in-memory storage. Use MongoDB only.
 
@@ -327,7 +328,7 @@ app.put('/api/user/profile', authenticateToken, async (req, res) => {
 
 // Serve index.html for all unknown routes (SPA fallback)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(staticDir, 'index.html'));
+    res.sendFile(path.join(distDir, 'index.html'));
 });
 
 // Health check endpoint

@@ -153,8 +153,8 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
               display: 'inline-block',
               marginLeft: '16px',
               verticalAlign: 'middle',
-              width: '96px',
-              height: '96px',
+              width: '115px', // 1.2 * 96px
+              height: '115px', // 1.2 * 96px
               animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
             }}
           />

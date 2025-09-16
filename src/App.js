@@ -209,7 +209,7 @@ function App() {
           position: 'fixed',
           left: 0,
           bottom: 0,
-          width: '120px',
+          width: '96px', // 0.8 * 120px
           zIndex: 999,
           pointerEvents: 'none'
         }}

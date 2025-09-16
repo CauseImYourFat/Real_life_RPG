@@ -1,7 +1,12 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/renderer.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
   module: {
     rules: [
       {
@@ -32,6 +37,12 @@ module.exports = {
       }
     ]
   },
-  target: 'electron-renderer',
-  mode: 'development'
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'index.html'),
+      inject: 'body',
+    })
+  ],
+  target: 'web',
+  mode: 'production'
 };

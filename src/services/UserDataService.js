@@ -141,7 +141,10 @@ class UserDataService {
 
   // Load user data from API
   async loadUserData() {
-    if (!this.isAuthenticated()) {
+    // Always reload token from localStorage before API call
+    this.authToken = localStorage.getItem('authToken');
+    this.currentUser = localStorage.getItem('currentUser');
+    if (!this.authToken || !this.currentUser) {
       return { skills: {}, health: {}, preferences: {} };
     }
 
@@ -164,12 +167,14 @@ class UserDataService {
       return {
         skills: data.skills || {},
         health: data.health || {},
-        preferences: data.preferences || {}
+        preferences: data.preferences || {},
+        profile: data.profile || {},
+        lastSaved: data.lastSaved || ''
       };
     } catch (error) {
       console.error('Load user data error:', error);
       // Return empty data if API fails
-      return { skills: {}, health: {}, preferences: {} };
+      return { skills: {}, health: {}, preferences: {}, profile: {}, lastSaved: '' };
     }
   }
 

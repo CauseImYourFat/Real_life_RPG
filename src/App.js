@@ -226,13 +226,15 @@ function App() {
       {/* Persistent debug info for token and user */}
       <header className="app-header">
         <div className="header-content" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
-          <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-            Real Life
-            <img src={gneePng} alt="Gnee" style={{height: '2.2em', verticalAlign: 'middle'}} />
-            <span className="gnee-points" style={{background: '#222', color: '#fff', borderRadius: '1em', padding: '0.3em 0.8em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.1em', marginLeft: '0.5em', boxShadow: '0 0 6px #ff0'}}>
-              Gnee!!'s Points: {userData.preferences.gneePoints || 0}
-            </span>
-          </h1>
+            <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative'}}>
+              <span style={{display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.2em 0.7em', borderRadius: '1em', background: 'linear-gradient(90deg, #00d4aa 60%, #fff 100%)', boxShadow: '0 0 8px #00d4aa', position: 'relative'}}>
+                Real Life
+                <img src={gneePng} alt="Gnee" style={{height: '1.1em', verticalAlign: 'middle', marginLeft: '0.3em', filter: 'drop-shadow(0 0 8px #00d4aa)', transition: 'filter 0.3s', cursor: 'pointer'}} />
+              </span>
+              <span className="gnee-points" style={{background: '#222', color: 'rgba(0,0,0,0)', borderRadius: '1em', padding: '0.15em 0.4em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '0.55em', marginLeft: '0.5em', boxShadow: '0 0 6px #ff0'}}>
+                Gnee!!'s Points: {userData.preferences.gneePoints || 0}
+              </span>
+            </h1>
           <UserMenu 
             currentUser={currentUser} 
             onLogout={handleLogout}

@@ -1,7 +1,6 @@
 import dragonFireGif from '../assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
 import SkillsPage from './components/SkillsPage';
-import rocketGif from '../assets/rocket.gif';
 import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';
 import ExportPage from './components/ExportPage';
@@ -13,7 +12,7 @@ import userDataService from './services/UserDataService';
 import './styles/App.css';
 
 function App() {
-  const [showRocket, setShowRocket] = useState(false);
+  // const [showRocket, setShowRocket] = useState(false);
   // Image imports for Webpack
   const [activeTab, setActiveTab] = useState('skills');
   const [userData, setUserData] = useState({
@@ -115,16 +114,10 @@ function App() {
 
   const updateSkillData = async (skillCategory, skillName, level) => {
     try {
-      const prevLevel = userData[skillCategory]?.[skillName] || 0;
       const updatedData = await userDataService.saveSkillData(skillCategory, skillName, level);
       setUserData(prev => ({
         ...updatedData
       }));
-      // Trigger rocket.gif if level goes from 9 to 10
-      if (prevLevel === 9 && level === 10) {
-        setShowRocket(true);
-        setTimeout(() => setShowRocket(false), 7000);
-      }
     } catch (error) {
       console.error('Failed to update skill data:', error);
     }
@@ -207,22 +200,7 @@ function App() {
 
   return (
     <div className="app">
-      {showRocket && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          background: 'transparent',
-          zIndex: 99999,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-          <img src={rocketGif} alt="Rocket" style={{width: '40vw', height: 'auto', animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'}} />
-        </div>
-      )}
+      {/* Rocket popup removed */}
       {/* Sticky dragon-fire.gif at bottom left, only one instance */}
       <img
         src={dragonFireGif}

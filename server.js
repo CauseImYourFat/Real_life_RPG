@@ -1,29 +1,6 @@
 // ...existing code...
 // ...existing code...
-// Save all user data (skills, health, preferences, profile)
-app.post('/api/user/data', authenticateToken, async (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const { skills, health, preferences, profile } = req.body;
-
-        let mongoUserData = await UserData.findOne({ userId });
-        if (!mongoUserData) {
-            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
-        }
-
-        if (skills) mongoUserData.skills = skills;
-        if (health) mongoUserData.health = health;
-        if (preferences) mongoUserData.preferences = preferences;
-        if (profile) mongoUserData.profile = profile;
-        mongoUserData.lastSaved = new Date().toISOString();
-        await mongoUserData.save();
-
-        res.json({ message: 'User data saved successfully', lastSaved: mongoUserData.lastSaved });
-    } catch (error) {
-        console.error('Save user data error:', error);
-        res.status(500).json({ error: 'Failed to save user data' });
-    }
-});
+// ...existing code...
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
@@ -58,6 +35,30 @@ app.use(express.static('.'));
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+// Save all user data (skills, health, preferences, profile)
+app.post('/api/user/data', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { skills, health, preferences, profile } = req.body;
+
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
+        }
+
+        if (skills) mongoUserData.skills = skills;
+        if (health) mongoUserData.health = health;
+        if (preferences) mongoUserData.preferences = preferences;
+        if (profile) mongoUserData.profile = profile;
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
+
+        res.json({ message: 'User data saved successfully', lastSaved: mongoUserData.lastSaved });
+    } catch (error) {
+        console.error('Save user data error:', error);
+        res.status(500).json({ error: 'Failed to save user data' });
+    }
+});
 
     if (!token) {
         return res.status(401).json({ error: 'Access token required' });

@@ -15,6 +15,20 @@ function HealthPage({ healthData, onUpdateHealth }) {
 
   return (
     <div className="health-page">
+      {/* Floating pixel-heart mascot */}
+      <img
+        src="/assets/pixel-heart.gif"
+        alt="Pixel Heart Mascot"
+        style={{
+          position: 'fixed',
+          left: '24px',
+          bottom: '24px',
+          width: '64px',
+          height: '64px',
+          zIndex: 1000,
+          pointerEvents: 'none',
+        }}
+      />
       <div className="health-header">
         <h2>Health & Anatomy Tracker</h2>
         <div className="health-status">

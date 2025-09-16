@@ -25,6 +25,10 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
+    // Debug: Show token and user on every page load
+    const token = localStorage.getItem('authToken');
+    const user = localStorage.getItem('currentUser');
+    console.log('App load: token', token, 'user', user);
     // Check authentication and load user data
     const checkAuth = async () => {
       const isAuth = await userDataService.isAuthenticated();

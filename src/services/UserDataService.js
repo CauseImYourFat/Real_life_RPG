@@ -1,5 +1,69 @@
 // API-Based UserDataService - Handles backend communication for cross-device sync
 class UserDataService {
+  // Change username
+  async changeUsername(newUsername) {
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/username`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ newUsername })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to change username');
+      }
+      this.currentUser = newUsername;
+      localStorage.setItem('currentUser', newUsername);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Change password
+  async changePassword(currentPassword, newPassword) {
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/password`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to change password');
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update profile
+  async updateProfile(profile) {
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/profile`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(profile)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update profile');
+      }
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
   constructor() {
     // Always load token and user from localStorage on service creation
     this.authToken = localStorage.getItem('authToken');

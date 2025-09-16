@@ -158,89 +158,13 @@ function ProfilePage({ onClose, currentUser, userData }) {
 
           {/* Body Visualization with Edit Button */}
           <div className="body-visualization">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h4>⚡ Anatomy & Condition</h4>
-              <button className="edit-anatomy-btn" title="Edit Anatomy" style={{ fontSize: '1.1rem', background: 'none', border: 'none', color: '#00d4aa', cursor: 'pointer' }}>✏️ Edit</button>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', marginBottom: '1rem' }}>
+              <h4 style={{ margin: 0, paddingRight: '2.5rem' }}>⚡ Anatomy & Condition</h4>
+              <button className="edit-anatomy-btn" title="Edit Anatomy" style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', background: 'none', border: 'none', color: '#00d4aa', cursor: 'pointer', zIndex: 2 }}>✏️ Edit</button>
             </div>
             <div className="body-container">
-              {/* Anatomy Image or SVG */}
-              <svg className="body-svg" viewBox="0 0 400 600" width="300" height="450">
-                {/* Head */}
-                <circle 
-                  cx="200" 
-                  cy="80" 
-                  r="40" 
-                  className={`body-part head ${getBodyPartStatus('head')}`}
-                  data-part="head"
-                />
-                <text x="200" y="85" textAnchor="middle" className="body-text">🧠</text>
-                {/* Body */}
-                <rect 
-                  x="170" 
-                  y="120" 
-                  width="60" 
-                  height="100" 
-                  rx="20" 
-                  className={`body-part body ${getBodyPartStatus('body')}`}
-                  data-part="body"
-                />
-                <text x="200" y="180" textAnchor="middle" className="body-text">💪</text>
-                {/* Left Arm */}
-                <rect 
-                  x="120" 
-                  y="130" 
-                  width="50" 
-                  height="15" 
-                  rx="7" 
-                  className={`body-part arm ${getBodyPartStatus('arms')}`}
-                  data-part="left-arm"
-                />
-                {/* Right Arm */}
-                <rect 
-                  x="230" 
-                  y="130" 
-                  width="50" 
-                  height="15" 
-                  rx="7" 
-                  className={`body-part arm ${getBodyPartStatus('arms')}`}
-                  data-part="right-arm"
-                />
-                {/* Left Leg */}
-                <rect 
-                  x="180" 
-                  y="220" 
-                  width="15" 
-                  height="80" 
-                  rx="7" 
-                  className={`body-part leg ${getBodyPartStatus('legs')}`}
-                  data-part="left-leg"
-                />
-                {/* Right Leg */}
-                <rect 
-                  x="205" 
-                  y="220" 
-                  width="15" 
-                  height="80" 
-                  rx="7" 
-                  className={`body-part leg ${getBodyPartStatus('legs')}`}
-                  data-part="right-leg"
-                />
-                {/* Feet */}
-                <ellipse 
-                  cx="187" 
-                  cy="310" 
-                  rx="12" 
-                  ry="8" 
-                  className={`body-part foot ${getBodyPartStatus('legs')}`}
-                />
-                <ellipse 
-                  cx="213" 
-                  cy="310" 
-                  rx="12" 
-                  ry="8" 
-                  className={`body-part foot ${getBodyPartStatus('legs')}`}
-                />
-              </svg>
+              {/* Anatomy PNG Image (default) */}
+              <img src="/image/anatomy/full body 5 1303.png" alt="Anatomy" style={{ width: '300px', height: 'auto', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }} />
             </div>
           </div>
 
@@ -391,31 +315,30 @@ function ProfilePage({ onClose, currentUser, userData }) {
           flex: 1;
           overflow-y: auto;
           padding: 1.5rem;
-          display: grid;
-          grid-template-columns: 350px 1fr 350px;
-          grid-template-rows: auto 1fr;
+          display: flex;
+          flex-direction: row;
           gap: 2rem;
-          grid-template-areas: 
-            "stats body summary"
-            "description body description";
           min-height: 600px;
         }
 
         .character-stats {
-          grid-area: stats;
+          flex: 1 1 350px;
+          min-width: 300px;
         }
 
         .body-visualization {
-          grid-area: body;
+          flex: 1 1 350px;
+          min-width: 300px;
         }
 
         .skills-overview {
-          grid-area: summary;
+          flex: 1 1 350px;
+          min-width: 300px;
         }
 
         .character-description {
-          grid-area: description;
-          grid-column: 1 / -1;
+          width: 100%;
+          margin-top: 2rem;
         }
 
         .character-info {

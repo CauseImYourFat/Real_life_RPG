@@ -27,7 +27,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-i
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static('.'));
+// Serve static files from 'public' if present, otherwise from root
+const staticDir = __dirname;
+app.use(express.static(staticDir));
 
 // Remove in-memory storage. Use MongoDB only.
 
@@ -325,7 +327,7 @@ app.put('/api/user/profile', authenticateToken, async (req, res) => {
 
 // Serve index.html for all unknown routes (SPA fallback)
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(staticDir, 'index.html'));
 });
 
 // Health check endpoint

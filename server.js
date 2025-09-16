@@ -159,21 +159,23 @@ app.delete('/api/user/delete', authenticateToken, async (req, res) => {
 // ...existing code...
 
 // Update health data
-app.post('/api/user/health', authenticateToken, (req, res) => {
+app.post('/api/user/health', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
         const healthData = req.body;
 
-        if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
         }
 
-        userData[userId].health = healthData;
-        userData[userId].lastSaved = new Date().toISOString();
+        mongoUserData.health = healthData;
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
 
         res.json({ 
             message: 'Health data updated successfully',
-            health: userData[userId].health
+            health: mongoUserData.health
         });
     } catch (error) {
         console.error('Update health error:', error);
@@ -192,18 +194,20 @@ app.put('/api/user/username', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'Username must be at least 3 characters long' });
         }
 
-        // Check if new username already exists
-        if (findUser(newUsername.trim())) {
+        // Check if new username already exists in MongoDB
+        const existingUser = await User.findOne({ username: newUsername.trim() });
+        if (existingUser) {
             return res.status(409).json({ error: 'Username already exists' });
         }
 
-        // Find and update user
-        const user = findUserById(userId);
+        // Find and update user in MongoDB
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
         user.username = newUsername.trim();
+        await user.save();
 
         res.json({ 
             message: 'Username changed successfully',
@@ -231,8 +235,8 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
             return res.status(400).json({ error: 'New password must be at least 6 characters long' });
         }
 
-        // Find user
-        const user = findUserById(userId);
+        // Find user in MongoDB
+        const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -246,6 +250,7 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
         // Hash new password
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedNewPassword;
+        await user.save();
 
         res.json({ 
             message: 'Password changed successfully'
@@ -258,24 +263,26 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
 });
 
 // Update profile
-app.put('/api/user/profile', authenticateToken, (req, res) => {
+app.put('/api/user/profile', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
         const { description, profileImage } = req.body;
 
-        if (!userData[userId]) {
-            userData[userId] = { skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' } };
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
         }
 
-        userData[userId].profile = {
+        mongoUserData.profile = {
             description: description || '',
             profileImage: profileImage || ''
         };
-        userData[userId].lastSaved = new Date().toISOString();
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
 
         res.json({ 
             message: 'Profile updated successfully',
-            profile: userData[userId].profile
+            profile: mongoUserData.profile
         });
 
     } catch (error) {
@@ -285,35 +292,7 @@ app.put('/api/user/profile', authenticateToken, (req, res) => {
 });
 
 // Delete user account
-app.delete('/api/user/delete', authenticateToken, (req, res) => {
-    try {
-        const userId = req.user.userId;
-        const { confirmText } = req.body;
-
-        // Require confirmation text 'delete'
-        if (confirmText !== 'delete') {
-            return res.status(400).json({ error: 'Must type "delete" to confirm account deletion' });
-        }
-
-        // Find and remove user from users array
-        const userIndex = users.findIndex(u => u.id === userId);
-        if (userIndex !== -1) {
-            users.splice(userIndex, 1);
-        }
-
-        // Remove user data
-        delete userData[userId];
-
-        console.log(`User account deleted: ${userId}`);
-        res.json({ 
-            message: 'Account deleted successfully',
-            deleted: true
-        });
-    } catch (error) {
-        console.error('Delete account error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// ...existing code...
 
 // Serve the main HTML file
 app.get('/', (req, res) => {

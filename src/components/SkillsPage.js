@@ -149,13 +149,11 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
           src="/assets/Carpenter_Paschalis_Rathskellers.gif"
           alt="Carpenter Paschalis Rathskellers"
           style={{
-            position: 'absolute',
-            left: '60%',
-            top: '40px',
-            width: '64px',
-            height: '64px',
-            zIndex: 10,
-            pointerEvents: 'none',
+            display: 'inline-block',
+            marginLeft: '16px',
+            verticalAlign: 'middle',
+            width: '48px',
+            height: '48px',
             animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
           }}
         />

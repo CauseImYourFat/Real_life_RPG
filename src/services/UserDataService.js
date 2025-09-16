@@ -22,17 +22,30 @@ class UserDataService {
     return headers;
   }
 
-  // Check if user is logged in
-  isAuthenticated() {
+  // Check if user is logged in and token is valid
+  async isAuthenticated() {
     const token = localStorage.getItem('authToken');
     const user = localStorage.getItem('currentUser');
-    
     if (token && user) {
       this.authToken = token;
       this.currentUser = user;
-      return true;
+      // Check token validity with a lightweight API call
+      try {
+        const response = await fetch(`${this.baseURL}/api/health`, {
+          method: 'GET',
+          headers: this.getAuthHeaders()
+        });
+        if (response.ok) {
+          return true;
+        } else {
+          this.logout();
+          return false;
+        }
+      } catch (e) {
+        this.logout();
+        return false;
+      }
     }
-    
     return false;
   }
 
@@ -107,11 +120,12 @@ class UserDataService {
 
   // Initialize user (called on app start)
   async initializeUser(username) {
-    if (this.isAuthenticated()) {
+    if (await this.isAuthenticated()) {
       this.currentUser = username || this.getCurrentUser();
       return await this.loadUserData();
     }
-    return { skills: {}, health: {}, preferences: {} };
+    // If not authenticated, prompt for login (not sign up)
+    return { requireLogin: true, skills: {}, health: {}, preferences: {} };
   }
 
   // Load user data from API

@@ -18,9 +18,13 @@ function App() {
     preferences: { gneePoints: 0 },
     lastLogin: null
   });
-    const [showDonut, setShowDonut] = useState(false);
-    const [donutPosition, setDonutPosition] = useState({ top: 20, right: 20 });
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showProfile, setShowProfile] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showDonut, setShowDonut] = useState(false);
+  const [donutPosition, setDonutPosition] = useState({ top: 20, right: 20 });
 
   useEffect(() => {
     // Check authentication and load user data

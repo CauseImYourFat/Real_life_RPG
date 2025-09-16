@@ -1,3 +1,4 @@
+// Trigger redeploy: harmless comment for Railway
 import React, { useState, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 

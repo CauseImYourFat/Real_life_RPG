@@ -125,13 +125,13 @@ function App() {
   const removeSkillData = async (skillCategory, skillName) => {
     try {
       const updatedData = await userDataService.removeSkillData(skillCategory, skillName);
-        setUserData(prev => ({
-          ...updatedData,
-          preferences: {
-            ...updatedData.preferences,
-            gneePoints: (prev.preferences.gneePoints || 0) + 1
-          }
-        }));
+      setUserData(prev => ({
+        ...updatedData,
+        preferences: {
+          ...updatedData.preferences,
+          gneePoints: (prev.preferences.gneePoints || 0) + 1
+        }
+      }));
         // Show donut animation
         triggerDonut();
     } catch (error) {
@@ -147,11 +147,11 @@ function App() {
         health: {
           ...prev.health,
           [category]: data
+        },
+        preferences: {
+          ...prev.preferences,
+          gneePoints: (prev.preferences.gneePoints || 0) + 1
         }
-          preferences: {
-            ...prev.preferences,
-            gneePoints: (prev.preferences.gneePoints || 0) + 1
-          }
       }));
         // Show donut animation
         triggerDonut();

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 
 function ProfilePage({ onClose, currentUser, userData }) {
+  const [showAvatarDialog, setShowAvatarDialog] = useState(false);
+  const [newProfileImage, setNewProfileImage] = useState('');
   const [profileData, setProfileData] = useState({
     description: '',
     profileImage: '',
@@ -106,7 +108,19 @@ function ProfilePage({ onClose, currentUser, userData }) {
   const topSkills = getSkillSummary();
   const healthCategories = getHealthSummary();
 
-  return (
+  const handleAvatarClick = () => setShowAvatarDialog(true);
+  const handleAvatarUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setNewProfileImage(ev.target.result);
+        setProfileData(prev => ({ ...prev, profileImage: ev.target.result }));
+        setShowAvatarDialog(false);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
     <div className="profile-page">
       <div className="profile-overlay" onClick={onClose}></div>
       <div className="profile-container">
@@ -119,13 +133,23 @@ function ProfilePage({ onClose, currentUser, userData }) {
           {/* Character Stats Panel */}
           <div className="character-stats">
             <div className="character-info">
-              <div className="character-avatar">
+              <div className="character-avatar" onClick={handleAvatarClick} style={{ cursor: 'pointer' }}>
                 {profileData.profileImage ? (
                   <img src={profileData.profileImage} alt="Profile" />
                 ) : (
                   <div className="default-avatar">👤</div>
                 )}
+                <div style={{ fontSize: '0.8rem', color: '#00d4aa', textAlign: 'center' }}>Edit</div>
               </div>
+              {showAvatarDialog && (
+                <div className="avatar-dialog" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ background: '#222', padding: '2rem', borderRadius: '12px', boxShadow: '0 2px 12px #000', textAlign: 'center' }}>
+                    <h3>Change Profile Picture</h3>
+                    <input type="file" accept="image/*" onChange={handleAvatarUpload} />
+                    <button onClick={() => setShowAvatarDialog(false)} style={{ marginTop: '1rem' }}>Cancel</button>
+                  </div>
+                </div>
+              )}
               <div className="character-details">
                 <h3>{currentUser}</h3>
                 <div className="level-badge" style={{ backgroundColor: getLevelColor(profileData.level) }}>
@@ -163,8 +187,28 @@ function ProfilePage({ onClose, currentUser, userData }) {
               <button className="edit-anatomy-btn" title="Edit Anatomy" style={{ position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)', fontSize: '1.1rem', background: 'none', border: 'none', color: '#00d4aa', cursor: 'pointer', zIndex: 2 }}>✏️ Edit</button>
             </div>
             <div className="body-container">
-              {/* Anatomy PNG Image (default) */}
-              <img src="/image/anatomy/full body 5 1303.png" alt="Anatomy" style={{ width: '300px', height: 'auto', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }} />
+              <div style={{ position: 'relative', width: '300px', height: '420px' }}>
+                <img src="/image/anatomy/full body 5 1303.png" alt="Anatomy" style={{ width: '300px', height: '420px', borderRadius: '15px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(255,255,255,0.05)' }} />
+                {/* Overlay status circles for body parts */}
+                <div style={{ position: 'absolute', left: '135px', top: '35px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('head')}`} title="Head/Brain" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+                <div style={{ position: 'absolute', left: '135px', top: '160px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('body')}`} title="Core/Body" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+                <div style={{ position: 'absolute', left: '60px', top: '120px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('arms')}`} title="Arms" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+                <div style={{ position: 'absolute', left: '210px', top: '120px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('arms')}`} title="Arms" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+                <div style={{ position: 'absolute', left: '100px', top: '340px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('legs')}`} title="Legs" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+                <div style={{ position: 'absolute', left: '170px', top: '340px' }}>
+                  <div className={`status-circle ${getBodyPartStatus('legs')}`} title="Legs" style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #fff', background: 'rgba(0,0,0,0.3)', margin: 0 }}></div>
+                </div>
+              </div>
             </div>
           </div>
 

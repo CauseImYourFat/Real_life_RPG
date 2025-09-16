@@ -168,9 +168,6 @@ function App() {
   return (
     <div className="app">
       {/* Persistent debug info for token and user */}
-      <div style={{position: 'fixed', bottom: 0, right: 0, background: '#222', color: '#fff', padding: '8px 16px', fontSize: '0.85rem', zIndex: 9999, borderTopLeftRadius: '8px', opacity: 0.85}}>
-        <strong>Debug:</strong> token: {localStorage.getItem('authToken') || 'null'} | user: {localStorage.getItem('currentUser') || 'null'}
-      </div>
       <header className="app-header">
         <div className="header-content">
           <h1 className="app-title">🎮 Life RPG</h1>

@@ -1,3 +1,4 @@
+import dragonFireGif from '../assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
 import donutGif from '../assets/donut.gif';
 import gneePng from '../assets/Gnee.png';

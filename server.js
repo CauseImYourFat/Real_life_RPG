@@ -26,15 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('.'));
 
-// In-memory storage (replace with database in production)
-let users = [];
-let userData = {};
-
-// Helper function to find user by username
-const findUser = (username) => users.find(u => u.username === username);
-
-// Helper function to find user by ID
-const findUserById = (userId) => users.find(u => u.id === userId);
+// Remove in-memory storage. Use MongoDB only.
 
 // Middleware to verify JWT token
 const authenticateToken = (req, res, next) => {
@@ -60,66 +52,35 @@ const authenticateToken = (req, res, next) => {
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Validation
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required' });
         }
-
         if (username.length < 3) {
             return res.status(400).json({ error: 'Username must be at least 3 characters long' });
         }
-
         if (password.length < 6) {
             return res.status(400).json({ error: 'Password must be at least 6 characters long' });
         }
-
-        // Check if user already exists
-        if (findUser(username)) {
+        // Check if user already exists in MongoDB
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
             return res.status(409).json({ error: 'Username already exists' });
         }
-
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create new user
-        const newUser = {
-            id: Date.now().toString(),
-            username,
-            password: hashedPassword,
-            createdAt: new Date().toISOString()
-        };
-
-        users.push(newUser);
-
-        // Initialize empty user data
-        userData[newUser.id] = {
-            skills: {},
-            health: {},
-            preferences: {},
-            profile: {
-                description: '',
-                profileImage: ''
-            },
-            lastSaved: new Date().toISOString()
-        };
-
+        // Create new user in MongoDB
+        const mongoUser = new User({ username, password: hashedPassword, createdAt: new Date().toISOString() });
+        await mongoUser.save();
+        // Create empty user data in MongoDB
+        const mongoUserData = new UserData({ userId: mongoUser._id, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
+        await mongoUserData.save();
         // Generate JWT token
-        const token = jwt.sign(
-            { userId: newUser.id, username: newUser.username },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-        );
-
+        const token = jwt.sign({ userId: mongoUser._id, username: mongoUser.username }, JWT_SECRET, { expiresIn: '7d' });
         res.status(201).json({
             message: 'User registered successfully',
             token,
-            user: {
-                id: newUser.id,
-                username: newUser.username
-            }
+            user: { id: mongoUser._id, username: mongoUser.username }
         });
-
     } catch (error) {
         console.error('Registration error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -130,40 +91,26 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Validation
         if (!username || !password) {
             return res.status(400).json({ error: 'Username and password are required' });
         }
-
-        // Find user
-        const user = findUser(username);
-        if (!user) {
+        // Find user in MongoDB
+        const mongoUser = await User.findOne({ username });
+        if (!mongoUser) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
-
         // Check password
-        const isValidPassword = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcrypt.compare(password, mongoUser.password);
         if (!isValidPassword) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
-
         // Generate JWT token
-        const token = jwt.sign(
-            { userId: user.id, username: user.username },
-            JWT_SECRET,
-            { expiresIn: '7d' }
-        );
-
+        const token = jwt.sign({ userId: mongoUser._id, username: mongoUser.username }, JWT_SECRET, { expiresIn: '7d' });
         res.json({
             message: 'Login successful',
             token,
-            user: {
-                id: user.id,
-                username: user.username
-            }
+            user: { id: mongoUser._id, username: mongoUser.username }
         });
-
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -171,21 +118,14 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Get user data
-app.get('/api/user/data', authenticateToken, (req, res) => {
+app.get('/api/user/data', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
-        const data = userData[userId] || {
-            skills: {},
-            health: {},
-            preferences: {},
-            profile: {
-                description: '',
-                profileImage: ''
-            },
-            lastSaved: new Date().toISOString()
-        };
-
-        res.json(data);
+        const mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            return res.json({ skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
+        }
+        res.json(mongoUserData);
     } catch (error) {
         console.error('Get user data error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -193,26 +133,21 @@ app.get('/api/user/data', authenticateToken, (req, res) => {
 });
 
 // Save user data
-app.post('/api/user/data', authenticateToken, (req, res) => {
+app.post('/api/user/data', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
         const { skills, health, preferences, profile } = req.body;
-
-        userData[userId] = {
-            skills: skills || {},
-            health: health || {},
-            preferences: preferences || {},
-            profile: profile || {
-                description: '',
-                profileImage: ''
-            },
-            lastSaved: new Date().toISOString()
-        };
-
-        res.json({ 
-            message: 'Data saved successfully',
-            lastSaved: userData[userId].lastSaved
-        });
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
+        }
+        mongoUserData.skills = skills || {};
+        mongoUserData.health = health || {};
+        mongoUserData.preferences = preferences || {};
+        mongoUserData.profile = profile || { description: '', profileImage: '' };
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
+        res.json({ message: 'Data saved successfully', lastSaved: mongoUserData.lastSaved });
     } catch (error) {
         console.error('Save user data error:', error);
         res.status(500).json({ error: 'Internal server error' });

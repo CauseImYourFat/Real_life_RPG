@@ -228,11 +228,11 @@ function App() {
       <header className="app-header">
         <div className="header-content" style={{display: 'flex', alignItems: 'center', gap: '1rem'}}>
             <h1 className="app-title" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative'}}>
-              <span style={{display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.2em 0.7em', borderRadius: '1em', position: 'relative'}}>
+              <span style={{display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.15em 0.5em', borderRadius: '1em', position: 'relative'}}>
                 Real Life
-                <img src={gneePng} alt="Gnee" style={{height: '2.2em', verticalAlign: 'middle', marginLeft: '0.3em', filter: 'drop-shadow(0 0 8px #00d4aa)', transition: 'filter 0.3s', cursor: 'pointer'}} />
+                <img src={gneePng} alt="Gnee" style={{height: '1.2em', verticalAlign: 'middle', marginLeft: '0.3em', filter: 'none', transition: 'none', cursor: 'pointer'}} />
               </span>
-              <span className="gnee-points" style={{background: '#222', color: '#00d4aa', borderRadius: '1em', padding: '0.25em 0.8em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1.65em', marginLeft: '0.5em', boxShadow: '0 0 6px #ff0'}}>
+              <span className="gnee-points" style={{background: '#222', color: '#00d4aa', borderRadius: '1em', padding: '0.15em 0.5em', fontWeight: 'bold', fontFamily: 'monospace', fontSize: '1em', marginLeft: '0.5em', boxShadow: 'none'}}>
                 Gnee!!'s Points: {userData.preferences.gneePoints || 0}
               </span>
             </h1>

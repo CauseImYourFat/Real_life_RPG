@@ -1,4 +1,14 @@
 ﻿import React, { useState } from 'react';
+import fullBodyImg from '../../image/anatomy/full body 5 1303.png';
+import headImg from '../../image/anatomy/head 13 6212.png';
+import shoulderImg from '../../image/anatomy/shoulder 14 5104.png';
+import armImg from '../../image/anatomy/arm 15 6513.png';
+import frontHandImg from '../../image/anatomy/front hand 11 3451.png';
+import bodyZoomImg from '../../image/anatomy/body zoom (without arms legs) 17 6665.png';
+import legImg from '../../image/anatomy/leg 16 4298.png';
+import frontFeetImg from '../../image/anatomy/front feet 9 1185.png';
+import backFeetImg from '../../image/anatomy/back feet 10 1512.png';
+import backHandImg from '../../image/anatomy/back hand 12 1417.png';
 
 function BodyVisualization({ data, onUpdate }) {
   const [selectedBodyPart, setSelectedBodyPart] = useState(null);
@@ -10,7 +20,7 @@ function BodyVisualization({ data, onUpdate }) {
   const anatomyViews = {
     fullbody: {
       name: 'Full Body Overview',
-      image: 'image/anatomy/full body 5 1303.png',
+      image: fullBodyImg,
       canZoom: true,
       parts: [
         { id: 'head', name: 'Head', x: 46, y: 8, width: 8, height: 8, view: 'head' },
@@ -25,8 +35,8 @@ function BodyVisualization({ data, onUpdate }) {
       ]
     },
     head: {
-      name: 'Head & Facial Features',
-      image: 'image/anatomy/head 13 6212.png',
+  name: 'Head & Facial Features',
+  image: headImg,
       canZoom: false,
       detailedParts: [
         { id: 'forehead', name: 'Forehead', x: 50, y: 25, width: 8, height: 8 },
@@ -40,8 +50,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Headaches', 'Vision', 'Hearing', 'Sinus', 'Jaw Pain', 'Neck Tension']
     },
     shoulder: {
-      name: 'Left Shoulder Complex',
-      image: 'image/anatomy/shoulder 14 5104.png',
+  name: 'Left Shoulder Complex',
+  image: shoulderImg,
       canZoom: false,
       detailedParts: [
         { id: 'clavicle', name: 'Clavicle', x: 30, y: 35, width: 8, height: 8 },
@@ -53,8 +63,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Range of Motion', 'Strength', 'Pain Level', 'Stiffness', 'Injury History']
     },
     arm: {
-      name: 'Right Arm Detail',
-      image: 'image/anatomy/arm 15 6513.png',
+  name: 'Right Arm Detail',
+  image: armImg,
       canZoom: false,
       detailedParts: [
         { id: 'bicep', name: 'Bicep', x: 39, y: 30, width: 8, height: 8, conditions: ['Muscle Strength', 'Flexibility', 'Pain Level', 'Fatigue', 'Range of Motion'] },
@@ -66,8 +76,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Muscle Strength', 'Joint Flexibility', 'Tendon Health', 'Nerve Function', 'Circulation']
     },
     front_hand: {
-      name: 'Right Hand Detail',
-      image: 'image/anatomy/front hand 11 3451.png',
+  name: 'Right Hand Detail',
+  image: frontHandImg,
       canZoom: false,
       detailedParts: [
         { id: 'thumb', name: 'Thumb', x: 71, y: 40, width: 8, height: 8, conditions: ['Grip Strength', 'Flexibility', 'Pain Level', 'Joint Mobility', 'Dexterity'] },
@@ -81,8 +91,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Grip Strength', 'Finger Dexterity', 'Joint Pain', 'Carpal Tunnel', 'Circulation']
     },
     body_zoom: {
-      name: 'Core Body (Torso)',
-      image: 'image/anatomy/body zoom (without arms legs) 17 6665.png',
+  name: 'Core Body (Torso)',
+  image: bodyZoomImg,
       canZoom: false,
       detailedParts: [
         { id: 'chest', name: 'Chest', x: 58, y: 42, width: 8, height: 8 },
@@ -94,8 +104,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Core Strength', 'Posture', 'Breathing', 'Digestion', 'Back Health', 'Chest Health']
     },
     leg: {
-      name: 'Right Leg Structure',
-      image: 'image/anatomy/leg 16 4298.png', 
+  name: 'Right Leg Structure',
+  image: legImg,
       canZoom: false,
       detailedParts: [
         { id: 'thigh', name: 'Thigh (Quadriceps)', x: 35, y: 15, width: 8, height: 8, conditions: ['Muscle Strength', 'Pain Level', 'Fatigue', 'Flexibility', 'Cramps'] },
@@ -107,8 +117,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Leg Strength', 'Knee Health', 'Thigh Muscles', 'Calf Muscles', 'Joint Mobility']
     },
     front_feet: {
-      name: 'Foot Structure',
-      image: 'image/anatomy/front feet 9 1185.png',
+  name: 'Foot Structure',
+  image: frontFeetImg,
       canZoom: false,
       detailedParts: [
         { id: 'heel', name: 'Heel', x: 49, y: 75, width: 8, height: 8 },
@@ -121,8 +131,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Balance', 'Arch Support', 'Toe Flexibility', 'Heel Pain', 'Circulation', 'Gait']
     },
     back_feet: {
-      name: 'Back Foot View',
-      image: 'image/anatomy/back feet 10 1512.png',
+  name: 'Back Foot View',
+  image: backFeetImg,
       canZoom: false,
       detailedParts: [
         { id: 'achilles', name: 'Achilles Tendon', x: 45, y: 70, width: 8, height: 8 },
@@ -132,8 +142,8 @@ function BodyVisualization({ data, onUpdate }) {
       conditions: ['Achilles Health', 'Heel Stability', 'Calf Tension']
     },
     back_hand: {
-      name: 'Back Hand View',
-      image: 'image/anatomy/back hand 12 1417.png',
+  name: 'Back Hand View',
+  image: backHandImg,
       canZoom: false,
       detailedParts: [
         { id: 'knuckles', name: 'Knuckles', x: 30, y: 25, width: 8, height: 8 },

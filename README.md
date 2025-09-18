@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Real Life RPG - Gnee!! Point System
 
 **Ready for static hosting! Zero-gap mobile optimized.**
@@ -232,6 +231,21 @@ Simply open `index.html` in your web browser - no server required! The app works
 ---
 
 **Start tracking your life skills today and unlock your potential with data-driven personal development!**
-=======
-# Real_life_RPG
->>>>>>> 70359e2cee0d236d9075c97e4585666a69f98400
+
+---
+
+# [2025-09-18] Major Patch & Security Update
+
+**New Features & Improvements:**
+- Google Sign-In integration (OAuth2) for secure authentication
+- Modernized Google Sign-In button UI
+- Backend security hardening (OWASP Top 10: input validation, HTTPS, logging, secure headers)
+- Automated weekly dependency updates via Dependabot
+- Patch/deploy log popup: Each new patch or deploy will now show as a modern popup on the sign-in page, styled to match the sign-in frame
+
+**How Patch Popup Works:**
+- When a new patch or deploy is made, a summary will appear on the sign-in page for that day
+- Popup uses the same modern style as the sign-in frame for visibility and consistency
+- Users can see what’s new or changed immediately after each update
+
+---

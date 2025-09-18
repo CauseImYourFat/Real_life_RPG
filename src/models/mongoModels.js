@@ -17,6 +17,10 @@ const userDataSchema = new mongoose.Schema({
     description: String,
     profileImage: String
   },
+  tamagotchi: {
+    mascotXP: { type: Object, default: {} },
+    purchased: { type: Object, default: {} }
+  },
   lastSaved: String
 });
 

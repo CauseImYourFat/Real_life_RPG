@@ -1,5 +1,61 @@
 // API-Based UserDataService - Handles backend communication for cross-device sync
 class UserDataService {
+  // Save Tamagotchi data (mascotXP, purchased) to backend
+  async saveTamagotchiData(mascotXP, purchased) {
+    if (!this.isAuthenticated()) {
+      return false;
+    }
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/tamagotchi`, {
+        method: 'POST',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify({ mascotXP, purchased })
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.logout();
+          throw new Error('Session expired. Please login again.');
+        }
+        throw new Error('Failed to save Tamagotchi data');
+      }
+      const result = await response.json();
+      console.log('Tamagotchi data saved:', result.message);
+      return true;
+    } catch (error) {
+      console.error('Save Tamagotchi data error:', error);
+      throw error;
+    }
+  }
+
+  // Load Tamagotchi data from backend
+  async loadTamagotchiData() {
+    this.authToken = localStorage.getItem('authToken');
+    this.currentUser = localStorage.getItem('currentUser');
+    if (!this.authToken || !this.currentUser) {
+      return { mascotXP: {}, purchased: {} };
+    }
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/tamagotchi`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          this.logout();
+          throw new Error('Session expired. Please login again.');
+        }
+        throw new Error('Failed to load Tamagotchi data');
+      }
+      const data = await response.json();
+      return {
+        mascotXP: data.mascotXP || {},
+        purchased: data.purchased || {}
+      };
+    } catch (error) {
+      console.error('Load Tamagotchi data error:', error);
+      return { mascotXP: {}, purchased: {} };
+    }
+  }
   // Change username
   async changeUsername(newUsername) {
     if (!this.isAuthenticated()) {

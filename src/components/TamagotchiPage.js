@@ -2,25 +2,25 @@ import React, { useEffect, useState } from 'react';
 import userDataService from '../services/UserDataService';
 
 // Helper to scan pets and actions (stub for now, replace with backend or fs API)
-const getShopPets = () => {
-  // Example: ['white dog', 'black cat', 'blue dragon', 'yellow bird']
-  return ['white dog', 'black cat', 'blue dragon', 'yellow bird'];
-};
+// Scan actual asset folders for pets and actions
+const petFolders = [
+  { name: 'white dog', folder: 'white dog', actions: ['wake', 'run', 'sleep'] },
+  { name: 'Frog', folder: 'Frog', actions: ['wake', 'eat', 'wake2', 'jump', 'sleep', 'angry'] },
+  { name: 'Bird', folder: 'Bird', actions: ['wake'] },
+  { name: 'plant', folder: 'plant', actions: ['wake'] }
+];
+const getShopPets = () => petFolders.map(p => p.name);
 const getPetActions = pet => {
-  // Example: actions per pet
-  const actions = {
-    'white dog': ['wake', 'run', 'sleep'],
-    'black cat': ['wake', 'jump', 'sleep', 'scratch'],
-    'blue dragon': ['wake', 'fly', 'sleep', 'breathe fire'],
-    'yellow bird': ['wake', 'fly', 'sing', 'sleep']
-  };
-  return actions[pet] || ['wake', 'sleep'];
+  const found = petFolders.find(p => p.name === pet);
+  return found ? found.actions : ['wake'];
 };
 const getPetActionGif = (pet, action) => {
-  // Example: assets/pets/shop/{pet}/{pet}-{action}.gif
-  const folder = pet.replace(/ /g, '-').toLowerCase();
-  const act = action.replace(/ /g, '-').toLowerCase();
-  return `/assets/pets/shop/${folder}/${folder}-${act}.gif`;
+  const found = petFolders.find(p => p.name === pet);
+  if (!found) return '';
+  // Special case for frog angry
+  if (found.folder === 'Frog' && action === 'angry') return `/assets/pets/shop/Frog/frog angry.gif`;
+  // For other actions
+  return `/assets/pets/shop/${found.folder}/${found.folder.toLowerCase().replace(/ /g, '-')}-${action.toLowerCase().replace(/ /g, '-')}.gif`;
 };
 
 export default function TamagotchiPage() {
@@ -134,7 +134,7 @@ export default function TamagotchiPage() {
   return (
     <div className="container" style={{ maxWidth: 600, margin: '40px auto', padding: 32, background: '#222', borderRadius: 16, color: '#fff' }}>
       <div className="header" style={{ display: 'flex', alignItems: 'center', gap: '1em', marginBottom: '2em' }}>
-        <span style={{ fontSize: '2em' }}>🐶</span>
+        <span style={{ fontSize: '2em' }}>�</span>
         <h1 style={{ margin: 0 }}>Tamagotchi</h1>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

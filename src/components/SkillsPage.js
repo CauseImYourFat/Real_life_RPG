@@ -186,20 +186,21 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
           </button>
           <button
             style={{
-              background: '#e0e0e0',
-              color: '#222',
-              border: '1px solid #bbb',
+              background: '#f7f7f7',
+              color: '#444',
+              border: '1px solid #ccc',
               borderRadius: '6px',
-              padding: '8px 18px',
-              fontWeight: 'bold',
-              fontSize: '1rem',
+              padding: '8px 16px',
+              fontWeight: 'normal',
+              fontSize: '0.95rem',
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
               transition: 'background 0.2s',
             }}
             onClick={() => setEditMode(!editMode)}
+            title="Toggle edit mode"
           >
-            {editMode ? 'Done' : 'Edit'}
+            {editMode ? 'Done' : <span style={{letterSpacing: '2px'}}>...</span>}
           </button>
         </div>
       </div>

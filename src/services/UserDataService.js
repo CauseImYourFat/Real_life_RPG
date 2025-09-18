@@ -1,5 +1,100 @@
 // API-Based UserDataService - Handles backend communication for cross-device sync
 class UserDataService {
+  // --- Tamagotchi API ---
+  // Get full Tamagotchi data (shop, hive, XP, currentMascot, etc)
+  async getTamagotchi() {
+    if (!await this.isAuthenticated()) return null;
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/tamagotchi`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to load Tamagotchi data');
+      return await response.json();
+    } catch (e) {
+      console.error('getTamagotchi error:', e);
+      return null;
+    }
+  }
+
+  // Update Tamagotchi data (partial update)
+  async updateTamagotchi(data) {
+    if (!await this.isAuthenticated()) return false;
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/tamagotchi`, {
+        method: 'PUT',
+        headers: this.getAuthHeaders(),
+        body: JSON.stringify(data)
+      });
+      if (!response.ok) throw new Error('Failed to update Tamagotchi data');
+      return await response.json();
+    } catch (e) {
+      console.error('updateTamagotchi error:', e);
+      return false;
+    }
+  }
+
+  // Buy pet (add to hive/shop)
+  async buyPet(mascotType) {
+    return await this.updateTamagotchi({ action: 'buy', mascotType });
+  }
+
+  // Edit pet (rename, change asset, etc)
+  async editPet(mascotType, changes) {
+    return await this.updateTamagotchi({ action: 'edit', mascotType, changes });
+  }
+
+  // Delete pet from hive
+  async deletePet(mascotType) {
+    return await this.updateTamagotchi({ action: 'delete', mascotType });
+  }
+
+  // Transfer pet to another user
+  async transferPet(mascotType, toUser) {
+    return await this.updateTamagotchi({ action: 'transfer', mascotType, toUser });
+  }
+
+  // Set current displayed mascot
+  async setCurrentMascot(mascotType) {
+    return await this.updateTamagotchi({ action: 'setCurrent', mascotType });
+  }
+
+  // Gain XP for mascot
+  async gainXP(mascotType, amount) {
+    return await this.updateTamagotchi({ action: 'gainXP', mascotType, amount });
+  }
+
+  // Get available shop pets
+  async getShopPets() {
+    if (!await this.isAuthenticated()) return [];
+    try {
+      const response = await fetch(`${this.baseURL}/api/shop/pets`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to load shop pets');
+      return await response.json();
+    } catch (e) {
+      console.error('getShopPets error:', e);
+      return [];
+    }
+  }
+
+  // Get user's hive pets
+  async getHivePets() {
+    if (!await this.isAuthenticated()) return [];
+    try {
+      const response = await fetch(`${this.baseURL}/api/user/hive`, {
+        method: 'GET',
+        headers: this.getAuthHeaders()
+      });
+      if (!response.ok) throw new Error('Failed to load hive pets');
+      return await response.json();
+    } catch (e) {
+      console.error('getHivePets error:', e);
+      return [];
+    }
+  }
   // Save Tamagotchi data (mascotXP, purchased) to backend
   async saveTamagotchiData(mascotXP, purchased) {
     if (!this.isAuthenticated()) {

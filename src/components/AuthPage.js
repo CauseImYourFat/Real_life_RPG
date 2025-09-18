@@ -226,14 +226,15 @@ function AuthPage({ onLogin }) {
           }}>
             <h3 style={{marginTop:0, marginBottom:'12px', fontWeight:600, fontSize:'1.15rem', color:'#00d4aa'}}>🚀 Patch & Deploy Log</h3>
             <div style={{fontSize:'0.98rem', lineHeight:'1.5'}}>
-              <div style={{marginBottom:'10px'}}><b>2025-09-18</b> — Major Patch & Security Update</div>
-              <ul style={{paddingLeft:'1.2em', marginBottom:'10px'}}>
-                <li>Google Sign-In integration (OAuth2) for secure authentication</li>
-                <li>Modernized Google Sign-In button UI</li>
-                <li>Backend security hardening (OWASP Top 10: input validation, HTTPS, logging, secure headers)</li>
-                <li>Automated weekly dependency updates via Dependabot</li>
-                <li>Patch/deploy log popup: Each new patch or deploy will now show as a modern popup on the sign-in page, styled to match the sign-in frame</li>
-              </ul>
+                <div style={{marginBottom:'10px'}}><b>2025-09-18</b> — Major Patch & Security Update</div>
+                <ul style={{paddingLeft:'1.2em', marginBottom:'10px'}}>
+                  <li>Google Sign-In integration (OAuth2) for secure authentication</li>
+                  <li>Modernized Google Sign-In button UI</li>
+                  <li>Backend security hardening (OWASP Top 10: input validation, HTTPS, logging, secure headers)</li>
+                  <li>Automated weekly dependency updates via Dependabot</li>
+                  <li>Patch/deploy log popup: Each new patch or deploy will now show as a modern popup on the sign-in page, styled to match the sign-in frame</li>
+                  <li>Privacy Policy and Terms of Service pages deployed for Google OAuth verification</li>
+                </ul>
               <div style={{marginBottom:'10px'}}><b>2025-09-16</b> — Asset, Point System, and Donut Animation</div>
               <ul style={{paddingLeft:'1.2em', marginBottom:'10px'}}>
                 <li>Fixed asset references and mascot images</li>

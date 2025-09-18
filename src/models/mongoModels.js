@@ -18,8 +18,12 @@ const userDataSchema = new mongoose.Schema({
     profileImage: String
   },
   tamagotchi: {
-    mascotXP: { type: Object, default: {} },
-    purchased: { type: Object, default: {} }
+    mascotXP: { type: Object, default: {} }, // { mascotType: xpValue }
+    purchased: { type: Object, default: {} }, // { mascotType: { name, assetFolder, actions, createdAt, editHistory } }
+    shop: { type: [String], default: [] }, // available pets in shop (mascotType)
+    hive: { type: [String], default: [] }, // user's hive (mascotType)
+    currentMascot: { type: String, default: '' }, // currently displayed mascot
+    editHistory: { type: [Object], default: [] }, // [{ mascotType, action, timestamp, details }]
   },
   lastSaved: String
 });

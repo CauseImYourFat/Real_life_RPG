@@ -90,30 +90,10 @@ export default function TamagotchiPage() {
     return level;
   };
 
-  // Asset loading: map mascot/action to hashed file in dist/assets
-  const assetMap = {
-    'Frog': {
-      wake: '/assets/ahhh.bc33e29a5ae08e4778d216ce11e614c4.gif',
-      run: '/assets/zumo-bandit-run.080b5a23ce6e3dffc58e696fa6a6242a.gif',
-      sleep: '/assets/pixel-heart.9743008404e4fb38e4443ea319ad8a87.gif'
-    },
-    'donut': {
-      wake: '/assets/donut.201f8ea19380a5a255d4ee652ebd5798.gif',
-      run: '/assets/Carpenter_Paschalis_Rathskellers.59ea3c01cfdd5e2ed5298aa57b3955c9.gif',
-      sleep: '/assets/catfly-rainbow.a7e09065d4814d7733d9574ed81e7e66.gif'
-    },
-    'dragon': {
-      wake: '/assets/dragon-fire.a51e560da2861efd0792ddd9b3e0d58f.gif',
-      run: '/assets/zumo-bandit-run.080b5a23ce6e3dffc58e696fa6a6242a.gif',
-      sleep: '/assets/pixel-heart.9743008404e4fb38e4443ea319ad8a87.gif'
-    }
-    // Add more mappings as needed
-  };
+  // Asset loading: link directly to dist/assets/pets/shop
   const getMascotImg = (mascot, action) => {
-    if (assetMap[mascot] && assetMap[mascot][action]) {
-      return assetMap[mascot][action];
-    }
-    return '/assets/ahhh.bc33e29a5ae08e4778d216ce11e614c4.gif'; // fallback
+    // Use exact path and name
+    return `/assets/pets/shop/${mascot}/${mascot}-${action}.gif`;
   };
 
   return (

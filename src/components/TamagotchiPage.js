@@ -13,12 +13,15 @@ export default function TamagotchiPage() {
   const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
   const [renameValue, setRenameValue] = useState(''); // Rename input
 
-  // On mount, load tamagotchi data from backend
+  // List of pets from assets/pets/shop
+  const assetShopPets = ['white dog', 'Frog', 'Bird', 'plant'];
+
   useEffect(() => {
     async function fetchData() {
       const tama = await userDataService.getTamagotchi();
       if (tama) {
-        setShopPets(tama.shop || []);
+        // Shop pets: always show all asset pets
+        setShopPets(assetShopPets);
         setPurchased(tama.purchased || {});
         setCurrentMascot(tama.currentMascot || null);
         setMascotXP(tama.mascotXP || {});
@@ -56,14 +59,17 @@ export default function TamagotchiPage() {
   // Shop/hive modals (simplified)
   const [shopOpen, setShopOpen] = useState(false);
   const [hiveOpen, setHiveOpen] = useState(false);
+  // Only allow picking one free pet
   const handleBuyPet = async (type) => {
-    await userDataService.buyPet(type);
-    setShopOpen(false);
-    // Reload shop/hive
-    const tama = await userDataService.getTamagotchi();
-    setShopPets(tama.shop || []);
-    setPurchased(tama.purchased || {});
-    setCurrentMascot(type);
+    if (Object.keys(purchased).length === 0) {
+      await userDataService.buyPet(type);
+      setShopOpen(false);
+      // Reload shop/hive
+      const tama = await userDataService.getTamagotchi();
+      setShopPets(assetShopPets);
+      setPurchased(tama.purchased || {});
+      setCurrentMascot(type);
+    }
   };
   const handleSelectHiveMascot = (type) => {
     setCurrentMascot(type);
@@ -145,16 +151,21 @@ export default function TamagotchiPage() {
           <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, margin: 'auto', boxShadow: '0 2px 16px #0006' }}>
             <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Shop</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>
-              {shopPets.map(type => (
-                <div key={type} style={{ textAlign: 'center' }}>
-                  <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
-                    <img src={getMascotImg(type, 'wake')} alt={type} style={{ width: 48, height: 48 }} />
+              {shopPets.map(type => {
+                const alreadyPicked = Object.keys(purchased).length > 0;
+                const isPicked = purchased[type];
+                const locked = alreadyPicked && !isPicked;
+                return (
+                  <div key={type} style={{ textAlign: 'center', opacity: locked ? 0.4 : 1 }}>
+                    <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
+                      <img src={getMascotImg(type, 'wake')} alt={type} style={{ width: 48, height: 48 }} />
+                    </div>
+                    <div style={{ color: '#fff', fontSize: '1em' }}>{type}</div>
+                    <div style={{ color: '#ffd700', fontSize: '0.95em' }}>{locked ? 'Locked' : 'Free'}</div>
+                    <button onClick={() => !locked && handleBuyPet(type)} disabled={locked} style={{ marginTop: 6, background: locked ? '#aaa' : '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: locked ? 'not-allowed' : 'pointer' }}>{locked ? 'Locked' : 'Buy'}</button>
                   </div>
-                  <div style={{ color: '#fff', fontSize: '1em' }}>{type}</div>
-                  <div style={{ color: '#ffd700', fontSize: '0.95em' }}>Free</div>
-                  <button onClick={() => handleBuyPet(type)} style={{ marginTop: 6, background: '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}>Buy</button>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <button onClick={() => setShopOpen(false)} style={{ marginTop: 24, background: '#ffd700', color: '#222', padding: '8px 24px', border: 'none', borderRadius: 18, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>Close</button>
           </div>

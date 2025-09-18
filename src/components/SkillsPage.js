@@ -69,6 +69,14 @@ const STARFIELD_SKILLS = {
       { name: 'Automated Weapon Systems', description: 'AI-assisted combat' },
       { name: 'Boost Pack Training', description: 'Advanced mobility systems' }
     ]
+  },
+  'Technical': {
+    icon: '🛠️',
+    skills: [] // Empty, users add their own technical skills
+  },
+  'Custom': {
+    icon: '✨',
+    skills: [] // Empty, users add any custom skill
   }
 };
 
@@ -101,6 +109,9 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
   };
 
   const removeCustomSkill = (categoryName, skillName) => {
+    if (!window.confirm(`Are you sure you want to remove the skill "${skillName}" from ${categoryName}? This action cannot be undone.`)) {
+      return;
+    }
     // Remove from custom skills
     setCustomSkills(prev => {
       const updated = { ...prev };
@@ -115,7 +126,6 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
       }
       return updated;
     });
-    
     // Remove skill data from parent component
     if (onRemoveSkill) {
       onRemoveSkill(categoryName, skillName);

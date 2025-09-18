@@ -1,3 +1,4 @@
+export default SkillsPage;
 import React, { useState, useEffect } from 'react';
 import carpenterGif from '../../assets/Carpenter_Paschalis_Rathskellers.gif';
 import SkillCategory from './SkillCategory';
@@ -88,7 +89,6 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
   const [editMode, setEditMode] = useState(false);
 
   const handleSkillClick = (categoryName, skillName, newLevel) => {
-    // Use the newLevel directly (it's already calculated in SkillCategory)
     onUpdateSkill(categoryName, skillName, newLevel);
   };
 
@@ -103,7 +103,7 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
       ...prev,
       [categoryName]: [
         ...(prev[categoryName] || []),
-        { ...skillData, isCustom: true }  // Mark as custom skill
+        { ...skillData, isCustom: true }
       ]
     }));
     setIsModalOpen(false);
@@ -114,21 +114,18 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
     if (input !== 'delete') {
       return;
     }
-    // Remove from custom skills
     setCustomSkills(prev => {
       const updated = { ...prev };
       if (updated[categoryName]) {
         updated[categoryName] = updated[categoryName].filter(
           skill => skill.name !== skillName
         );
-        // Remove category if empty
         if (updated[categoryName].length === 0) {
           delete updated[categoryName];
         }
       }
       return updated;
     });
-    // Remove skill data from parent component
     if (onRemoveSkill) {
       onRemoveSkill(categoryName, skillName);
     }
@@ -158,18 +155,18 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
     <div className="skills-page">
       <div className="skills-header">
         <h2>Personal Development Skills</h2>
-          <img
-            src={carpenterGif}
-            alt="Carpenter Paschalis Rathskellers"
-            style={{
-              display: 'inline-block',
-              marginLeft: '16px',
-              verticalAlign: 'middle',
-              width: '115px', // 1.2 * 96px
-              height: '115px', // 1.2 * 96px
-              animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
-            }}
-          />
+        <img
+          src={carpenterGif}
+          alt="Carpenter Paschalis Rathskellers"
+          style={{
+            display: 'inline-block',
+            marginLeft: '16px',
+            verticalAlign: 'middle',
+            width: '115px',
+            height: '115px',
+            animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
+          }}
+        />
         <div className="skills-stats">
           <div className="stat-item">
             <span className="stat-label">Total Skill Points:</span>
@@ -180,83 +177,57 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
             <span className="stat-value">{Math.floor(getTotalSkillPoints() / 10) + 1}</span>
           </div>
         </div>
-        <button 
-          return (
-            <div className="skills-page">
-              <div className="skills-header">
-                <h2>Personal Development Skills</h2>
-                <img
-                  src={carpenterGif}
-                  alt="Carpenter Paschalis Rathskellers"
-                  style={{
-                    display: 'inline-block',
-                    marginLeft: '16px',
-                    verticalAlign: 'middle',
-                    width: '115px',
-                    height: '115px',
-                    animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
-                  }}
-                />
-                <div className="skills-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Total Skill Points:</span>
-                    <span className="stat-value">{getTotalSkillPoints()}</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Level:</span>
-                    <span className="stat-value">{Math.floor(getTotalSkillPoints() / 10) + 1}</span>
-                  </div>
-                </div>
-                <button 
-                  className="add-skill-btn"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  + Add Custom Skill
-                </button>
-                <button
-                  className="edit-skill-btn"
-                  style={{ float: 'right', marginTop: '-40px', marginRight: '8px', background: editMode ? '#ffd700' : '#eee', color: '#222', border: 'none', borderRadius: '12px', fontWeight: 600, padding: '6px 16px', boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}
-                  onClick={() => setEditMode(!editMode)}
-                >
-                  {editMode ? 'Done' : 'Edit'}
-                </button>
-              </div>
-              <div className="skills-container">
-                <div className="category-sidebar">
-                  {Object.entries(STARFIELD_SKILLS).map(([categoryName, categoryData]) => (
-                    <button
-                      key={categoryName}
-                      className={`category-button ${selectedCategory === categoryName ? 'active' : ''}`}
-                      onClick={() => setSelectedCategory(categoryName)}
-                    >
-                      <span className="category-icon">{categoryData.icon}</span>
-                      <span className="category-name">{categoryName}</span>
-                      <span className="category-progress">
-                        {Object.values(skillData[categoryName] || {}).reduce((sum, level) => sum + level, 0)}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-                <div className="skills-grid">
-                  <SkillCategory
-                    categoryName={selectedCategory}
-                    categoryData={STARFIELD_SKILLS[selectedCategory]}
-                    skills={getAllSkillsForCategory(selectedCategory)}
-                    skillData={skillData[selectedCategory] || {}}
-                    onSkillClick={handleSkillClick}
-                    onSkillRightClick={handleSkillRightClick}
-                    getSkillLevel={getSkillLevel}
-                    onRemoveCustomSkill={removeCustomSkill}
-                    editMode={editMode}
-                  />
-                </div>
-              </div>
-              {isModalOpen && (
-                <SkillModal
-                  categories={Object.keys(STARFIELD_SKILLS)}
-                  onClose={() => setIsModalOpen(false)}
-                  onSave={addCustomSkill}
-                />
-              )}
-            </div>
-          );
+        <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+          <button
+            className="add-skill-btn"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Add Skill
+          </button>
+          <button
+            onClick={() => setEditMode(!editMode)}
+          >
+            {editMode ? 'Done' : 'Edit'}
+          </button>
+        </div>
+      </div>
+      <div className="skills-container">
+        <div className="category-sidebar">
+          {Object.entries(STARFIELD_SKILLS).map(([categoryName, categoryData]) => (
+            <button
+              key={categoryName}
+              className={`category-button ${selectedCategory === categoryName ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(categoryName)}
+            >
+              <span className="category-icon">{categoryData.icon}</span>
+              <span className="category-name">{categoryName}</span>
+              <span className="category-progress">
+                {Object.values(skillData[categoryName] || {}).reduce((sum, level) => sum + level, 0)}
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="skills-grid">
+          <SkillCategory
+            categoryName={selectedCategory}
+            categoryData={STARFIELD_SKILLS[selectedCategory]}
+            skills={getAllSkillsForCategory(selectedCategory)}
+            skillData={skillData[selectedCategory] || {}}
+            onSkillClick={handleSkillClick}
+            onSkillRightClick={handleSkillRightClick}
+            getSkillLevel={getSkillLevel}
+            onRemoveCustomSkill={removeCustomSkill}
+            editMode={editMode}
+          />
+        </div>
+      </div>
+      {isModalOpen && (
+        <SkillModal
+          categories={Object.keys(STARFIELD_SKILLS)}
+          onClose={() => setIsModalOpen(false)}
+          onSave={addCustomSkill}
+        />
+      )}
+    </div>
+  );
+}

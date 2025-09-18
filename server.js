@@ -2,6 +2,7 @@
 // ...existing code...
 // ...existing code...
 const express = require('express');
+const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -17,10 +18,18 @@ const mongoose = require('mongoose');
 require('dotenv').config({ path: '.env.local' });
 // Load Google OAuth credentials
 let googleOAuthConfig = {};
-try {
-    googleOAuthConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'google-oauth.json')));
-} catch (err) {
-    console.warn('Google OAuth config not found or invalid:', err.message);
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CALLBACK_URL) {
+    googleOAuthConfig.web = {
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uris: [process.env.GOOGLE_CALLBACK_URL]
+    };
+} else {
+    try {
+        googleOAuthConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'google-oauth.json')));
+    } catch (err) {
+        console.warn('Google OAuth config not found or invalid:', err.message);
+    }
 }
 require('dotenv').config();
 const { User, UserData } = require('./src/models/mongoModels');
@@ -34,6 +43,24 @@ mongoose.connect(process.env.MONGODB_URI, {
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
 const app = express();
+// Security middleware
+app.use(helmet());
+
+// Logging middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
+// Enforce HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+    app.use((req, res, next) => {
+        if (req.headers['x-forwarded-proto'] !== 'https') {
+            return res.redirect('https://' + req.headers.host + req.url);
+        }
+        next();
+    });
+}
 // Express session middleware (required for Passport)
 app.use(session({
     secret: process.env.SESSION_SECRET || 'your-session-secret',
@@ -131,6 +158,81 @@ app.post('/api/user/data', authenticateToken, async (req, res) => {
 };
 
 // API Routes
+// Tamagotchi API: Get user tamagotchi data
+app.get('/api/user/tamagotchi', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            // Default shop pets from assets/pets/shop
+            const shopPets = ['white dog', 'Frog', 'Bird', 'plant'];
+            mongoUserData = new UserData({
+                userId,
+                tamagotchi: {
+                    mascotXP: {},
+                    purchased: {},
+                    shop: shopPets,
+                    hive: [],
+                    currentMascot: '',
+                    editHistory: []
+                },
+                lastSaved: new Date().toISOString()
+            });
+            await mongoUserData.save();
+        }
+        // Return only tamagotchi data
+        res.json(mongoUserData.tamagotchi);
+    } catch (error) {
+        console.error('Get tamagotchi error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Tamagotchi API: Update user tamagotchi data (buy, edit, delete, transfer, XP, setCurrent)
+app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { action, mascotType, changes, toUser, amount } = req.body;
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            return res.status(404).json({ error: 'User data not found' });
+        }
+        let tamagotchi = mongoUserData.tamagotchi || {};
+        if (action === 'buy' && mascotType) {
+            if (!tamagotchi.purchased[mascotType]) {
+                tamagotchi.purchased[mascotType] = { name: mascotType, assetFolder: mascotType, actions: ['wake', 'run', 'sleep'], createdAt: new Date().toISOString(), editHistory: [] };
+                tamagotchi.hive.push(mascotType);
+                tamagotchi.currentMascot = mascotType;
+            }
+        } else if (action === 'edit' && mascotType && changes) {
+            if (tamagotchi.purchased[mascotType]) {
+                Object.assign(tamagotchi.purchased[mascotType], changes);
+                tamagotchi.purchased[mascotType].editHistory = tamagotchi.purchased[mascotType].editHistory || [];
+                tamagotchi.purchased[mascotType].editHistory.push({ changes, timestamp: new Date().toISOString() });
+            }
+        } else if (action === 'delete' && mascotType) {
+            delete tamagotchi.purchased[mascotType];
+            tamagotchi.hive = tamagotchi.hive.filter(x => x !== mascotType);
+            if (tamagotchi.currentMascot === mascotType) tamagotchi.currentMascot = tamagotchi.hive[0] || '';
+        } else if (action === 'transfer' && mascotType && toUser) {
+            // For demo: just delete from hive
+            delete tamagotchi.purchased[mascotType];
+            tamagotchi.hive = tamagotchi.hive.filter(x => x !== mascotType);
+            if (tamagotchi.currentMascot === mascotType) tamagotchi.currentMascot = tamagotchi.hive[0] || '';
+        } else if (action === 'setCurrent' && mascotType) {
+            tamagotchi.currentMascot = mascotType;
+        } else if (action === 'gainXP' && mascotType && amount) {
+            tamagotchi.mascotXP[mascotType] = (tamagotchi.mascotXP[mascotType] || 0) + amount;
+        }
+        mongoUserData.tamagotchi = tamagotchi;
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
+        res.json(tamagotchi);
+    } catch (error) {
+        console.error('Update tamagotchi error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 // Google OAuth routes
 app.get('/api/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -147,11 +249,12 @@ app.get('/api/auth/google/callback',
 app.post('/api/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-        if (!username || !password) {
+        // Basic input validation
+        if (!username || typeof username !== 'string' || !password || typeof password !== 'string') {
             return res.status(400).json({ error: 'Username and password are required' });
         }
-        if (username.length < 3) {
-            return res.status(400).json({ error: 'Username must be at least 3 characters long' });
+        if (!/^[a-zA-Z0-9_]{3,}$/.test(username)) {
+            return res.status(400).json({ error: 'Username must be at least 3 characters and contain only letters, numbers, and underscores.' });
         }
         if (password.length < 6) {
             return res.status(400).json({ error: 'Password must be at least 6 characters long' });

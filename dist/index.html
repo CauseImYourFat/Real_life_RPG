@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Real Life RPG - Personal Development Hub</title><style>body {
+<!doctype html><html lang="en"><head><meta charset="UTF-8"><link rel="icon" type="image/x-icon" href="/assets/donut.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Real Life RPG - Personal Development Hub</title><style>body {
             margin: 0;
             padding: 0;
             background: #1a1a1a;
@@ -23,7 +23,7 @@
             color: #888;
             text-align: center;
             max-width: 400px;
-        }</style></head><body><div id="root"><div class="loading"><div style="display: flex; align-items: center; gap: 12px;"><span style="font-size: 1.5rem; font-weight: bold;">Real Life</span> <img src="assets/Gnee.png" alt="Gnee" style="height: 32px; vertical-align: middle;"/> <span id="gnee-point-counter" style="background: #222; color: #0ff; border-radius: 16px; padding: 4px 12px; font-family: 'Consolas', 'monospace'; font-size: 1.1rem; margin-left: 8px;">Gnee!!'s Points: 0</span></div><div class="loading-message">☁️ Connecting to server for cross-device sync<br>� Your data is securely stored and synchronized</div></div></div><script>// Version string should be updated on each deploy
+        }</style></head><body><div id="root"></div><script>// Version string should be updated on each deploy
                     // Auto-generate version string from build time
                     const APP_VERSION = new Date().toISOString();
                     const storedVersion = localStorage.getItem('appVersion');
@@ -32,12 +32,4 @@
                         localStorage.removeItem('authToken');
                         localStorage.removeItem('currentUser');
                         localStorage.setItem('appVersion', APP_VERSION);
-                    }</script><script src="dist/bundle.js?v=20250914-2045"></script><script defer="defer" src="bundle.js"></script></body><style>#dragon-fire-sticky {
-                    position: fixed;
-                    left: -6px;
-                    bottom: 4px;
-                    z-index: 9999;
-                    width: 96px;
-                    height: 96px;
-                    pointer-events: none;
-                }</style><img id="dragon-fire-sticky" src="assets/dragon-fire.gif" alt="Dragon Fire"/></html>
+                    }</script><script src="dist/bundle.js?v=20250914-2045"></script><script defer="defer" src="bundle.js"></script></body><style>/* Removed duplicate dragon-fire.gif styling */</style></html>

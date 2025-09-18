@@ -134,7 +134,7 @@ export default function TamagotchiPage() {
   return (
     <div className="container" style={{ maxWidth: 600, margin: '40px auto', padding: 32, background: '#222', borderRadius: 16, color: '#fff' }}>
       <div className="header" style={{ display: 'flex', alignItems: 'center', gap: '1em', marginBottom: '2em' }}>
-        <span style={{ fontSize: '2em' }}>�</span>
+        <span style={{ fontSize: '2em' }}>👀</span>
         <h1 style={{ margin: 0 }}>Tamagotchi</h1>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

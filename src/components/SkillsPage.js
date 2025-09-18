@@ -185,6 +185,18 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
             Add Skill
           </button>
           <button
+            style={{
+              background: '#e0e0e0',
+              color: '#222',
+              border: '1px solid #bbb',
+              borderRadius: '6px',
+              padding: '8px 18px',
+              fontWeight: 'bold',
+              fontSize: '1rem',
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(0,0,0,0.08)',
+              transition: 'background 0.2s',
+            }}
             onClick={() => setEditMode(!editMode)}
           >
             {editMode ? 'Done' : 'Edit'}

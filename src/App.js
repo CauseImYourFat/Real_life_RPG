@@ -179,7 +179,7 @@ function App() {
   { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
   { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
   { id: 'export', name: 'Data Export', icon: '📊' },
-    { id: 'tamagotchi', name: 'Tamagotchi', icon: '🐦' }
+    { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' }
   ];
 
   // Show loading screen

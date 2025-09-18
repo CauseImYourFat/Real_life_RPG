@@ -42,8 +42,7 @@ function SkillCategory({
       <div className="skills-list">
         {skills.map((skill, index) => {
           const skillLevel = getSkillLevel(categoryName, skill.name);
-          const isCustomSkill = skill.isCustom; // Check if it's a custom skill
-          
+          const isCustomSkill = skill.isCustom;
           return (
             <div 
               key={`${skill.name}-${index}`}
@@ -57,26 +56,22 @@ function SkillCategory({
                   size={60}
                 />
               </div>
-              
               <div className="skill-info">
                 <h4 className="skill-name">
                   {skill.name}
-                  {isCustomSkill && (
-                    <button 
-                      className="remove-skill-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRemoveCustomSkill(categoryName, skill.name);
-                      }}
-                      title="Remove custom skill"
-                    >
-                      ✕
-                    </button>
-                  )}
+                  <button 
+                    className="remove-skill-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveCustomSkill(categoryName, skill.name);
+                    }}
+                    title={isCustomSkill ? "Remove custom skill" : "Remove default skill"}
+                  >
+                    ✕
+                  </button>
                 </h4>
                 <p className="skill-description">{skill.description}</p>
               </div>
-              
               <div className="skill-controls">
                 <button 
                   className="skill-btn increment"

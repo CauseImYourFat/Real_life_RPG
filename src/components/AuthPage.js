@@ -11,6 +11,11 @@ function AuthPage({ onLogin }) {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+    // Google Sign-In handler
+    const handleGoogleSignIn = () => {
+      window.location.href = '/api/auth/google';
+    };
+
   const validateInputs = () => {
     if (!username.trim()) {
       setError('Username is required');
@@ -138,6 +143,13 @@ function AuthPage({ onLogin }) {
             {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
           </button>
         </form>
+
+          <div style={{ margin: '20px 0', textAlign: 'center' }}>
+            <button type="button" className="google-signin-btn" onClick={handleGoogleSignIn}>
+              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style={{ width: 20, marginRight: 8, verticalAlign: 'middle' }} />
+              Sign in with Google
+            </button>
+          </div>
 
         <div className="auth-switch">
           <p>

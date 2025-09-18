@@ -2,6 +2,10 @@
 // ...existing code...
 // ...existing code...
 const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const fs = require('fs');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -11,6 +15,13 @@ const path = require('path');
 const mongoose = require('mongoose');
 // Always load .env.local first for local dev, fallback to .env
 require('dotenv').config({ path: '.env.local' });
+// Load Google OAuth credentials
+let googleOAuthConfig = {};
+try {
+    googleOAuthConfig = JSON.parse(fs.readFileSync(path.join(__dirname, 'google-oauth.json')));
+} catch (err) {
+    console.warn('Google OAuth config not found or invalid:', err.message);
+}
 require('dotenv').config();
 const { User, UserData } = require('./src/models/mongoModels');
 
@@ -23,6 +34,47 @@ mongoose.connect(process.env.MONGODB_URI, {
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
 const app = express();
+// Express session middleware (required for Passport)
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-session-secret',
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport user serialization
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+// Google OAuth strategy
+if (googleOAuthConfig.web) {
+    passport.use(new GoogleStrategy({
+        clientID: googleOAuthConfig.web.client_id,
+        clientSecret: googleOAuthConfig.web.client_secret,
+        callbackURL: googleOAuthConfig.web.redirect_uris[0]
+    },
+    async (accessToken, refreshToken, profile, done) => {
+        // Find or create user in MongoDB
+        let user = await User.findOne({ googleId: profile.id });
+        if (!user) {
+            user = new User({
+                username: profile.displayName,
+                googleId: profile.id,
+                createdAt: new Date().toISOString()
+            });
+            await user.save();
+        }
+        return done(null, { id: user._id, username: user.username });
+    }
+    ));
+}
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
 
@@ -79,6 +131,17 @@ app.post('/api/user/data', authenticateToken, async (req, res) => {
 };
 
 // API Routes
+// Google OAuth routes
+app.get('/api/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+app.get('/api/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    (req, res) => {
+        // Successful authentication, redirect to app or send token
+        // You can generate a JWT here if you want to use your existing auth flow
+        res.redirect('/');
+    }
+);
 
 // Register new user
 app.post('/api/register', async (req, res) => {

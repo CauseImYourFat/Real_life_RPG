@@ -85,6 +85,7 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState(null);
   const [customSkills, setCustomSkills] = useState({});
+  const [editMode, setEditMode] = useState(false);
 
   const handleSkillClick = (categoryName, skillName, newLevel) => {
     // Use the newLevel directly (it's already calculated in SkillCategory)
@@ -109,7 +110,8 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
   };
 
   const removeCustomSkill = (categoryName, skillName) => {
-    if (!window.confirm(`Are you sure you want to remove the skill "${skillName}" from ${categoryName}? This action cannot be undone.`)) {
+    const input = window.prompt(`Type 'delete' to confirm removal of the skill "${skillName}" from ${categoryName}. This action cannot be undone.`);
+    if (input !== 'delete') {
       return;
     }
     // Remove from custom skills
@@ -179,53 +181,82 @@ function SkillsPage({ skillData, onUpdateSkill, onRemoveSkill }) {
           </div>
         </div>
         <button 
-          className="add-skill-btn"
-          onClick={() => setIsModalOpen(true)}
-        >
-          + Add Custom Skill
-        </button>
-      </div>
-
-      <div className="skills-container">
-        <div className="category-sidebar">
-          {Object.entries(STARFIELD_SKILLS).map(([categoryName, categoryData]) => (
-            <button
-              key={categoryName}
-              className={`category-button ${selectedCategory === categoryName ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(categoryName)}
-            >
-              <span className="category-icon">{categoryData.icon}</span>
-              <span className="category-name">{categoryName}</span>
-              <span className="category-progress">
-                {Object.values(skillData[categoryName] || {}).reduce((sum, level) => sum + level, 0)}
-              </span>
-            </button>
-          ))}
-        </div>
-
-        <div className="skills-grid">
-          <SkillCategory
-            categoryName={selectedCategory}
-            categoryData={STARFIELD_SKILLS[selectedCategory]}
-            skills={getAllSkillsForCategory(selectedCategory)}
-            skillData={skillData[selectedCategory] || {}}
-            onSkillClick={handleSkillClick}
-            onSkillRightClick={handleSkillRightClick}
-            getSkillLevel={getSkillLevel}
-            onRemoveCustomSkill={removeCustomSkill}
-          />
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <SkillModal
-          categories={Object.keys(STARFIELD_SKILLS)}
-          onClose={() => setIsModalOpen(false)}
-          onSave={addCustomSkill}
-        />
-      )}
-    </div>
-  );
-}
-
-export default SkillsPage;
+          return (
+            <div className="skills-page">
+              <div className="skills-header">
+                <h2>Personal Development Skills</h2>
+                <img
+                  src={carpenterGif}
+                  alt="Carpenter Paschalis Rathskellers"
+                  style={{
+                    display: 'inline-block',
+                    marginLeft: '16px',
+                    verticalAlign: 'middle',
+                    width: '115px',
+                    height: '115px',
+                    animation: 'floatLamp 2.2s infinite cubic-bezier(.4,0,.6,1)'
+                  }}
+                />
+                <div className="skills-stats">
+                  <div className="stat-item">
+                    <span className="stat-label">Total Skill Points:</span>
+                    <span className="stat-value">{getTotalSkillPoints()}</span>
+                  </div>
+                  <div className="stat-item">
+                    <span className="stat-label">Level:</span>
+                    <span className="stat-value">{Math.floor(getTotalSkillPoints() / 10) + 1}</span>
+                  </div>
+                </div>
+                <button 
+                  className="add-skill-btn"
+                  onClick={() => setIsModalOpen(true)}
+                >
+                  + Add Custom Skill
+                </button>
+                <button
+                  className="edit-skill-btn"
+                  style={{ float: 'right', marginTop: '-40px', marginRight: '8px', background: editMode ? '#ffd700' : '#eee', color: '#222', border: 'none', borderRadius: '12px', fontWeight: 600, padding: '6px 16px', boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}
+                  onClick={() => setEditMode(!editMode)}
+                >
+                  {editMode ? 'Done' : 'Edit'}
+                </button>
+              </div>
+              <div className="skills-container">
+                <div className="category-sidebar">
+                  {Object.entries(STARFIELD_SKILLS).map(([categoryName, categoryData]) => (
+                    <button
+                      key={categoryName}
+                      className={`category-button ${selectedCategory === categoryName ? 'active' : ''}`}
+                      onClick={() => setSelectedCategory(categoryName)}
+                    >
+                      <span className="category-icon">{categoryData.icon}</span>
+                      <span className="category-name">{categoryName}</span>
+                      <span className="category-progress">
+                        {Object.values(skillData[categoryName] || {}).reduce((sum, level) => sum + level, 0)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                <div className="skills-grid">
+                  <SkillCategory
+                    categoryName={selectedCategory}
+                    categoryData={STARFIELD_SKILLS[selectedCategory]}
+                    skills={getAllSkillsForCategory(selectedCategory)}
+                    skillData={skillData[selectedCategory] || {}}
+                    onSkillClick={handleSkillClick}
+                    onSkillRightClick={handleSkillRightClick}
+                    getSkillLevel={getSkillLevel}
+                    onRemoveCustomSkill={removeCustomSkill}
+                    editMode={editMode}
+                  />
+                </div>
+              </div>
+              {isModalOpen && (
+                <SkillModal
+                  categories={Object.keys(STARFIELD_SKILLS)}
+                  onClose={() => setIsModalOpen(false)}
+                  onSave={addCustomSkill}
+                />
+              )}
+            </div>
+          );

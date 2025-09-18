@@ -9,7 +9,8 @@ function SkillCategory({
   onSkillClick, 
   onSkillRightClick, 
   getSkillLevel,
-  onRemoveCustomSkill  // Add this new prop
+  onRemoveCustomSkill,
+  editMode
 }) {
   const handleIncrement = (e, categoryName, skillName, currentLevel) => {
     e.preventDefault();
@@ -38,7 +39,6 @@ function SkillCategory({
           {getCategoryDescription(categoryName)}
         </p>
       </div>
-
       <div className="skills-list">
         {skills.map((skill, index) => {
           const skillLevel = getSkillLevel(categoryName, skill.name);
@@ -59,16 +59,18 @@ function SkillCategory({
               <div className="skill-info">
                 <h4 className="skill-name">
                   {skill.name}
-                  <button 
-                    className="remove-skill-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onRemoveCustomSkill(categoryName, skill.name);
-                    }}
-                    title={isCustomSkill ? "Remove custom skill" : "Remove default skill"}
-                  >
-                    ✕
-                  </button>
+                  {editMode && (
+                    <button 
+                      className="remove-skill-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveCustomSkill(categoryName, skill.name);
+                      }}
+                      title={isCustomSkill ? "Remove custom skill" : "Remove default skill"}
+                    >
+                      ✕
+                    </button>
+                  )}
                 </h4>
                 <p className="skill-description">{skill.description}</p>
               </div>

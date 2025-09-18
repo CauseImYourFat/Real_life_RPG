@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import userDataService from '../services/UserDataService';
 
 // Helper to scan pets and actions (stub for now, replace with backend or fs API)
 const getShopPets = () => {
@@ -31,6 +32,25 @@ export default function TamagotchiPage() {
   const [actionInterval, setActionInterval] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+  // Load tamagotchi data from backend on mount
+  useEffect(() => {
+    async function loadTama() {
+      setShopPets(getShopPets());
+      try {
+        const data = await userDataService.loadTamagotchiData();
+        setMascotXP(data.mascotXP && Object.keys(data.mascotXP).length ? data.mascotXP : { 'white dog': 0 });
+        setPurchased(data.purchased && Object.keys(data.purchased).length ? data.purchased : { 'white dog': { name: 'White Dog' } });
+        setCurrentMascot(Object.keys(data.purchased || { 'white dog': {} })[0] || 'white dog');
+        setCurrentAction('wake');
+      } catch (e) {
+        setMascotXP({ 'white dog': 0 });
+        setPurchased({ 'white dog': { name: 'White Dog' } });
+        setCurrentMascot('white dog');
+        setCurrentAction('wake');
+      }
+    }
+    loadTama();
+  }, []);
 
   useEffect(() => {
     setShopPets(getShopPets());
@@ -58,14 +78,25 @@ export default function TamagotchiPage() {
 
   function setAction(action) {
     setCurrentAction(action);
-    setMascotXP(xp => ({ ...xp, [currentMascot]: (xp[currentMascot] || 0) + 0.2 }));
+    setMascotXP(xp => {
+      const newXP = { ...xp, [currentMascot]: (xp[currentMascot] || 0) + 0.2 };
+      userDataService.saveTamagotchiData(newXP, purchased);
+      return newXP;
+    });
   }
 
   function buyMascot(pet) {
-    setPurchased(p => ({ ...p, [pet]: { name: pet.replace(/\b\w/g, l => l.toUpperCase()) } }));
-    setMascotXP(xp => ({ ...xp, [pet]: 0 }));
-    setCurrentMascot(pet);
-    setCurrentAction(getPetActions(pet)[0]);
+    setPurchased(p => {
+      const newPurchased = { ...p, [pet]: { name: pet.replace(/\b\w/g, l => l.toUpperCase()) } };
+      setMascotXP(xp => {
+        const newXP = { ...xp, [pet]: 0 };
+        userDataService.saveTamagotchiData(newXP, newPurchased);
+        return newXP;
+      });
+      setCurrentMascot(pet);
+      setCurrentAction(getPetActions(pet)[0]);
+      return newPurchased;
+    });
   }
 
   function openEditModal() {
@@ -73,8 +104,12 @@ export default function TamagotchiPage() {
     setEditModalOpen(true);
   }
   function handleRename() {
-    setPurchased(p => ({ ...p, [currentMascot]: { ...p[currentMascot], name: renameValue } }));
-    setEditModalOpen(false);
+    setPurchased(p => {
+      const newPurchased = { ...p, [currentMascot]: { ...p[currentMascot], name: renameValue } };
+      userDataService.saveTamagotchiData(mascotXP, newPurchased);
+      setEditModalOpen(false);
+      return newPurchased;
+    });
   }
 
   // XP/Level logic

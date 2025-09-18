@@ -1,6 +1,7 @@
 import dragonFireGif from '../assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
 import SkillsPage from './components/SkillsPage';
+import TamagotchiPage from './components/TamagotchiPage';
 import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';
 import ExportPage from './components/ExportPage';
@@ -174,10 +175,11 @@ function App() {
   };
 
   const tabs = [
-    { id: 'skills', name: 'Skills', icon: '⚔️' },
-    { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
-    { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
-    { id: 'export', name: 'Data Export', icon: '📊' }
+  { id: 'skills', name: 'Skills', icon: '⚔️' },
+  { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
+  { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
+  { id: 'export', name: 'Data Export', icon: '📊' },
+  { id: 'tamagotchi', name: 'Tamagotchi', icon: '🐶' }
   ];
 
   // Show loading screen
@@ -265,6 +267,9 @@ function App() {
         )}
         {activeTab === 'export' && (
           <ExportPage userData={userData} />
+        )}
+        {activeTab === 'tamagotchi' && (
+          <TamagotchiPage />
         )}
       </main>
 

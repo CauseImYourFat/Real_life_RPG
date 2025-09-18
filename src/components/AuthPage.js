@@ -145,9 +145,44 @@ function AuthPage({ onLogin }) {
         </form>
 
           <div style={{ margin: '20px 0', textAlign: 'center' }}>
-            <button type="button" className="google-signin-btn" onClick={handleGoogleSignIn}>
-              <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" style={{ width: 20, marginRight: 8, verticalAlign: 'middle' }} />
-              Sign in with Google
+            <button
+              type="button"
+              className="google-signin-btn"
+              onClick={handleGoogleSignIn}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                background: '#fff',
+                color: '#444',
+                border: '1px solid #ddd',
+                borderRadius: '30px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                fontWeight: 500,
+                fontSize: '1rem',
+                padding: '10px 24px',
+                cursor: 'pointer',
+                transition: 'box-shadow 0.2s, border 0.2s',
+                margin: '0 auto',
+                outline: 'none',
+                minWidth: '220px',
+              }}
+              onMouseOver={e => {
+                e.currentTarget.style.boxShadow = '0 4px 16px rgba(66,133,244,0.15)';
+                e.currentTarget.style.border = '1px solid #4285f4';
+              }}
+              onMouseOut={e => {
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                e.currentTarget.style.border = '1px solid #ddd';
+              }}
+            >
+              <img
+                src="https://developers.google.com/identity/images/g-logo.png"
+                alt="Google logo"
+                style={{ width: 22, height: 22, background: 'none', borderRadius: '50%' }}
+              />
+              <span style={{ fontSize: '1rem', fontWeight: 500 }}>Sign in with Google</span>
             </button>
           </div>
 

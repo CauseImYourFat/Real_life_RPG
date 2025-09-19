@@ -109,8 +109,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-i
 app.use(cors());
 app.use(express.json());
 // Serve static files from 'public' if present, otherwise from root
-const staticDir = __dirname;
 const distDir = path.join(__dirname, 'dist');
+const assetsDir = path.join(__dirname, 'assets');
+app.use('/assets', express.static(assetsDir));
 app.use(express.static(distDir));
 
 // Remove in-memory storage. Use MongoDB only.

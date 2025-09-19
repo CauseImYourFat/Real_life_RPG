@@ -45,7 +45,7 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'assets', to: 'assets', noErrorOnMissing: true }
+        { from: 'assets', to: 'assets', noErrorOnMissing: true, globOptions: { dot: true, ignore: [], }, } // Recursively copy all files and subfolders
       ]
     })
   ],

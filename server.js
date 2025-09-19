@@ -210,12 +210,23 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         if (!mongoUserData) {
             return res.status(404).json({ error: 'User data not found' });
         }
+        // Deep merge to retain all existing pet data and support Gnee! points
         let tamagotchi = mongoUserData.tamagotchi || {};
+        tamagotchi.purchased = tamagotchi.purchased || {};
+        tamagotchi.hive = tamagotchi.hive || [];
+        tamagotchi.mascotXP = tamagotchi.mascotXP || {};
+        tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
+        tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
+
         if (action === 'buy' && mascotType) {
             if (!tamagotchi.purchased[mascotType]) {
                 tamagotchi.purchased[mascotType] = { name: mascotType, assetFolder: mascotType, actions: ['wake', 'run', 'sleep'], createdAt: new Date().toISOString(), editHistory: [] };
                 tamagotchi.hive.push(mascotType);
                 tamagotchi.currentMascot = mascotType;
+            }
+            // If Gnee! points are sent, update them
+            if (typeof req.body.gneePoints === 'number') {
+                tamagotchi.gneePoints = req.body.gneePoints;
             }
         } else if (action === 'edit' && mascotType && changes) {
             if (tamagotchi.purchased[mascotType]) {
@@ -237,6 +248,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         } else if (action === 'gainXP' && mascotType && amount) {
             tamagotchi.mascotXP[mascotType] = (tamagotchi.mascotXP[mascotType] || 0) + amount;
         }
+        // Always merge and retain all fields
         mongoUserData.tamagotchi = tamagotchi;
         mongoUserData.lastSaved = new Date().toISOString();
         await mongoUserData.save();

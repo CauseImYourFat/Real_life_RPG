@@ -1,14 +1,14 @@
 ﻿import React, { useState } from 'react';
-import fullBodyImg from '../../image/anatomy/full body 5 1303.png';
-import headImg from '../../image/anatomy/head 13 6212.png';
-import shoulderImg from '../../image/anatomy/shoulder 14 5104.png';
-import armImg from '../../image/anatomy/arm 15 6513.png';
-import frontHandImg from '../../image/anatomy/front hand 11 3451.png';
-import bodyZoomImg from '../../image/anatomy/body zoom (without arms legs) 17 6665.png';
-import legImg from '../../image/anatomy/leg 16 4298.png';
-import frontFeetImg from '../../image/anatomy/front feet 9 1185.png';
-import backFeetImg from '../../image/anatomy/back feet 10 1512.png';
-import backHandImg from '../../image/anatomy/back hand 12 1417.png';
+import fullBodyImg from '../../dist/assets/anatomy/full body 5 1303.png';
+import headImg from '../../dist/assets/anatomy/head 13 6212.png';
+import shoulderImg from '../../dist/assets/anatomy/shoulder 14 5104.png';
+import armImg from '../../dist/assets/anatomy/arm 15 6513.png';
+import frontHandImg from '../../dist/assets/anatomy/front hand 11 3451.png';
+import bodyZoomImg from '../../dist/assets/anatomy/body zoom (without arms legs) 17 6665.png';
+import legImg from '../../dist/assets/anatomy/leg 16 4298.png';
+import frontFeetImg from '../../dist/assets/anatomy/front feet 9 1185.png';
+import backFeetImg from '../../dist/assets/anatomy/back feet 10 1512.png';
+import backHandImg from '../../dist/assets/anatomy/back hand 12 1417.png';
 
 function BodyVisualization({ data, onUpdate }) {
   const [selectedBodyPart, setSelectedBodyPart] = useState(null);

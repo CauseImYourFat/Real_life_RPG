@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import pixelHeartGif from '../../assets/pixel-heart.gif';
+import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
 import BodyVisualization from './BodyVisualization';
 import HealthMetrics from './HealthMetrics';
 import HealthGoals from './HealthGoals';

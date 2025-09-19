@@ -1,3 +1,18 @@
+## [2025-09-19] Dynamic Tamagotchi Pet Action System
+
+**Problem:**
+- Hardcoded pet actions made it difficult to add new pets and actions as the app grew.
+
+**Solution:**
+- Pet actions are now detected automatically by scanning each pet's asset folder for GIF files.
+- Action buttons are generated from the last part of each GIF filename (e.g., frog-jump.gif → jump).
+- This allows each pet to have a unique set of actions, and future pets/actions are supported without code changes.
+
+**Result:**
+- Adding a new pet or action is as simple as adding a new folder and GIF file.
+- The system is scalable and easy to maintain for long-term development.
+
+---
 # resolved.log
 
 ## [2025-09-16] Asset/GIF/PNG Detection & Path Issues

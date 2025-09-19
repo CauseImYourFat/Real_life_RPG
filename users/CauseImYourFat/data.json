@@ -19,6 +19,7 @@
     "autoSave": true
   },
   "achievements": [],
+  "gneePoints": 0,
   "purchased": {
     "Frog": {
       "name": "Frog",

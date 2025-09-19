@@ -4,8 +4,10 @@ import userDataService from '../services/UserDataService';
 
 // Skeleton for TamagotchiPage, compatible with webapp architecture
 export default function TamagotchiPage() {
+  const [gneePoints, setGneePoints] = useState(0);
   // State hooks for pets, shop, hive, XP, etc.
   const [shopPets, setShopPets] = useState([]); // List of available pets
+  const [petActionsMap, setPetActionsMap] = useState({}); // Map: pet name -> actions
   const [purchased, setPurchased] = useState({}); // User's owned pets
   const [currentMascot, setCurrentMascot] = useState(null); // Displayed pet
   const [currentAction, setCurrentAction] = useState(null); // Current pet action
@@ -13,8 +15,36 @@ export default function TamagotchiPage() {
   const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
   const [renameValue, setRenameValue] = useState(''); // Rename input
 
-  // List of pets from assets/pets/shop
-  const assetShopPets = ['white dog', 'Frog', 'Bird', 'plant'];
+  // Dynamically detect pets and actions from asset folders
+  useEffect(() => {
+    // Load Gnee! points from user data
+    userDataService.getUserData?.().then(userData => {
+      setGneePoints(userData?.gneePoints || 0);
+    });
+    async function fetchPetsAndActions() {
+      // List pets from asset folder
+      const petFolders = ['white dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
+      setShopPets(petFolders);
+      // For each pet, list actions from GIF filenames
+      const actionsMap = {};
+      for (const pet of petFolders) {
+        let gifs = [];
+        try {
+          // Use require.context or static import for Webpack
+          gifs = require.context('../../dist/assets/pets/shop/' + pet, false, /\.gif$/).keys();
+        } catch (e) {
+          gifs = [];
+        }
+        actionsMap[pet] = gifs.map(f => {
+          // Extract action from filename: petname-action.gif
+          const match = f.match(/([a-zA-Z0-9_-]+)-([a-zA-Z0-9_]+)\.gif$/);
+          return match ? match[2] : null;
+        }).filter(Boolean);
+      }
+      setPetActionsMap(actionsMap);
+    }
+    fetchPetsAndActions();
+  }, []);
 
   useEffect(() => {
     async function fetchData() {
@@ -30,8 +60,8 @@ export default function TamagotchiPage() {
     fetchData();
   }, []);
 
-  // Action buttons for mascot
-  const petActions = currentMascot && purchased[currentMascot]?.actions ? purchased[currentMascot].actions : [];
+  // Action buttons for mascot (dynamic)
+  const petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
 
   // Handle action click (gain XP)
   const handleAction = async (action) => {
@@ -59,14 +89,23 @@ export default function TamagotchiPage() {
   // Shop/hive modals (simplified)
   const [shopOpen, setShopOpen] = useState(false);
   const [hiveOpen, setHiveOpen] = useState(false);
-  // Only allow picking one free pet
+  // Secure pet purchase logic: first pet free, others cost 5 Gnee! points
   const handleBuyPet = async (type) => {
-    if (Object.keys(purchased).length === 0) {
+    const alreadyPicked = Object.keys(purchased).length > 0;
+    if (!alreadyPicked) {
       await userDataService.buyPet(type);
       setShopOpen(false);
-      // Reload shop/hive
       const tama = await userDataService.getTamagotchi();
-      setShopPets(assetShopPets);
+      setShopPets(shopPets);
+      setPurchased(tama.purchased || {});
+      setCurrentMascot(type);
+    } else if (gneePoints >= 5 && !purchased[type]) {
+      await userDataService.buyPet(type);
+      setGneePoints(gneePoints - 5);
+      userDataService.updateUserData?.({ gneePoints: gneePoints - 5 });
+      setShopOpen(false);
+      const tama = await userDataService.getTamagotchi();
+      setShopPets(shopPets);
       setPurchased(tama.purchased || {});
       setCurrentMascot(type);
     }
@@ -151,19 +190,24 @@ export default function TamagotchiPage() {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, margin: 'auto', boxShadow: '0 2px 16px #0006' }}>
             <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Shop</h2>
+            <div style={{ color: '#ffd700', textAlign: 'center', fontWeight: 600, fontSize: '1.1em', marginBottom: '18px' }}>
+              <img src={require('../../dist/assets/donut.png')} alt="Gnee!" style={{ width: 32, height: 32, verticalAlign: 'middle', marginRight: 8 }} />
+              Gnee! points: <span style={{ color: '#fff', fontWeight: 700 }}>{gneePoints}</span>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>
               {shopPets.map(type => {
                 const alreadyPicked = Object.keys(purchased).length > 0;
                 const isPicked = purchased[type];
                 const locked = alreadyPicked && !isPicked;
+                const canBuy = !isPicked && (gneePoints >= 5 || !alreadyPicked);
                 return (
-                  <div key={type} style={{ textAlign: 'center', opacity: locked ? 0.4 : 1 }}>
+                  <div key={type} style={{ textAlign: 'center', opacity: locked && !canBuy ? 0.4 : 1 }}>
                     <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
                       <img src={getMascotImg(type, 'wake')} alt={type} style={{ width: 48, height: 48 }} />
                     </div>
                     <div style={{ color: '#fff', fontSize: '1em' }}>{type}</div>
-                    <div style={{ color: '#ffd700', fontSize: '0.95em' }}>{locked ? 'Locked' : 'Free'}</div>
-                    <button onClick={() => !locked && handleBuyPet(type)} disabled={locked} style={{ marginTop: 6, background: locked ? '#aaa' : '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: locked ? 'not-allowed' : 'pointer' }}>{locked ? 'Locked' : 'Buy'}</button>
+                    <div style={{ color: '#ffd700', fontSize: '0.95em' }}>{isPicked ? 'Owned' : (!alreadyPicked ? 'Free' : '5 Gnee! points')}</div>
+                    <button onClick={() => canBuy && handleBuyPet(type)} disabled={!canBuy} style={{ marginTop: 6, background: canBuy ? '#ffd700' : '#aaa', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: canBuy ? 'pointer' : 'not-allowed' }}>{isPicked ? 'Owned' : (!alreadyPicked ? 'Get Free' : 'Buy')}</button>
                   </div>
                 );
               })}

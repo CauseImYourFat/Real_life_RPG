@@ -269,7 +269,10 @@ function App() {
           <ExportPage userData={userData} />
         )}
         {activeTab === 'tamagotchi' && (
-          <TamagotchiPage />
+          <TamagotchiPage 
+            healthData={userData.health}
+            skillData={userData.skills}
+          />
         )}
       </main>
 

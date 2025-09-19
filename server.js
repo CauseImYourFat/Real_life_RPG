@@ -219,7 +219,10 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         let tamagotchi = mongoUserData.tamagotchi || {};
         tamagotchi.purchased = tamagotchi.purchased || {};
         tamagotchi.hive = tamagotchi.hive || [];
-        tamagotchi.mascotXP = tamagotchi.mascotXP || {};
+        // Load mascotXP from DB if present, else initialize
+        if (!tamagotchi.mascotXP || typeof tamagotchi.mascotXP !== 'object') {
+            tamagotchi.mascotXP = {};
+        }
         tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
         tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
 
@@ -256,12 +259,17 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             const prevXP = tamagotchi.mascotXP[mascotType] || 0;
             tamagotchi.mascotXP[mascotType] = prevXP + amount;
             console.log(`[BACKEND] XP gain for user ${userId}, pet ${mascotType}: ${prevXP} + ${amount} = ${tamagotchi.mascotXP[mascotType]}`);
+            // Extra logging for DB state
+            console.log(`[BACKEND] mascotXP full object:`, tamagotchi.mascotXP);
         }
         // Always merge and retain all fields
         mongoUserData.tamagotchi = tamagotchi;
-        mongoUserData.lastSaved = new Date().toISOString();
-        await mongoUserData.save();
-        res.json(tamagotchi);
+    mongoUserData.lastSaved = new Date().toISOString();
+    await mongoUserData.save();
+    // Confirm mascotXP after save
+    const confirmUserData = await UserData.findOne({ userId });
+    console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
+    res.json(tamagotchi);
     } catch (error) {
         console.error('Update tamagotchi error:', error);
         res.status(500).json({ error: 'Internal server error' });

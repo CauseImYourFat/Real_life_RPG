@@ -19,6 +19,24 @@
     "autoSave": true
   },
   "achievements": [],
+  "purchased": {
+    "Frog": {
+      "name": "Frog",
+      "actions": ["wake"]
+    },
+    "white dog": {
+      "name": "white dog",
+      "actions": ["wake"]
+    },
+    "Bird": {
+      "name": "Bird",
+      "actions": ["wake"]
+    },
+    "plant": {
+      "name": "plant",
+      "actions": ["wake"]
+    }
+  },
   "progressHistory": [
     {
       "timestamp": "2025-09-14T11:24:02.164Z",

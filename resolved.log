@@ -101,16 +101,20 @@
 
 ---
 
-## [2025-09-19] Troubleshooting & Support
+
+## [2025-09-19] Tamagotchi Pet Action Unlock Logic
 
 **Problem:**
-- Common issues: undefined errors, data not saving, login not working.
+- New users were confused why only one action was available for each pet.
 
 **Solution:**
-- Added troubleshooting steps: clear cache, enable localStorage, check console, try guest mode.
+- All shop pets (Frog, white dog, Bird, plant) start with only the "wake" action.
+- Every 5 levels gained by a pet unlocks a new action (e.g., "sleep", "eat", "jump", etc.).
+- This keeps progression clear and rewarding for users.
 
 **Result:**
-- Users can resolve most issues quickly and independently.
+- Users see only "wake" at first, and unlock more actions as they level up their pet.
+- Logic is easy to understand for first-time users and maintainers.
 
 ---
 

@@ -184,6 +184,22 @@ export default function TamagotchiPage() {
         <div className="progress-bar" style={{ background: '#444', borderRadius: 8, overflow: 'hidden', height: 18, marginTop: 8 }}>
           <div className="progress" style={{ background: '#00d4aa', height: '100%', width: `${currentMascot ? Math.round((mascotXP[currentMascot] || 0) / 100 * 100) : 0}%` }}></div>
         </div>
+        {/* XP display */}
+        {currentMascot && (
+          <div style={{ fontSize: '1em', color: '#222', marginTop: 4, fontWeight: 600 }}>
+            XP: <span style={{ color: '#444' }}>{mascotXP[currentMascot] || 0}</span> / <span style={{ color: '#888' }}>{(() => {
+              let xpNeeded = 100;
+              let xp = mascotXP[currentMascot] || 0;
+              let level = 1;
+              while (xp >= xpNeeded) {
+                xp -= xpNeeded;
+                level++;
+                xpNeeded = Math.floor(xpNeeded * 1.05);
+              }
+              return xpNeeded;
+            })()}</span> XP
+          </div>
+        )}
         <div style={{ fontSize: '0.95em', color: '#aaa', marginTop: 4 }}>Progress to next evolution</div>
       </div>
       {/* Evolution display */}

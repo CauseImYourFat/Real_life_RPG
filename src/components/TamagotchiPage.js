@@ -131,8 +131,8 @@ export default function TamagotchiPage() {
 
   // Asset loading: link directly to dist/assets/pets/shop
   const getMascotImg = (mascot, action) => {
-  // Use lowercase mascot name for file path
-  const mascotLower = mascot.toLowerCase();
+  // Use lowercase mascot name and replace spaces with hyphens for file path
+  const mascotLower = mascot.toLowerCase().replace(/\s+/g, '-');
   return `/assets/pets/shop/${mascot}/${mascotLower}-${action}.gif`;
   };
 
@@ -191,7 +191,7 @@ export default function TamagotchiPage() {
           <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, margin: 'auto', boxShadow: '0 2px 16px #0006' }}>
             <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Shop</h2>
             <div style={{ color: '#ffd700', textAlign: 'center', fontWeight: 600, fontSize: '1.1em', marginBottom: '18px' }}>
-              <img src={require('../../dist/assets/donut.png')} alt="Gnee!" style={{ width: 32, height: 32, verticalAlign: 'middle', marginRight: 8 }} />
+              <img src={require('../../dist/assets/point/gnee-point.png')} alt="Gnee!" style={{ width: 32, height: 32, verticalAlign: 'middle', marginRight: 8 }} />
               Gnee! points: <span style={{ color: '#fff', fontWeight: 700 }}>{gneePoints}</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>

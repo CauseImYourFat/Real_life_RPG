@@ -92,8 +92,9 @@ export default function TamagotchiPage() {
 
   // Asset loading: link directly to dist/assets/pets/shop
   const getMascotImg = (mascot, action) => {
-    // Use exact path and name
-    return `/assets/pets/shop/${mascot}/${mascot}-${action}.gif`;
+  // Use lowercase mascot name for file path
+  const mascotLower = mascot.toLowerCase();
+  return `/assets/pets/shop/${mascot}/${mascotLower}-${action}.gif`;
   };
 
   return (

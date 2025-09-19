@@ -223,6 +223,8 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         if (!tamagotchi.mascotXP || typeof tamagotchi.mascotXP !== 'object') {
             tamagotchi.mascotXP = {};
         }
+        // Extra logging: show mascotXP before any update
+        console.log(`[BACKEND] mascotXP before update:`, tamagotchi.mascotXP);
         tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
         tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
 
@@ -260,7 +262,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             tamagotchi.mascotXP[mascotType] = prevXP + amount;
             console.log(`[BACKEND] XP gain for user ${userId}, pet ${mascotType}: ${prevXP} + ${amount} = ${tamagotchi.mascotXP[mascotType]}`);
             // Extra logging for DB state
-            console.log(`[BACKEND] mascotXP full object:`, tamagotchi.mascotXP);
+            console.log(`[BACKEND] mascotXP after increment:`, tamagotchi.mascotXP);
         }
         // Always merge and retain all fields
         mongoUserData.tamagotchi = tamagotchi;
@@ -269,6 +271,8 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
     // Confirm mascotXP after save
     const confirmUserData = await UserData.findOne({ userId });
     console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
+    // Extra: log full userData object for debugging
+    console.log(`[BACKEND] Full userData after save:`, confirmUserData);
     res.json(tamagotchi);
     } catch (error) {
         console.error('Update tamagotchi error:', error);

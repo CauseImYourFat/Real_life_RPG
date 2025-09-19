@@ -126,6 +126,11 @@ const assetsDir = path.join(__dirname, 'assets');
 app.use('/assets', express.static(assetsDir));
 app.use(express.static(distDir));
 
+// Fallback: serve index.html for all non-API, non-asset requests (SPA routing)
+app.get(/^\/(?!api|assets).*/, (req, res) => {
+    res.sendFile(path.join(distDir, 'index.html'));
+});
+
 // Remove in-memory storage. Use MongoDB only.
 
 // Middleware to verify JWT token

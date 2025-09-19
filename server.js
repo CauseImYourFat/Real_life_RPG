@@ -14,6 +14,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 // MongoDB setup
 const mongoose = require('mongoose');
+const fs = require('fs');
 // Always load .env.local first for local dev, fallback to .env
 require('dotenv').config({ path: '.env.local' });
 // Load Google OAuth credentials
@@ -208,6 +209,14 @@ app.get('/api/user/tamagotchi', authenticateToken, async (req, res) => {
 
 // Tamagotchi API: Update user tamagotchi data (buy, edit, delete, transfer, XP, setCurrent)
 app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
+        // Helper to log mascotXP to file
+        function logMascotXPToFile(msg, obj) {
+            try {
+                fs.appendFileSync('mascotXP.log', `${new Date().toISOString()} ${msg}: ${JSON.stringify(obj)}\n`);
+            } catch (e) {
+                console.error('Failed to write mascotXP log:', e);
+            }
+        }
     try {
         const userId = req.user.userId;
         const { action, mascotType, changes, toUser, amount } = req.body;
@@ -224,7 +233,8 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             tamagotchi.mascotXP = {};
         }
         // Extra logging: show mascotXP before any update
-        console.log(`[BACKEND] mascotXP before update:`, tamagotchi.mascotXP);
+    console.log(`[BACKEND] mascotXP before update:`, tamagotchi.mascotXP);
+    logMascotXPToFile('mascotXP before update', tamagotchi.mascotXP);
         tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
         tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
 
@@ -263,6 +273,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             console.log(`[BACKEND] XP gain for user ${userId}, pet ${mascotType}: ${prevXP} + ${amount} = ${tamagotchi.mascotXP[mascotType]}`);
             // Extra logging for DB state
             console.log(`[BACKEND] mascotXP after increment:`, tamagotchi.mascotXP);
+            logMascotXPToFile('mascotXP after increment', tamagotchi.mascotXP);
         }
         // Always merge and retain all fields
         mongoUserData.tamagotchi = tamagotchi;
@@ -271,8 +282,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
     // Confirm mascotXP after save
     const confirmUserData = await UserData.findOne({ userId });
     console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
-    // Extra: log full userData object for debugging
-    console.log(`[BACKEND] Full userData after save:`, confirmUserData);
+    logMascotXPToFile('mascotXP after save', confirmUserData.tamagotchi?.mascotXP);
     res.json(tamagotchi);
     } catch (error) {
         console.error('Update tamagotchi error:', error);

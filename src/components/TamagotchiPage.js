@@ -42,11 +42,22 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   }
 
   // Calculate boost
+  // Passive boost from user level (total skill points)
+  function getPassiveXPBoost() {
+    const skillPoints = getTotalSkillPoints(skillData);
+    // Example: +10% XP per 10 skill points above 10, capped at +50%
+    if (skillPoints <= 10) return 0;
+    return Math.min(0.5, Math.floor((skillPoints - 10) / 10) * 0.1);
+  }
+
+  // Active boost from health
+  function getActiveXPBoost() {
+    return calculateOverallHealth(healthData) > 80 ? 0.5 : 0;
+  }
+
+  // Total boost
   function getXPBoost() {
-    let boost = 0;
-    if (calculateOverallHealth(healthData) > 80) boost += 0.5;
-    if (getTotalSkillPoints(skillData) > 50) boost += 0.5;
-    return boost;
+    return getActiveXPBoost() + getPassiveXPBoost();
   }
   // State hooks for pets, shop, hive, XP, etc.
   const [gneePoints, setGneePoints] = useState(0);
@@ -71,9 +82,16 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         setShowBoost(true);
         setTimeout(() => setShowBoost(false), 1200);
       }
+      // Debug log before XP update
+      console.log(`[Auto XP] Adding ${totalXP} XP to ${currentMascot} (base: ${baseXP}, boost: ${boost})`);
       await userDataService.gainXP(currentMascot, totalXP);
+      // Debug log after XP update
       const tama = await userDataService.getTamagotchi();
-      setMascotXP(tama.mascotXP || {});
+      console.log(`[Auto XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
+      setMascotXP(prev => ({
+        ...prev,
+        [currentMascot]: tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP)
+      }));
     }, 60000); // 60,000 ms = 1 min
     return () => clearInterval(interval);
   }, [currentMascot, healthData, skillData]);
@@ -236,24 +254,44 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
               boxShadow: '0 2px 8px #0004',
               zIndex: 10,
               display: 'flex',
-              alignItems: 'center',
-              gap: 8,
+              flexDirection: 'column',
+              alignItems: 'flex-start',
+              gap: 4,
               overflow: 'hidden',
-              height: '40px'
+              height: 'auto'
             }}>
-              <img src={pixelHeartGif} alt="Boost" style={{ width: 28, height: 28, marginRight: 6 }} />
-              <span className="xp-boost-wave" style={{
-                background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
-                backgroundSize: '100% 200%',
-                backgroundPosition: '0 100%',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                animation: 'waveColorMove 1.2s linear infinite',
-                display: 'inline-block',
-                fontWeight: 700
-              }}>
-                {getXPBoost() > 0 ? `+${Math.floor(getXPBoost() * 100)}% XP Boost!` : 'No Boost'}
-              </span>
+              {/* Active boost (health) */}
+              <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                <img src={pixelHeartGif} alt="Boost" style={{ width: 24, height: 24, marginRight: 4 }} />
+                <span className="xp-boost-wave" style={{
+                  background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
+                  backgroundSize: '100% 200%',
+                  backgroundPosition: '0 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'waveColorMove 1.2s linear infinite',
+                  display: 'inline-block',
+                  fontWeight: 700
+                }}>
+                  {getActiveXPBoost() > 0 ? `+${Math.floor(getActiveXPBoost() * 100)}% Health XP Boost` : 'No Health Boost'}
+                </span>
+              </div>
+              {/* Passive boost (level) */}
+              <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
+                <span style={{fontSize: '1.2em', color: '#ffd700', marginRight: 4}}>★</span>
+                <span className="xp-boost-wave" style={{
+                  background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
+                  backgroundSize: '100% 200%',
+                  backgroundPosition: '0 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'waveColorMove 1.2s linear infinite',
+                  display: 'inline-block',
+                  fontWeight: 700
+                }}>
+                  {getPassiveXPBoost() > 0 ? `+${Math.floor(getPassiveXPBoost() * 100)}% Level XP Boost` : 'No Level Boost'}
+                </span>
+              </div>
               <style>{`
                 @keyframes waveColorMove {
                   0% { background-position: 0 100%; }

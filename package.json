@@ -21,7 +21,7 @@
   "description": "Personal Development Hub - Track your skills and health in an RPG-style interface",
   "dependencies": {
     "@electron/packager": "^18.4.4",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "chart.js": "^4.5.0",
     "copy-webpack-plugin": "^13.0.1",
     "cors": "^2.8.5",

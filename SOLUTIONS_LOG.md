@@ -1,3 +1,30 @@
+## [2025-09-17] Tamagotchi Shop Monetization & Dynamic Actions
+
+**Problem:**
+- Shop pets previously had static unlock logic and no monetization.
+- Needed scalable, secure system for progressive pet action unlocks and Gnee! points purchases.
+
+**Solution:**
+- Refactored TamagotchiPage.js to display Gnee! points and enforce secure shop logic:
+  - First pet is free; subsequent pets cost 5 Gnee! points each.
+  - Gnee! points are displayed in the shop modal.
+  - Purchase logic checks points and updates user data securely.
+- Updated UserDataService.js:
+  - buyPet checks purchased pets and Gnee! points before allowing purchase.
+  - Deducts points and updates backend via updateTamagotchi API.
+- Dynamic pet actions:
+  - Actions for each pet are detected from GIF filenames in assets.
+  - New actions unlock every 5 levels for each pet.
+  - Logic is scalable for future pets and actions.
+
+**Result:**
+- Shop is secure, scalable, and supports monetization via Gnee! points.
+- Pet actions unlock progressively and are detected dynamically from assets.
+
+**Maintenance Notes:**
+- To add new pets or actions, place GIFs in the appropriate assets folder.
+- No code changes needed for new actions; logic auto-detects available actions.
+- Gnee! points can be awarded for achievements, level-ups, or other events.
 # Solutions Log
 
 ## [2025-09-16] Fixing 404 Errors for Username/Password Change

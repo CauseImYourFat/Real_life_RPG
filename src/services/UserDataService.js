@@ -36,7 +36,19 @@ class UserDataService {
 
   // Buy pet (add to hive/shop)
   async buyPet(mascotType) {
-    return await this.updateTamagotchi({ action: 'buy', mascotType });
+    // Get user data for Gnee! points and purchased pets
+    const tama = await this.getTamagotchi();
+    const purchased = tama?.purchased || {};
+    const gneePoints = tama?.gneePoints || 0;
+    const alreadyPicked = Object.keys(purchased).length > 0;
+    if (!alreadyPicked) {
+      // First pet is free
+      return await this.updateTamagotchi({ action: 'buy', mascotType });
+    } else if (gneePoints >= 5 && !purchased[mascotType]) {
+      // Deduct Gnee! points and buy pet
+      return await this.updateTamagotchi({ action: 'buy', mascotType, gneePoints: gneePoints - 5 });
+    }
+    return false;
   }
 
   // Edit pet (rename, change asset, etc)

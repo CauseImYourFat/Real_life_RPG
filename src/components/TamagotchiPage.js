@@ -4,6 +4,17 @@ import userDataService from '../services/UserDataService';
 
 // Skeleton for TamagotchiPage, compatible with webapp architecture
 export default function TamagotchiPage() {
+  // State hooks for pets, shop, hive, XP, etc.
+  const [gneePoints, setGneePoints] = useState(0);
+  const [shopPets, setShopPets] = useState([]); // List of available pets
+  const [petActionsMap, setPetActionsMap] = useState({}); // Map: pet name -> actions
+  const [purchased, setPurchased] = useState({}); // User's owned pets
+  const [currentMascot, setCurrentMascot] = useState(null); // Displayed pet
+  const [currentAction, setCurrentAction] = useState(null); // Current pet action
+  const [mascotXP, setMascotXP] = useState({}); // XP per pet
+  const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
+  const [renameValue, setRenameValue] = useState(''); // Rename input
+
   // Auto-gain XP every 1 minute for current pet
   useEffect(() => {
     if (!currentMascot) return;
@@ -14,16 +25,6 @@ export default function TamagotchiPage() {
     }, 60000); // 60,000 ms = 1 min
     return () => clearInterval(interval);
   }, [currentMascot]);
-  const [gneePoints, setGneePoints] = useState(0);
-  // State hooks for pets, shop, hive, XP, etc.
-  const [shopPets, setShopPets] = useState([]); // List of available pets
-  const [petActionsMap, setPetActionsMap] = useState({}); // Map: pet name -> actions
-  const [purchased, setPurchased] = useState({}); // User's owned pets
-  const [currentMascot, setCurrentMascot] = useState(null); // Displayed pet
-  const [currentAction, setCurrentAction] = useState(null); // Current pet action
-  const [mascotXP, setMascotXP] = useState({}); // XP per pet
-  const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
-  const [renameValue, setRenameValue] = useState(''); // Rename input
 
   // Dynamically detect pets and actions from asset folders
   useEffect(() => {

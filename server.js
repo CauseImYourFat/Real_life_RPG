@@ -15,7 +15,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 // MongoDB setup
 const mongoose = require('mongoose');
-const fs = require('fs');
+// Removed duplicate fs require
 // Always load .env.local first for local dev, fallback to .env
 require('dotenv').config({ path: '.env.local' });
 // Load Google OAuth credentials

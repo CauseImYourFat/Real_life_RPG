@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import ahhhGif from '../../assets/ahhh.gif';
 import zumoBanditRunGif from '../../assets/zumo-bandit-run.gif';
+import googleLogo from '../../assets/google-logo.png';
 import userDataService from '../services/UserDataService';
 
 function AuthPage({ onLogin }) {
@@ -178,7 +179,7 @@ function AuthPage({ onLogin }) {
               }}
             >
               <img
-                src="https://developers.google.com/identity/images/g-logo.png"
+                src={googleLogo}
                 alt="Google logo"
                 style={{ width: 22, height: 22, background: 'none', borderRadius: '50%' }}
               />

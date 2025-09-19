@@ -50,5 +50,6 @@ module.exports = {
     })
   ],
   target: 'web',
-  mode: 'production'
+  mode: 'production',
+  devtool: 'source-map'
 };

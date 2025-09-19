@@ -3,7 +3,51 @@ import React, { useEffect, useState } from 'react';
 import userDataService from '../services/UserDataService';
 
 // Skeleton for TamagotchiPage, compatible with webapp architecture
-export default function TamagotchiPage() {
+import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
+
+export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
+  // XP boost state
+  const [showBoost, setShowBoost] = useState(false);
+  const [boostAmount, setBoostAmount] = useState(0);
+
+  // Calculate overall health (copied from HealthPage.js)
+  function calculateOverallHealth(healthData) {
+    const metrics = healthData.metrics || {};
+    let score = 100;
+    if (metrics.weight && metrics.height) {
+      const bmi = metrics.weight / ((metrics.height / 100) ** 2);
+      if (bmi < 18.5 || bmi > 30) score -= 10;
+      else if (bmi < 20 || bmi > 25) score -= 5;
+    }
+    if (metrics.exerciseFrequency) {
+      if (metrics.exerciseFrequency < 2) score -= 15;
+      else if (metrics.exerciseFrequency < 3) score -= 5;
+    }
+    if (metrics.averageSleep) {
+      if (metrics.averageSleep < 6 || metrics.averageSleep > 9) score -= 10;
+      else if (metrics.averageSleep < 7 || metrics.averageSleep > 8) score -= 5;
+    }
+    return Math.max(0, Math.min(100, score));
+  }
+
+  // Calculate total skill points (copied from SkillsPage.js)
+  function getTotalSkillPoints(skillData) {
+    let total = 0;
+    Object.values(skillData).forEach(category => {
+      Object.values(category).forEach(level => {
+        total += level;
+      });
+    });
+    return total;
+  }
+
+  // Calculate boost
+  function getXPBoost() {
+    let boost = 0;
+    if (calculateOverallHealth(healthData) > 80) boost += 0.5;
+    if (getTotalSkillPoints(skillData) > 50) boost += 0.5;
+    return boost;
+  }
   // State hooks for pets, shop, hive, XP, etc.
   const [gneePoints, setGneePoints] = useState(0);
   const [shopPets, setShopPets] = useState([]); // List of available pets
@@ -74,11 +118,18 @@ export default function TamagotchiPage() {
   // Action buttons for mascot (dynamic)
   const petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
 
-  // Handle action click (gain XP)
+  // Handle action click (gain XP with boost)
   const handleAction = async (action) => {
     setCurrentAction(action);
-    // Gain XP for mascot
-    await userDataService.gainXP(currentMascot, 1);
+    let baseXP = 1;
+    let boost = getXPBoost();
+    let totalXP = baseXP + Math.floor(baseXP * boost);
+    if (boost > 0) {
+      setBoostAmount(boost);
+      setShowBoost(true);
+      setTimeout(() => setShowBoost(false), 1200);
+    }
+    await userDataService.gainXP(currentMascot, totalXP);
     // Reload XP
     const tama = await userDataService.getTamagotchi();
     setMascotXP(tama.mascotXP || {});
@@ -160,9 +211,32 @@ export default function TamagotchiPage() {
       </div>
       {/* Mascot display */}
       {currentMascot ? (
-        <div style={{ margin: '32px auto 0 auto', textAlign: 'center', color: '#ccc', fontSize: '1.1em' }}>
-          <div style={{ width: 200, height: 200, margin: 'auto', background: 'transparent', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002' }}>
+        <div style={{ margin: '32px auto 0 auto', textAlign: 'center', color: '#ccc', fontSize: '1.1em', position: 'relative' }}>
+          <div style={{ width: 200, height: 200, margin: 'auto', background: 'transparent', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', position: 'relative' }}>
             <img src={getMascotImg(currentMascot, currentAction || 'wake')} alt={currentMascot} style={{ width: 180, height: 180 }} />
+            {/* Floating boost UI */}
+            {showBoost && (
+              <div style={{
+                position: 'absolute',
+                top: 10,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                background: '#ffd700',
+                color: '#222',
+                padding: '8px 18px',
+                borderRadius: '18px',
+                fontWeight: 700,
+                fontSize: '1.1em',
+                boxShadow: '0 2px 8px #0004',
+                zIndex: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8
+              }}>
+                <img src={pixelHeartGif} alt="Boost" style={{ width: 28, height: 28, marginRight: 6 }} />
+                +{Math.floor(boostAmount * 100)}% XP Boost!
+              </div>
+            )}
           </div>
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 12 }}>

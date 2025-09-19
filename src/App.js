@@ -179,7 +179,9 @@ function App() {
   { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
   { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
   { id: 'export', name: 'Data Export', icon: '📊' },
-    { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' }
+    { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' },
+    { id: 'eyes', name: 'Eyes', icon: '👀' }
+import EyesPage from './components/EyesPage';
   ];
 
   // Show loading screen
@@ -270,6 +272,9 @@ function App() {
         )}
         {activeTab === 'tamagotchi' && (
           <TamagotchiPage />
+        )}
+        {activeTab === 'eyes' && (
+          <EyesPage />
         )}
       </main>
 

@@ -59,16 +59,24 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
   const [renameValue, setRenameValue] = useState(''); // Rename input
 
-  // Auto-gain XP every 1 minute for current pet
+  // Auto-gain XP every 1 minute for current pet, with boost and floating UI
   useEffect(() => {
     if (!currentMascot) return;
     const interval = setInterval(async () => {
-      await userDataService.gainXP(currentMascot, 1);
+      let baseXP = 1;
+      let boost = getXPBoost();
+      let totalXP = baseXP + Math.floor(baseXP * boost);
+      if (boost > 0) {
+        setBoostAmount(boost);
+        setShowBoost(true);
+        setTimeout(() => setShowBoost(false), 1200);
+      }
+      await userDataService.gainXP(currentMascot, totalXP);
       const tama = await userDataService.getTamagotchi();
       setMascotXP(tama.mascotXP || {});
     }, 60000); // 60,000 ms = 1 min
     return () => clearInterval(interval);
-  }, [currentMascot]);
+  }, [currentMascot, healthData, skillData]);
 
   // Dynamically detect pets and actions from asset folders
   useEffect(() => {
@@ -221,8 +229,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
                 top: 10,
                 left: '50%',
                 transform: 'translateX(-50%)',
-                background: '#ffd700',
-                color: '#222',
+                background: 'transparent',
                 padding: '8px 18px',
                 borderRadius: '18px',
                 fontWeight: 700,
@@ -231,10 +238,28 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
                 zIndex: 10,
                 display: 'flex',
                 alignItems: 'center',
-                gap: 8
+                gap: 8,
+                overflow: 'hidden'
               }}>
                 <img src={pixelHeartGif} alt="Boost" style={{ width: 28, height: 28, marginRight: 6 }} />
-                +{Math.floor(boostAmount * 100)}% XP Boost!
+                <span className="xp-boost-wave" style={{
+                  background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
+                  backgroundSize: '100% 200%',
+                  backgroundPosition: '0 100%',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'waveColorMove 1.2s linear infinite',
+                  display: 'inline-block',
+                  fontWeight: 700
+                }}>
+                  +{Math.floor(boostAmount * 100)}% XP Boost!
+                </span>
+                <style>{`
+                  @keyframes waveColorMove {
+                    0% { background-position: 0 100%; }
+                    100% { background-position: 0 0%; }
+                  }
+                `}</style>
               </div>
             )}
           </div>

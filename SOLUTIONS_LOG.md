@@ -1,3 +1,8 @@
+## Important Note
+
+Never run tests on local development. Always deploy and test directly on the cloud.
+
+Reason: Running tests locally can confuse the logic and AI, mixing stories between two structures and causing errors. For consistency and reliability, only use cloud deployment for testing and validation.
 ## [2025-09-17] Tamagotchi Shop Monetization & Dynamic Actions
 
 **Problem:**

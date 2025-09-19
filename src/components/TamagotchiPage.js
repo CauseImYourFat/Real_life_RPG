@@ -51,7 +51,7 @@ export default function TamagotchiPage() {
       const tama = await userDataService.getTamagotchi();
       if (tama) {
         // Shop pets: always show all asset pets
-        setShopPets(assetShopPets);
+        // Use shopPets from state or fallback to default
         setPurchased(tama.purchased || {});
         setCurrentMascot(tama.currentMascot || null);
         setMascotXP(tama.mascotXP || {});

@@ -4,6 +4,16 @@ import userDataService from '../services/UserDataService';
 
 // Skeleton for TamagotchiPage, compatible with webapp architecture
 export default function TamagotchiPage() {
+  // Auto-gain XP every 1 minute for current pet
+  useEffect(() => {
+    if (!currentMascot) return;
+    const interval = setInterval(async () => {
+      await userDataService.gainXP(currentMascot, 1);
+      const tama = await userDataService.getTamagotchi();
+      setMascotXP(tama.mascotXP || {});
+    }, 60000); // 60,000 ms = 1 min
+    return () => clearInterval(interval);
+  }, [currentMascot]);
   const [gneePoints, setGneePoints] = useState(0);
   // State hooks for pets, shop, hive, XP, etc.
   const [shopPets, setShopPets] = useState([]); // List of available pets
@@ -120,11 +130,11 @@ export default function TamagotchiPage() {
   const calcLevel = (mascot) => {
     let xp = mascotXP[mascot] || 0;
     let level = 1;
-    let req = 100;
-    while (xp >= req) {
-      xp -= req;
+    let xpNeeded = 5;
+    while (xp >= xpNeeded) {
+      xp -= xpNeeded;
       level++;
-      req = Math.floor(100 * (1 + 0.05 * level));
+      xpNeeded += 5; // Each level needs 5 more XP than previous
     }
     return level;
   };

@@ -251,6 +251,8 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         } else if (action === 'setCurrent' && mascotType) {
             tamagotchi.currentMascot = mascotType;
         } else if (action === 'gainXP' && mascotType && amount) {
+            // Always merge mascotXP, never overwrite
+            tamagotchi.mascotXP = tamagotchi.mascotXP || {};
             const prevXP = tamagotchi.mascotXP[mascotType] || 0;
             tamagotchi.mascotXP[mascotType] = prevXP + amount;
             console.log(`[BACKEND] XP gain for user ${userId}, pet ${mascotType}: ${prevXP} + ${amount} = ${tamagotchi.mascotXP[mascotType]}`);

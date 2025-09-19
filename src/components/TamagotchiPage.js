@@ -84,14 +84,22 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       }
       // Debug log before XP update
       console.log(`[Auto XP] Adding ${totalXP} XP to ${currentMascot} (base: ${baseXP}, boost: ${boost})`);
-      await userDataService.gainXP(currentMascot, totalXP);
-      // Debug log after XP update
-      const tama = await userDataService.getTamagotchi();
-      console.log(`[Auto XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
-      setMascotXP(prev => ({
-        ...prev,
-        [currentMascot]: tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP)
-      }));
+      try {
+        await userDataService.gainXP(currentMascot, totalXP);
+        const tama = await userDataService.getTamagotchi();
+        console.log(`[Auto XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
+        setMascotXP(prev => ({
+          ...prev,
+          [currentMascot]: tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP)
+        }));
+      } catch (err) {
+        console.error('[Auto XP] Backend error:', err);
+        // Fallback: update XP locally if backend fails
+        setMascotXP(prev => ({
+          ...prev,
+          [currentMascot]: (prev[currentMascot] || 0) + totalXP
+        }));
+      }
     }, 60000); // 60,000 ms = 1 min
     return () => clearInterval(interval);
   }, [currentMascot, healthData, skillData]);

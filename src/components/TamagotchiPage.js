@@ -150,7 +150,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   }, []);
 
   // Action buttons for mascot (dynamic)
-  const petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
+  let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
+  // Always unlock at least one action button for testing
+  if (petActions.length === 0) {
+    petActions = ['wake'];
+  }
 
   // Handle action click (gain XP with boost)
   const handleAction = async (action) => {
@@ -163,9 +167,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       setShowBoost(true);
       setTimeout(() => setShowBoost(false), 1200);
     }
+    console.log(`[Manual XP] Adding ${totalXP} XP to ${currentMascot} (base: ${baseXP}, boost: ${boost})`);
     await userDataService.gainXP(currentMascot, totalXP);
     // Reload XP
     const tama = await userDataService.getTamagotchi();
+    console.log(`[Manual XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
     setMascotXP(tama.mascotXP || {});
   };
 

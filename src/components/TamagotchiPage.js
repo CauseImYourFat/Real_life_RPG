@@ -130,11 +130,11 @@ export default function TamagotchiPage() {
   const calcLevel = (mascot) => {
     let xp = mascotXP[mascot] || 0;
     let level = 1;
-    let xpNeeded = 5;
+    let xpNeeded = 100;
     while (xp >= xpNeeded) {
       xp -= xpNeeded;
       level++;
-      xpNeeded += 5; // Each level needs 5 more XP than previous
+      xpNeeded = Math.floor(xpNeeded * 1.05); // Each level needs 5% more XP than previous
     }
     return level;
   };

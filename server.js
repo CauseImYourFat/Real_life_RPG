@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// Only require fs once at the top of the file
 const fs = require('fs');
 const cors = require('cors');
 const bcrypt = require('bcrypt');

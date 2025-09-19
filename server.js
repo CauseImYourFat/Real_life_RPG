@@ -277,14 +277,22 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             logMascotXPToFile('mascotXP after increment', tamagotchi.mascotXP);
         }
         // Always merge and retain all fields
-        mongoUserData.tamagotchi = tamagotchi;
-    mongoUserData.lastSaved = new Date().toISOString();
-    await mongoUserData.save();
-    // Confirm mascotXP after save
-    const confirmUserData = await UserData.findOne({ userId });
-    console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
-    logMascotXPToFile('mascotXP after save', confirmUserData.tamagotchi?.mascotXP);
-    res.json(tamagotchi);
+        // Only update mascotXP if it was changed in this request
+        const dbTama = mongoUserData.tamagotchi || {};
+        dbTama.mascotXP = tamagotchi.mascotXP; // Persist the updated mascotXP
+        dbTama.purchased = tamagotchi.purchased;
+        dbTama.hive = tamagotchi.hive;
+        dbTama.shop = tamagotchi.shop;
+        dbTama.gneePoints = tamagotchi.gneePoints;
+        dbTama.currentMascot = tamagotchi.currentMascot;
+        mongoUserData.tamagotchi = dbTama;
+        mongoUserData.lastSaved = new Date().toISOString();
+        await mongoUserData.save();
+        // Confirm mascotXP after save
+        const confirmUserData = await UserData.findOne({ userId });
+        console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
+        logMascotXPToFile('mascotXP after save', confirmUserData.tamagotchi?.mascotXP);
+        res.json(confirmUserData.tamagotchi);
     } catch (error) {
         console.error('Update tamagotchi error:', error);
         res.status(500).json({ error: 'Internal server error' });

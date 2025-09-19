@@ -222,46 +222,45 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         <div style={{ margin: '32px auto 0 auto', textAlign: 'center', color: '#ccc', fontSize: '1.1em', position: 'relative' }}>
           <div style={{ width: 200, height: 200, margin: 'auto', background: 'transparent', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', position: 'relative' }}>
             <img src={getMascotImg(currentMascot, currentAction || 'wake')} alt={currentMascot} style={{ width: 180, height: 180 }} />
-            {/* Floating boost UI */}
-            {showBoost && (
-              <div style={{
-                position: 'absolute',
-                top: 10,
-                left: '50%',
-                transform: 'translateX(-50%)',
-                background: 'transparent',
-                padding: '8px 18px',
-                borderRadius: '18px',
-                fontWeight: 700,
-                fontSize: '1.1em',
-                boxShadow: '0 2px 8px #0004',
-                zIndex: 10,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-                overflow: 'hidden'
+            {/* Fixed boost UI at right of pet display */}
+            <div style={{
+              position: 'absolute',
+              top: 20,
+              right: -220,
+              minWidth: 180,
+              background: 'transparent',
+              padding: '8px 18px',
+              borderRadius: '18px',
+              fontWeight: 700,
+              fontSize: '1.1em',
+              boxShadow: '0 2px 8px #0004',
+              zIndex: 10,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              overflow: 'hidden',
+              height: '40px'
+            }}>
+              <img src={pixelHeartGif} alt="Boost" style={{ width: 28, height: 28, marginRight: 6 }} />
+              <span className="xp-boost-wave" style={{
+                background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
+                backgroundSize: '100% 200%',
+                backgroundPosition: '0 100%',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                animation: 'waveColorMove 1.2s linear infinite',
+                display: 'inline-block',
+                fontWeight: 700
               }}>
-                <img src={pixelHeartGif} alt="Boost" style={{ width: 28, height: 28, marginRight: 6 }} />
-                <span className="xp-boost-wave" style={{
-                  background: 'linear-gradient(180deg, #ffd700 0%, #00d4aa 50%, #ff6b6b 100%)',
-                  backgroundSize: '100% 200%',
-                  backgroundPosition: '0 100%',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  animation: 'waveColorMove 1.2s linear infinite',
-                  display: 'inline-block',
-                  fontWeight: 700
-                }}>
-                  +{Math.floor(boostAmount * 100)}% XP Boost!
-                </span>
-                <style>{`
-                  @keyframes waveColorMove {
-                    0% { background-position: 0 100%; }
-                    100% { background-position: 0 0%; }
-                  }
-                `}</style>
-              </div>
-            )}
+                {getXPBoost() > 0 ? `+${Math.floor(getXPBoost() * 100)}% XP Boost!` : 'No Boost'}
+              </span>
+              <style>{`
+                @keyframes waveColorMove {
+                  0% { background-position: 0 100%; }
+                  100% { background-position: 0 0%; }
+                }
+              `}</style>
+            </div>
           </div>
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 12 }}>

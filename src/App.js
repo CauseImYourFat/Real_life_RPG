@@ -11,6 +11,7 @@ import ProfilePage from './components/ProfilePage';
 import SettingsPage from './components/SettingsPage';
 import userDataService from './services/UserDataService';
 import './styles/App.css';
+import EyesPage from './components/EyesPage';
 
 function App() {
   // const [showRocket, setShowRocket] = useState(false);
@@ -179,9 +180,8 @@ function App() {
   { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
   { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
   { id: 'export', name: 'Data Export', icon: '📊' },
-    { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' },
-    { id: 'eyes', name: 'Eyes', icon: '👀' }
-import EyesPage from './components/EyesPage';
+  { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' },
+  { id: 'eyes', name: 'Eyes', icon: '👀' }
   ];
 
   // Show loading screen

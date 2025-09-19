@@ -1,4 +1,4 @@
-import dragonFireGif from '../assets/dragon-fire.gif';
+import dragonFireGif from '../dist/assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
 import SkillsPage from './components/SkillsPage';
 import TamagotchiPage from './components/TamagotchiPage';

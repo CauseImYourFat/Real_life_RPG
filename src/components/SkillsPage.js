@@ -1,6 +1,6 @@
 export default SkillsPage;
 import React, { useState, useEffect } from 'react';
-import carpenterGif from '../../assets/Carpenter_Paschalis_Rathskellers.gif';
+import carpenterGif from '../../dist/assets/Carpenter_Paschalis_Rathskellers.gif';
 import SkillCategory from './SkillCategory';
 import SkillModal from './SkillModal';
 

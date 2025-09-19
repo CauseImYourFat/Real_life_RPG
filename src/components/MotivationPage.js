@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import catflyRainbowGif from '../../assets/catfly-rainbow.gif';
+import catflyRainbowGif from '../../dist/assets/catfly-rainbow.gif';
 
 function MotivationPage({ skillData, lastLogin }) {
   const [dailyQuote, setDailyQuote] = useState(null);

@@ -180,10 +180,8 @@ function App() {
   { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
   { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
   { id: 'export', name: 'Data Export', icon: '📊' },
-  { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' },
-  { id: 'eyes', name: 'Eyes', icon: '👀' }
+  { id: 'tamagotchi', name: 'Tamagotchi', icon: '�' }
   ];
-
   // Show loading screen
   if (loading) {
     return (
@@ -272,9 +270,6 @@ function App() {
         )}
         {activeTab === 'tamagotchi' && (
           <TamagotchiPage />
-        )}
-        {activeTab === 'eyes' && (
-          <EyesPage />
         )}
       </main>
 

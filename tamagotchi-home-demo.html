@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - Tamagotchi Evolution</title>
+  <link rel="stylesheet" href="/assets/css/styles.css">
+  <style>
+    body { background: #181818; color: #fff; font-family: Arial, sans-serif; margin: 0; }
+    .container { max-width: 600px; margin: 40px auto; padding: 32px; background: #222; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+    .header { display: flex; align-items: center; gap: 1em; margin-bottom: 2em; }
+    .tamagotchi { display: flex; flex-direction: column; align-items: center; margin-bottom: 2em; }
+    .tama-img { width: 120px; height: 120px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+    .tama-stats { margin-top: 1em; font-size: 1.1em; color: #00d4aa; }
+    .progress-bar { background: #444; border-radius: 8px; overflow: hidden; height: 18px; margin-top: 8px; }
+    .progress { background: #00d4aa; height: 100%; transition: width 0.3s; }
+    .evolution { margin-top: 2em; font-size: 1.05em; color: #ffd700; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <span style="font-size:2em;">🏠</span>
+      <h1 style="margin:0;">Home</h1>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <button id="hiveBtn" style="background:#00d4aa;color:#fff;padding:8px 18px;border:none;border-radius:18px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">🐝 Hive</button>
+      <button id="shopBtn" style="background:#ffd700;color:#222;padding:8px 18px;border:none;border-radius:18px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">🛒 Shop</button>
+    </div>
+    <div id="shopPopup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#222;padding:32px 24px;border-radius:18px;max-width:420px;margin:auto;box-shadow:0 2px 16px #0006;">
+        <h2 style="color:#ffd700;text-align:center;margin-top:0;">Tamagotchi Shop</h2>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;justify-items:center;">
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#f9c;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='assets/donut.ico' alt='Donut Dragon' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Donut Dragon</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('donut')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#bfa;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='https://pixelarticons.com/icons/dog.png' alt='Pixel Dog' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Pixel Dog</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('dog')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#acf;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='https://pixelarticons.com/icons/cat.png' alt='Pixel Cat' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Pixel Cat</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('cat')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#aef;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='https://pixelarticons.com/icons/dragon.png' alt='Pixel Dragon' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Pixel Dragon</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('dragon')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#0d4;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='https://pixelarticons.com/icons/blob.png' alt='Pixel Blob' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Pixel Blob</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('blob')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#ffd;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='https://pixelarticons.com/icons/egg.png' alt='Pixel Egg' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">Pixel Egg</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('egg')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+        </div>
+        <button onclick="closeShop()" style="margin-top:24px;background:#ffd700;color:#222;padding:8px 24px;border:none;border-radius:18px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;display:block;margin-left:auto;margin-right:auto;">Close</button>
+      </div>
+    </div>
+    <div id="hivePopup" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;">
+      <div style="background:#222;padding:32px 24px;border-radius:18px;max-width:420px;margin:auto;box-shadow:0 2px 16px #0006;">
+        <h2 style="color:#00d4aa;text-align:center;margin-top:0;">Your Hive</h2>
+        <div id="hiveList" style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;justify-items:center;"></div>
+        <button onclick="closeHive()" style="margin-top:24px;background:#00d4aa;color:#fff;padding:8px 24px;border:none;border-radius:18px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;display:block;margin-left:auto;margin-right:auto;">Close</button>
+      </div>
+    </div>
+  <div id="tamaMascot" style="margin:32px auto 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;"></div>
+  <div id="actionButtons" style="display:flex;gap:12px;justify-content:center;margin-top:12px;"></div>
+    <div class="tama-stats">
+      <div><b>Name:</b> Gnee!!</div>
+      <div><b>Mood:</b> Happy 😊</div>
+      <div><b>Level:</b> 5</div>
+      <div class="progress-bar"><div class="progress" style="width: 60%;"></div></div>
+      <div style="font-size:0.95em; color:#aaa; margin-top:4px;">Progress to next evolution</div>
+    </div>
+    <div class="evolution" style="display:flex;align-items:center;gap:10px;">
+      <b>Evolution:</b> <span id="evolutionName">Donut Dragon</span>
+      <button id="editDisplayPetBtn" style="background:#ffd700;color:#222;padding:2px 10px;border:none;border-radius:8px;font-size:0.95em;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Edit</button>
+    </div>
+    // Edit Displayed Pet Modal
+    if (!document.getElementById('editDisplayPetModal')) {
+      const modal = document.createElement('div');
+      modal.id = 'editDisplayPetModal';
+      modal.style = 'display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2100;align-items:center;justify-content:center;';
+      modal.innerHTML = `<div style='background:#222;padding:32px 24px;border-radius:18px;max-width:340px;margin:auto;box-shadow:0 2px 16px #0006;'>
+        <h2 style='color:#ffd700;text-align:center;margin-top:0;'>Edit Displayed Tamagotchi</h2>
+        <div style='margin-bottom:16px;'>
+          <label style='color:#fff;'>Rename:</label>
+          <input id='displayPetRenameInput' type='text' style='width:100%;padding:6px 10px;border-radius:8px;border:none;margin-top:6px;background:#333;color:#fff;font-size:1em;' />
+        </div>
+        <button id='displayRenamePetBtn' style='background:#00d4aa;color:#fff;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-bottom:10px;cursor:pointer;'>Rename</button>
+        <button id='closeEditDisplayPetBtn' style='background:#444;color:#fff;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-top:10px;cursor:pointer;'>Close</button>
+      </div>`;
+      document.body.appendChild(modal);
+    }
+    document.getElementById('editDisplayPetBtn').onclick = function() {
+      const modal = document.getElementById('editDisplayPetModal');
+      modal.style.display = 'flex';
+      document.getElementById('displayPetRenameInput').value = purchased[currentMascot]?.name || currentMascot;
+    };
+    document.getElementById('displayRenamePetBtn').onclick = function() {
+      const newName = document.getElementById('displayPetRenameInput').value.trim();
+      if (newName) {
+        if (!purchased[currentMascot]) purchased[currentMascot] = {};
+        purchased[currentMascot].name = newName;
+        document.getElementById('editDisplayPetModal').style.display = 'none';
+        updateEvolutionName();
+      }
+    };
+    document.getElementById('closeEditDisplayPetBtn').onclick = function() {
+      document.getElementById('editDisplayPetModal').style.display = 'none';
+    };
+    function updateEvolutionName() {
+      evolutionName.textContent = purchased[currentMascot]?.name || currentMascot;
+    }
+    <div style="margin-top:2em; text-align:center; color:#ccc; font-size:1em;">
+      <p>Your tamagotchi evolves as you complete skills and earn points!<br>
+      Keep progressing to unlock new forms and animations.</p>
+    </div>
+  </div>
+  <script>
+    const tamaMascot = document.getElementById('tamaMascot');
+    const evolutionName = document.getElementById('evolutionName');
+    const shopBtn = document.getElementById('shopBtn');
+    const shopPopup = document.getElementById('shopPopup');
+    const hiveBtn = document.getElementById('hiveBtn');
+    const hivePopup = document.getElementById('hivePopup');
+    const hiveList = document.getElementById('hiveList');
+    let purchased = { 'white dog': true };
+    // Only show pets from assets/pets/shop in the shop
+    // Demo: hardcoded shop pets, update to scan folder for real app
+    let shopPets = ['white dog'];
+    let petActions = {
+      'white dog': ['wake', 'run', 'sleep']
+    };
+    let petActionGifs = {
+      'white dog': {
+        wake: 'assets/pets/shop/white dog/white-dog-wake.gif',
+        run: 'assets/pets/shop/white dog/white-dog-run.gif',
+        sleep: 'assets/pets/shop/white dog/white-dog-sleep.gif'
+      }
+    };
+    let currentMascot = 'white dog';
+    let currentAction = 'wake';
+    let actionInterval = null;
+
+    function renderMascot(type) {
+      currentMascot = type;
+      // Default to wake action
+      currentAction = 'wake';
+      updateMascotImg();
+      renderActionButtons();
+      updateTamaStats();
+      // Start cycling actions every minute
+      if (actionInterval) clearInterval(actionInterval);
+      actionInterval = setInterval(() => {
+        cycleAction();
+      }, 60000);
+    }
+
+    function updateEvolutionName() {
+      evolutionName.textContent = purchased[currentMascot]?.name || currentMascot;
+    }
+    function updateMascotImg() {
+      const gif = petActionGifs[currentMascot][currentAction];
+      tamaMascot.innerHTML = `<div style="width:200px;height:200px;background:transparent;border-radius:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;"><img src='${gif}' alt='${currentMascot} ${currentAction}' style='width:180px;height:180px;' /></div>`;
+      updateEvolutionName();
+    }
+
+    function renderActionButtons() {
+      const actions = petActions[currentMascot];
+      const btns = actions.map(action => `<button onclick="setAction('${action}')" style="background:#222;color:#fff;padding:6px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">${action.charAt(0).toUpperCase()+action.slice(1)}</button>`).join('');
+      document.getElementById('actionButtons').innerHTML = btns;
+    }
+
+    function setAction(action) {
+      currentAction = action;
+      updateMascotImg();
+      mascotXP[currentMascot] = (mascotXP[currentMascot] || 0) + 0.2;
+      updateTamaStats();
+    }
+
+    function cycleAction() {
+      const actions = petActions[currentMascot];
+      let idx = actions.indexOf(currentAction);
+      idx = (idx + 1) % actions.length;
+      currentAction = actions[idx];
+      updateMascotImg();
+      updateTamaStats();
+    }
+    function buyMascot(type) {
+      purchased[type] = true;
+      renderMascot(type);
+      shopPopup.style.display = 'none';
+      alert('Purchased! Added to your Hive.');
+    }
+    shopBtn.onclick = () => {
+      // Render only shop pets
+      const shopGrid = shopPopup.querySelector('div[style*="display:grid"]');
+      shopGrid.innerHTML = '';
+      shopPets.forEach(folder => {
+        const petName = purchased[folder]?.name || folder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const wakeGif = petActionGifs[folder]?.wake || '';
+        shopGrid.innerHTML += `
+          <div style="text-align:center;">
+            <div style="width:70px;height:70px;background:#fff;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;">
+              <img src='${wakeGif}' alt='${petName}' style='width:48px;height:48px;' />
+            </div>
+            <div style="color:#fff;font-size:1em;">${petName}</div>
+            <div style="color:#ffd700;font-size:0.95em;">Free</div>
+            <button onclick="buyMascot('${folder}')" style="margin-top:6px;background:#ffd700;color:#222;padding:4px 16px;border:none;border-radius:12px;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;">Buy</button>
+          </div>
+        `;
+      });
+      shopPopup.style.display = 'flex';
+    };
+    function closeShop() { shopPopup.style.display = 'none'; }
+    hiveBtn.onclick = () => {
+      hivePopup.style.display = 'flex';
+      hiveList.innerHTML = '';
+      Object.keys(purchased).forEach(type => {
+        let img, name;
+        if(type === 'donut') { img = 'assets/donut.ico'; name = purchased[type].name || 'Donut Dragon'; }
+        if(type === 'dog') { img = 'https://pixelarticons.com/icons/dog.png'; name = purchased[type].name || 'Pixel Dog'; }
+        if(type === 'cat') { img = 'https://pixelarticons.com/icons/cat.png'; name = purchased[type].name || 'Pixel Cat'; }
+        if(type === 'dragon') { img = 'https://pixelarticons.com/icons/dragon.png'; name = purchased[type].name || 'Pixel Dragon'; }
+        if(type === 'blob') { img = 'https://pixelarticons.com/icons/blob.png'; name = purchased[type].name || 'Pixel Blob'; }
+        if(type === 'egg') { img = 'https://pixelarticons.com/icons/egg.png'; name = purchased[type].name || 'Pixel Egg'; }
+        hiveList.innerHTML += `<div style='text-align:center;position:relative;'>
+          <div style='cursor:pointer;' onclick='window.selectHiveMascot && window.selectHiveMascot("${type}")'>
+            <div style='width:70px;height:70px;background:#222;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px #0002;margin-bottom:8px;'>
+              <img src='${img}' alt='${name}' style='width:48px;height:48px;'/>
+            </div>
+            <div style='color:#fff;font-size:1em;'>${name}</div>
+          </div>
+          <button onclick='window.editPet && window.editPet("${type}")' style='position:absolute;top:4px;right:4px;background:#ffd700;color:#222;padding:2px 10px;border:none;border-radius:8px;font-size:0.9em;font-weight:600;box-shadow:0 2px 8px #0002;cursor:pointer;'>Edit</button>
+        </div>`;
+      });
+    // Edit Pet Modal
+    if (!document.getElementById('editPetModal')) {
+      const modal = document.createElement('div');
+      modal.id = 'editPetModal';
+      modal.style = 'display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);z-index:2000;align-items:center;justify-content:center;';
+      modal.innerHTML = `<div style='background:#222;padding:32px 24px;border-radius:18px;max-width:340px;margin:auto;box-shadow:0 2px 16px #0006;'>
+        <h2 style='color:#ffd700;text-align:center;margin-top:0;'>Edit Tamagotchi</h2>
+        <div style='margin-bottom:16px;'>
+          <label style='color:#fff;'>Rename:</label>
+          <input id='petRenameInput' type='text' style='width:100%;padding:6px 10px;border-radius:8px;border:none;margin-top:6px;background:#333;color:#fff;font-size:1em;' />
+        </div>
+        <button id='renamePetBtn' style='background:#00d4aa;color:#fff;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-bottom:10px;cursor:pointer;'>Rename</button>
+        <button id='deletePetBtn' style='background:#d44;color:#fff;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-bottom:10px;cursor:pointer;'>Delete</button>
+        <div style='margin-bottom:10px;'>
+          <label style='color:#fff;'>Transfer to user:</label>
+          <input id='transferUserInput' type='text' placeholder='Enter username' style='width:100%;padding:6px 10px;border-radius:8px;border:none;margin-top:6px;background:#333;color:#fff;font-size:1em;' />
+        </div>
+        <button id='transferPetBtn' style='background:#ffd700;color:#222;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-bottom:10px;cursor:pointer;'>Transfer</button>
+        <button id='closeEditPetBtn' style='background:#444;color:#fff;padding:6px 18px;border:none;border-radius:12px;font-weight:600;margin-top:10px;cursor:pointer;'>Close</button>
+      </div>`;
+      document.body.appendChild(modal);
+    }
+    window.editPet = function(type) {
+      const modal = document.getElementById('editPetModal');
+      modal.style.display = 'flex';
+      document.getElementById('petRenameInput').value = purchased[type].name || type;
+      window._editingPetType = type;
+    };
+    document.getElementById('renamePetBtn').onclick = function() {
+      const type = window._editingPetType;
+      const newName = document.getElementById('petRenameInput').value.trim();
+      if (newName) {
+        purchased[type].name = newName;
+        hivePopup.style.display = 'flex';
+        document.getElementById('editPetModal').style.display = 'none';
+        hiveBtn.onclick();
+      }
+    };
+    document.getElementById('deletePetBtn').onclick = function() {
+      const type = window._editingPetType;
+      delete purchased[type];
+      document.getElementById('editPetModal').style.display = 'none';
+      hiveBtn.onclick();
+    };
+    document.getElementById('transferPetBtn').onclick = function() {
+      const type = window._editingPetType;
+      const username = document.getElementById('transferUserInput').value.trim();
+      const validUsers = ['alice', 'bob', 'charlie']; // Simulated user list
+      if (!username) {
+        alert('Please enter a username.');
+        return;
+      }
+      if (!validUsers.includes(username)) {
+        alert('User not found.');
+        return;
+      }
+      if (confirm(`Transfer pet to ${username}?`)) {
+        delete purchased[type];
+        document.getElementById('editPetModal').style.display = 'none';
+        hiveBtn.onclick();
+        alert(`Pet transferred to ${username}!`);
+      }
+    };
+    document.getElementById('closeEditPetBtn').onclick = function() {
+      document.getElementById('editPetModal').style.display = 'none';
+    };
+      window.selectHiveMascot = function(type) {
+        renderMascot(type);
+        hivePopup.style.display = 'none';
+      };
+    };
+    function closeHive() { hivePopup.style.display = 'none'; }
+    // --- Tamagotchi Logic ---
+    // Mock data (replace with real backend values)
+    let userLevel = 5; // Example user level
+    let userMood = 80; // User-driven mood (0-100)
+    let lastOnline = new Date(); // Last online date (simulate)
+    let activePlayers = 12; // Number of active players online
+    // Each mascot tracks its own XP
+    let mascotXP = {
+      'white dog': 0
+    };
+    let xpToNext = 100;
+  // let currentMascot = 'donut'; // removed, now declared above for dynamic pets
+
+    // Simulate last online: 7 days ago for demo
+    lastOnline.setDate(lastOnline.getDate() - 7);
+
+    function calcMood() {
+      // 50% from user, 50% from online status
+      let now = new Date();
+      let daysOffline = Math.floor((now - lastOnline) / (1000 * 60 * 60 * 24));
+      let offlinePenalty = Math.floor(daysOffline / 5) * 10; // -10% per 5 days
+      let onlineMood = Math.max(100 - offlinePenalty, 0);
+      let mood = Math.round((userMood * 0.5) + (onlineMood * 0.5));
+      return mood;
+    }
+
+    function calcTamaLevel(mascot) {
+      // 50% from user level, 50% from XP for this mascot
+      let userPart = userLevel * 0.5;
+      let xpPart = tamaLevelFromXP(mascot);
+      return Math.floor(userPart + xpPart);
+    }
+
+    function tamaLevelFromXP(mascot) {
+      // Calculate level from XP, progressive scaling
+      let level = 1;
+      let xp = mascotXP[mascot];
+      let req = 100;
+      while (xp >= req) {
+        xp -= req;
+        level++;
+        req = Math.floor(100 * (1 + 0.05 * level)); // 100 * (1 + 0.05 * current level)
+      }
+      xpToNext = req - xp;
+      return level * 0.5; // Only 50% weight
+    }
+
+    // Remove old gainXP, now XP is gained by action button
+
+    function updateTamaStats() {
+      // Update mood
+      const moodVal = calcMood();
+      const moodText = moodVal > 80 ? 'Happy 😊' : moodVal > 50 ? 'Okay 😐' : 'Sad 😢';
+      document.querySelector('.tama-stats div:nth-child(2)').innerHTML = `<b>Mood:</b> ${moodText} (${moodVal}%)`;
+      // Update level
+      const lvl = calcTamaLevel(currentMascot);
+      document.querySelector('.tama-stats div:nth-child(3)').innerHTML = `<b>Level:</b> ${lvl}`;
+      // Update progress bar
+      let progress = Math.round((mascotXP[currentMascot] / (mascotXP[currentMascot] + xpToNext)) * 100);
+      document.querySelector('.progress').style.width = progress + '%';
+      document.querySelector('.progress-bar').title = `XP to next: ${xpToNext}`;
+    }
+
+    // Initial render for white dog
+    renderMascot('white dog');
+  </script>
+</body>
+</html>

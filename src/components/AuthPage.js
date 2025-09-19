@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ahhhGif from '../../assets/ahhh.gif';
 import zumoBanditRunGif from '../../assets/zumo-bandit-run.gif';
-import googleLogo from '../../assets/google-logo.png';
+import googleLogo from '../../assets/google-logo.svg';
 import userDataService from '../services/UserDataService';
 
 function AuthPage({ onLogin }) {

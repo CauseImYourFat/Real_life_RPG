@@ -109,6 +109,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-i
 app.use(cors());
 app.use(express.json());
 // Serve static files from 'public' if present, otherwise from root
+// API to list all frog GIFs in Frog folder
+app.get('/api/frog-gifs', (req, res) => {
+    const frogDir = path.join(__dirname, 'dist/assets/pets/shop/Frog');
+    fs.readdir(frogDir, (err, files) => {
+        if (err) return res.status(500).json({ error: 'Cannot read frog GIFs folder' });
+        const gifs = files.filter(f => f.endsWith('.gif'));
+        res.json(gifs);
+    });
+});
 const distDir = path.join(__dirname, 'dist');
 const assetsDir = path.join(__dirname, 'assets');
 app.use('/assets', express.static(assetsDir));

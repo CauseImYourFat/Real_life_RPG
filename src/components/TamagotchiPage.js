@@ -87,18 +87,30 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       try {
         await userDataService.gainXP(currentMascot, totalXP);
         const tama = await userDataService.getTamagotchi();
+        console.log(`[Auto XP] Backend mascotXP:`, tama.mascotXP);
         console.log(`[Auto XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
-        setMascotXP(prev => ({
-          ...prev,
-          [currentMascot]: tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP)
-        }));
+        setMascotXP(prev => {
+          const newXP = tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP);
+          console.log(`[Auto XP] Setting mascotXP for ${currentMascot}:`, newXP);
+          return { ...prev, [currentMascot]: newXP };
+        });
+        // Force XP bar refresh
+        setTimeout(() => {
+          setMascotXP(prev => ({ ...prev }));
+          console.log('[Auto XP] Forced XP bar refresh');
+        }, 100);
       } catch (err) {
         console.error('[Auto XP] Backend error:', err);
         // Fallback: update XP locally if backend fails
-        setMascotXP(prev => ({
-          ...prev,
-          [currentMascot]: (prev[currentMascot] || 0) + totalXP
-        }));
+        setMascotXP(prev => {
+          const newXP = (prev[currentMascot] || 0) + totalXP;
+          console.log(`[Auto XP] Fallback setting mascotXP for ${currentMascot}:`, newXP);
+          return { ...prev, [currentMascot]: newXP };
+        });
+        setTimeout(() => {
+          setMascotXP(prev => ({ ...prev }));
+          console.log('[Auto XP] Forced XP bar refresh (fallback)');
+        }, 100);
       }
     }, 60000); // 60,000 ms = 1 min
     return () => clearInterval(interval);
@@ -171,8 +183,18 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     await userDataService.gainXP(currentMascot, totalXP);
     // Reload XP
     const tama = await userDataService.getTamagotchi();
+    console.log(`[Manual XP] Backend mascotXP:`, tama.mascotXP);
     console.log(`[Manual XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
-    setMascotXP(tama.mascotXP || {});
+    setMascotXP(prev => {
+      const newXP = tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP);
+      console.log(`[Manual XP] Setting mascotXP for ${currentMascot}:`, newXP);
+      return { ...prev, [currentMascot]: newXP };
+    });
+    // Force XP bar refresh
+    setTimeout(() => {
+      setMascotXP(prev => ({ ...prev }));
+      console.log('[Manual XP] Forced XP bar refresh');
+    }, 100);
   };
 
   // Handle mascot edit (rename)

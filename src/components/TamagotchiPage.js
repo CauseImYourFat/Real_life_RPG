@@ -72,9 +72,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
 
   // Save XP/level and currentMascot to backend whenever petXP, purchased, or currentMascot changes
   useEffect(() => {
-    if (Object.keys(purchased).length === 0) return;
-    userDataService.saveTamagotchiData?.(petXP, purchased);
-    userDataService.updateTamagotchi?.({ currentMascot });
+  if (Object.keys(purchased).length === 0) return;
+  console.log('[DEBUG] Saving Tamagotchi data:', { petXP, purchased });
+  userDataService.saveTamagotchiData?.(petXP, purchased);
+  console.log('[DEBUG] Updating currentMascot:', currentMascot);
+  userDataService.updateTamagotchi?.({ currentMascot });
   }, [petXP, purchased, currentMascot]);
 
   // Action buttons for mascot (dynamic)

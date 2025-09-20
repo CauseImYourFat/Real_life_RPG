@@ -19,38 +19,40 @@ function SettingsPage({ onClose, currentUser }) {
 
   const showMessage = (text, isError = false) => {
     if (isError) {
-      setError(text);
-      setMessage('');
-    } else {
-      setMessage(text);
-      setError('');
-    }
-    setTimeout(() => {
-      setMessage('');
-      setError('');
-    }, 3000);
-  };
+      return (
+        <div className="settings-page">
+          <div className="settings-overlay" onClick={onClose}></div>
+          <div className="settings-container">
+            <div className="settings-header">
+              <h2>⚙️ Settings</h2>
+              <button className="close-button" onClick={onClose}>✕</button>
+            </div>
 
-  const handleChangeUsername = async () => {
-    if (!newUsername.trim() || newUsername.length < 3) {
-      showMessage('Username must be at least 3 characters long', true);
-      return;
-    }
-
-    if (newUsername.trim() === currentUser) {
-      showMessage('New username must be different from current username', true);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await userDataService.changeUsername(newUsername.trim());
-      showMessage('Username changed successfully! Please re-login to see changes.');
-      setNewUsername('');
-    } catch (err) {
-      showMessage(err.message || 'Failed to change username', true);
-    } finally {
-      setLoading(false);
+            <div className="settings-content">
+              <div className="settings-sidebar">
+                {sections.map(section => (
+                  <button
+                    key={section.id}
+                    className={`sidebar-item${activeSection === section.id ? ' active' : ''}`}
+                    onClick={() => setActiveSection(section.id)}
+                  >
+                    <span className="sidebar-icon">{section.icon}</span>
+                    <span>{section.name}</span>
+                  </button>
+                ))}
+              </div>
+              <div className="settings-main">
+                {/* ...existing settings UI... */}
+                <button onClick={onRefreshData} style={{ background: '#00d4aa', color: '#fff', padding: '6px 18px', border: 'none', borderRadius: 12, fontWeight: 600, marginTop: 10, cursor: 'pointer' }}>🔄 Refresh Data</button>
+              </div>
+            </div>
+          </div>
+          {/* Styles should be outside the return, or use a <style> tag inside the main div if using styled-jsx */}
+          <style jsx>{`
+            /* ...existing styles... */
+          `}</style>
+        </div>
+      );
     }
   };
 

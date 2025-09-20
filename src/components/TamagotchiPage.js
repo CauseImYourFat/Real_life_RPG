@@ -6,115 +6,22 @@ import userDataService from '../services/UserDataService';
 import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
 
 export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
-  // XP boost state
-  const [showBoost, setShowBoost] = useState(false);
-  const [boostAmount, setBoostAmount] = useState(0);
+  // Simple XP/level state for each pet
+  const [petXP, setPetXP] = useState({}); // { petName: xp }
+  const [petLevel, setPetLevel] = useState({}); // { petName: level }
 
-  // Calculate overall health (copied from HealthPage.js)
-  function calculateOverallHealth(healthData) {
-    const metrics = healthData.metrics || {};
-    let score = 100;
-    if (metrics.weight && metrics.height) {
-      const bmi = metrics.weight / ((metrics.height / 100) ** 2);
-      if (bmi < 18.5 || bmi > 30) score -= 10;
-      else if (bmi < 20 || bmi > 25) score -= 5;
-    }
-    if (metrics.exerciseFrequency) {
-      if (metrics.exerciseFrequency < 2) score -= 15;
-      else if (metrics.exerciseFrequency < 3) score -= 5;
-    }
-    if (metrics.averageSleep) {
-      if (metrics.averageSleep < 6 || metrics.averageSleep > 9) score -= 10;
-      else if (metrics.averageSleep < 7 || metrics.averageSleep > 8) score -= 5;
-    }
-    return Math.max(0, Math.min(100, score));
-  }
-
-  // Calculate total skill points (copied from SkillsPage.js)
-  function getTotalSkillPoints(skillData) {
-    let total = 0;
-    Object.values(skillData).forEach(category => {
-      Object.values(category).forEach(level => {
-        total += level;
-      });
-    });
-    return total;
-  }
-
-  // Calculate boost
-  // Passive boost from user level (total skill points)
-  function getPassiveXPBoost() {
-    const skillPoints = getTotalSkillPoints(skillData);
-    // Example: +10% XP per 10 skill points above 10, capped at +50%
-    if (skillPoints <= 10) return 0;
-    return Math.min(0.5, Math.floor((skillPoints - 10) / 10) * 0.1);
-  }
-
-  // Active boost from health
-  function getActiveXPBoost() {
-    return calculateOverallHealth(healthData) > 80 ? 0.5 : 0;
-  }
-
-  // Total boost
-  function getXPBoost() {
-    return getActiveXPBoost() + getPassiveXPBoost();
-  }
-  // State hooks for pets, shop, hive, XP, etc.
+  // ...existing code...
+  // State hooks for pets, shop, hive, etc.
   const [gneePoints, setGneePoints] = useState(0);
   const [shopPets, setShopPets] = useState([]); // List of available pets
   const [petActionsMap, setPetActionsMap] = useState({}); // Map: pet name -> actions
   const [purchased, setPurchased] = useState({}); // User's owned pets
   const [currentMascot, setCurrentMascot] = useState(null); // Displayed pet
   const [currentAction, setCurrentAction] = useState(null); // Current pet action
-  const [mascotXP, setMascotXP] = useState({}); // XP per pet
   const [editModalOpen, setEditModalOpen] = useState(false); // Edit modal state
   const [renameValue, setRenameValue] = useState(''); // Rename input
 
-  // Auto-gain XP every 1 minute for current pet, with boost and floating UI
-  useEffect(() => {
-    if (!currentMascot) return;
-    const interval = setInterval(async () => {
-      let baseXP = 1;
-      let boost = getXPBoost();
-      let totalXP = baseXP + Math.floor(baseXP * boost);
-      if (boost > 0) {
-        setBoostAmount(boost);
-        setShowBoost(true);
-        setTimeout(() => setShowBoost(false), 1200);
-      }
-      // Debug log before XP update
-      console.log(`[Auto XP] Adding ${totalXP} XP to ${currentMascot} (base: ${baseXP}, boost: ${boost})`);
-      try {
-        await userDataService.gainXP(currentMascot, totalXP);
-        const tama = await userDataService.getTamagotchi();
-        console.log(`[Auto XP] Backend mascotXP:`, tama.mascotXP);
-        console.log(`[Auto XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
-        setMascotXP(prev => {
-          const newXP = tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP);
-          console.log(`[Auto XP] Setting mascotXP for ${currentMascot}:`, newXP);
-          return { ...prev, [currentMascot]: newXP };
-        });
-        // Force XP bar refresh
-        setTimeout(() => {
-          setMascotXP(prev => ({ ...prev }));
-          console.log('[Auto XP] Forced XP bar refresh');
-        }, 100);
-      } catch (err) {
-        console.error('[Auto XP] Backend error:', err);
-        // Fallback: update XP locally if backend fails
-        setMascotXP(prev => {
-          const newXP = (prev[currentMascot] || 0) + totalXP;
-          console.log(`[Auto XP] Fallback setting mascotXP for ${currentMascot}:`, newXP);
-          return { ...prev, [currentMascot]: newXP };
-        });
-        setTimeout(() => {
-          setMascotXP(prev => ({ ...prev }));
-          console.log('[Auto XP] Forced XP bar refresh (fallback)');
-        }, 100);
-      }
-    }, 60000); // 60,000 ms = 1 min
-    return () => clearInterval(interval);
-  }, [currentMascot, healthData, skillData]);
+  // ...existing code...
 
   // Dynamically detect pets and actions from asset folders
   useEffect(() => {
@@ -148,18 +55,12 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   }, []);
 
   useEffect(() => {
-    async function fetchData() {
-      const tama = await userDataService.getTamagotchi();
-      if (tama) {
-        // Shop pets: always show all asset pets
-        // Use shopPets from state or fallback to default
-        setPurchased(tama.purchased || {});
-        setCurrentMascot(tama.currentMascot || null);
-        setMascotXP(tama.mascotXP || {});
-      }
-    }
-    fetchData();
-  }, []);
+    // Initialize XP/level for all purchased pets
+    Object.keys(purchased).forEach(pet => {
+      setPetXP(prev => ({ ...prev, [pet]: prev[pet] ?? 0 }));
+      setPetLevel(prev => ({ ...prev, [pet]: prev[pet] ?? 1 }));
+    });
+  }, [purchased]);
 
   // Action buttons for mascot (dynamic)
   let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
@@ -168,34 +69,34 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     petActions = ['wake'];
   }
 
-  // Handle action click (gain XP with boost)
-  const handleAction = async (action) => {
+  // Handle action click (no XP logic)
+  // Handle action click (+0.1 XP)
+  const handleAction = (action) => {
     setCurrentAction(action);
-    let baseXP = 1;
-    let boost = getXPBoost();
-    let totalXP = baseXP + Math.floor(baseXP * boost);
-    if (boost > 0) {
-      setBoostAmount(boost);
-      setShowBoost(true);
-      setTimeout(() => setShowBoost(false), 1200);
-    }
-    console.log(`[Manual XP] Adding ${totalXP} XP to ${currentMascot} (base: ${baseXP}, boost: ${boost})`);
-    await userDataService.gainXP(currentMascot, totalXP);
-    // Reload XP
-    const tama = await userDataService.getTamagotchi();
-    console.log(`[Manual XP] Backend mascotXP:`, tama.mascotXP);
-    console.log(`[Manual XP] New XP for ${currentMascot}:`, tama.mascotXP?.[currentMascot]);
-    setMascotXP(prev => {
-      const newXP = tama.mascotXP?.[currentMascot] ?? ((prev[currentMascot] || 0) + totalXP);
-      console.log(`[Manual XP] Setting mascotXP for ${currentMascot}:`, newXP);
+    if (!currentMascot) return;
+    setPetXP(prev => {
+      const newXP = ((prev[currentMascot] ?? 0) + 0.1);
+      if (newXP >= 100) {
+        setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+        return { ...prev, [currentMascot]: 0 };
+      }
       return { ...prev, [currentMascot]: newXP };
     });
-    // Force XP bar refresh
-    setTimeout(() => {
-      setMascotXP(prev => ({ ...prev }));
-      console.log('[Manual XP] Forced XP bar refresh');
-    }, 100);
   };
+  useEffect(() => {
+    if (!currentMascot) return;
+    const interval = setInterval(() => {
+      setPetXP(prev => {
+        const newXP = ((prev[currentMascot] ?? 0) + 1);
+        if (newXP >= 100) {
+          setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+          return { ...prev, [currentMascot]: 0 };
+        }
+        return { ...prev, [currentMascot]: newXP };
+      });
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [currentMascot]);
 
   // Handle mascot edit (rename)
   const openEditModal = () => {
@@ -240,18 +141,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     setHiveOpen(false);
   };
 
-  // Calculate level from XP
-  const calcLevel = (mascot) => {
-    let xp = mascotXP[mascot] || 0;
-    let level = 1;
-    let xpNeeded = 100;
-    while (xp >= xpNeeded) {
-      xp -= xpNeeded;
-      level++;
-      xpNeeded = Math.floor(xpNeeded * 1.05); // Each level needs 5% more XP than previous
-    }
-    return level;
-  };
+  // ...existing code...
 
   // Asset loading: link directly to dist/assets/pets/shop
   const getMascotImg = (mascot, action) => {
@@ -352,24 +242,13 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       <div className="tama-stats" style={{ marginTop: '2em', color: '#00d4aa' }}>
         <div><b>Name:</b> {currentMascot && purchased[currentMascot]?.name ? purchased[currentMascot].name : '--'}</div>
         <div><b>Mood:</b> Happy 😊</div>
-        <div><b>Level:</b> {currentMascot ? calcLevel(currentMascot) : '--'}</div>
+        <div><b>Level:</b> {currentMascot ? petLevel[currentMascot] ?? 1 : '--'}</div>
         <div className="progress-bar" style={{ background: '#444', borderRadius: 8, overflow: 'hidden', height: 18, marginTop: 8 }}>
-          <div className="progress" style={{ background: '#00d4aa', height: '100%', width: `${currentMascot ? Math.round((mascotXP[currentMascot] || 0) / 100 * 100) : 0}%` }}></div>
+          <div className="progress" style={{ background: '#00d4aa', height: '100%', width: `${currentMascot ? Math.round((petXP[currentMascot] ?? 0) / 100 * 100) : 0}%` }}></div>
         </div>
-        {/* XP display */}
         {currentMascot && (
           <div style={{ fontSize: '1em', color: '#222', marginTop: 4, fontWeight: 600 }}>
-            XP: <span style={{ color: '#444' }}>{mascotXP[currentMascot] || 0}</span> / <span style={{ color: '#888' }}>{(() => {
-              let xpNeeded = 100;
-              let xp = mascotXP[currentMascot] || 0;
-              let level = 1;
-              while (xp >= xpNeeded) {
-                xp -= xpNeeded;
-                level++;
-                xpNeeded = Math.floor(xpNeeded * 1.05);
-              }
-              return xpNeeded;
-            })()}</span> XP
+            XP: <span style={{ color: '#444' }}>{(petXP[currentMascot] ?? 0).toFixed(1)}</span> / <span style={{ color: '#888' }}>100</span> XP
           </div>
         )}
         <div style={{ fontSize: '0.95em', color: '#aaa', marginTop: 4 }}>Progress to next evolution</div>

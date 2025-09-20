@@ -154,10 +154,10 @@ app.post('/api/user/data', authenticateToken, async (req, res) => {
             mongoUserData = new UserData({ userId, skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
         }
 
-        if (skills) mongoUserData.skills = skills;
-        if (health) mongoUserData.health = health;
-        if (preferences) mongoUserData.preferences = preferences;
-        if (profile) mongoUserData.profile = profile;
+    if (skills) mongoUserData.skills = skills;
+    if (health) mongoUserData.health = health;
+    if (preferences) mongoUserData.preferences = preferences;
+    if (profile) mongoUserData.profile = { ...mongoUserData.profile, ...profile };
         mongoUserData.lastSaved = new Date().toISOString();
         await mongoUserData.save();
 
@@ -386,7 +386,8 @@ app.get('/api/user/data', authenticateToken, async (req, res) => {
         if (!mongoUserData) {
             return res.json({ skills: {}, health: {}, preferences: {}, profile: { description: '', profileImage: '' }, lastSaved: new Date().toISOString() });
         }
-        res.json(mongoUserData);
+            console.log('[DEBUG] Loaded user data from MongoDB:', mongoUserData);
+            res.json(mongoUserData);
     } catch (error) {
         console.error('Get user data error:', error);
         res.status(500).json({ error: 'Internal server error' });

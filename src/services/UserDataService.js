@@ -388,6 +388,7 @@ class UserDataService {
       }
 
       const data = await response.json();
+      console.log('[DEBUG] Loaded user data from cloud:', data);
       return {
         skills: data.skills || {},
         health: data.health || {},
@@ -415,7 +416,8 @@ class UserDataService {
         body: JSON.stringify({
           skills: data.skills || {},
           health: data.health || {},
-          preferences: data.preferences || {}
+          preferences: data.preferences || {},
+          profile: data.profile || {}
         })
       });
 

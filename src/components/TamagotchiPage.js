@@ -248,7 +248,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
             <img src={getMascotImg(currentMascot, currentAction || 'wake')} alt={currentMascot} style={{ width: 180, height: 180 }} />
             {/* XP boost indicator (right side of pet, outside main display) */}
             {xpBoost && xpBoost.expires > Date.now() && (
-              <div style={{ position: 'absolute', right: 20, top: 10, borderRadius: '50%', padding: 8, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 6, background: 'none' }}>
+              <div style={{ position: 'absolute', right: 20, top: -18, borderRadius: '50%', padding: 8, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 6, background: 'none' }}>
                 <img src={`/assets/food/${xpBoost.food}.gif`} alt="food" style={{ width: 32, height: 32, marginRight: 10 }} />
                 <span style={{ color: '#ffd700', fontWeight: 700, fontSize: '1em', background: 'none', padding: 0 }}>+10% XP</span>
               </div>

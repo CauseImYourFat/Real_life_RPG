@@ -6,6 +6,9 @@ import userDataService from '../services/UserDataService';
 import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
 
 export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
+  // Simple XP/level state for each pet (local only)
+  const [petXP, setPetXP] = useState({}); // { petName: xp }
+  const [petLevel, setPetLevel] = useState({}); // { petName: level }
   // ...existing code...
 
   // ...existing code...
@@ -23,6 +26,55 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
 
   // Load pets, mascot, XP, and level from backend on mount
   useEffect(() => {
+  // Restore XP/level from localStorage if available
+  useEffect(() => {
+    const savedXP = JSON.parse(localStorage.getItem('petXP') || '{}');
+    const savedLevel = JSON.parse(localStorage.getItem('petLevel') || '{}');
+    setPetXP(savedXP);
+    setPetLevel(savedLevel);
+  }, []);
+
+  // Save XP/level to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('petXP', JSON.stringify(petXP));
+    localStorage.setItem('petLevel', JSON.stringify(petLevel));
+  }, [petXP, petLevel]);
+
+  // Action buttons for mascot (dynamic)
+  let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
+  if (petActions.length === 0) {
+    petActions = ['wake'];
+  }
+
+  // Handle action click (+0.1 XP)
+  const handleAction = (action) => {
+    setCurrentAction(action);
+    if (!currentMascot) return;
+    setPetXP(prev => {
+      const newXP = ((prev[currentMascot] ?? 0) + 0.1);
+      if (newXP >= 100) {
+        setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+        return { ...prev, [currentMascot]: 0 };
+      }
+      return { ...prev, [currentMascot]: newXP };
+    });
+  };
+
+  // Auto XP gain (+1 XP/min)
+  useEffect(() => {
+    if (!currentMascot) return;
+    const interval = setInterval(() => {
+      setPetXP(prev => {
+        const newXP = ((prev[currentMascot] ?? 0) + 1);
+        if (newXP >= 100) {
+          setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+          return { ...prev, [currentMascot]: 0 };
+        }
+        return { ...prev, [currentMascot]: newXP };
+      });
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [currentMascot]);
     async function loadTamaData() {
       userDataService.getUserData?.().then(userData => {
         setGneePoints(userData?.gneePoints || 0);

@@ -293,7 +293,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       {/* Shop Modal */}
       {shopOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, margin: 'auto', boxShadow: '0 2px 16px #0006' }}>
+            <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, maxHeight: '80vh', overflowY: 'auto', margin: 'auto', boxShadow: '0 2px 16px #0006' }} onClick={e => { if (e.target === e.currentTarget) setShopOpen(false); }}>
             <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Shop</h2>
             <div style={{ color: '#ffd700', textAlign: 'center', fontWeight: 600, fontSize: '1.1em', marginBottom: '18px' }}>
               <img src="/assets/point/gnee-point.gif" alt="Gnee!" style={{ width: 32, height: 32, verticalAlign: 'middle', marginRight: 8 }} />
@@ -348,7 +348,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       {/* Hive Modal */}
       {hiveOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, margin: 'auto', boxShadow: '0 2px 16px #0006' }}>
+            <div style={{ background: '#222', padding: '32px 24px', borderRadius: 18, maxWidth: 420, maxHeight: '80vh', overflowY: 'auto', margin: 'auto', boxShadow: '0 2px 16px #0006' }} onClick={e => { if (e.target === e.currentTarget) setHiveOpen(false); }}>
             <h2 style={{ color: '#00d4aa', textAlign: 'center', marginTop: 0 }}>Your Hive</h2>
             {/* Hive tabs */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 18 }}>

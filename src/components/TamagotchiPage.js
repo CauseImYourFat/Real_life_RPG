@@ -6,9 +6,7 @@ import userDataService from '../services/UserDataService';
 import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
 
 export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
-  // Simple XP/level state for each pet, loaded from backend
-  const [petXP, setPetXP] = useState({}); // { petName: xp }
-  const [petLevel, setPetLevel] = useState({}); // { petName: level }
+  // ...existing code...
 
   // ...existing code...
   // State hooks for pets, shop, hive, etc.
@@ -32,15 +30,6 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       // Load Tamagotchi data from backend
       const tamaData = await userDataService.loadTamagotchiData?.();
       setPurchased(tamaData.purchased || {});
-      // XP/level state
-      if (tamaData.mascotXP) {
-        setPetXP(tamaData.mascotXP);
-        const levels = {};
-        Object.keys(tamaData.mascotXP).forEach(pet => {
-          levels[pet] = Math.floor((tamaData.mascotXP[pet] ?? 0) / 100) + 1;
-        });
-        setPetLevel(levels);
-      }
       // Restore mascot selection if available
       if (tamaData.currentMascot) {
         setCurrentMascot(tamaData.currentMascot);
@@ -70,14 +59,12 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     loadTamaData();
   }, []);
 
-  // Save XP/level and currentMascot to backend whenever petXP, purchased, or currentMascot changes
+  // Save currentMascot to backend whenever purchased or currentMascot changes
   useEffect(() => {
-  if (Object.keys(purchased).length === 0) return;
-  console.log('[DEBUG] Saving Tamagotchi data:', { petXP, purchased });
-  userDataService.saveTamagotchiData?.(petXP, purchased);
-  console.log('[DEBUG] Updating currentMascot:', currentMascot);
-  userDataService.updateTamagotchi?.({ currentMascot });
-  }, [petXP, purchased, currentMascot]);
+    if (Object.keys(purchased).length === 0) return;
+    console.log('[DEBUG] Updating currentMascot:', currentMascot);
+    userDataService.updateTamagotchi?.({ currentMascot });
+  }, [purchased, currentMascot]);
 
   // Action buttons for mascot (dynamic)
   let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
@@ -87,41 +74,10 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   }
 
   // Handle action click (no XP logic)
-  // Handle action click (+0.1 XP)
   const handleAction = (action) => {
     setCurrentAction(action);
-    if (!currentMascot) return;
-    setPetXP(prev => {
-      const newXP = ((prev[currentMascot] ?? 0) + 0.1);
-      if (newXP >= 100) {
-        setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
-        // Save XP/level to backend
-        userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
-        return { ...prev, [currentMascot]: 0 };
-      }
-      // Save XP to backend
-      userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
-      return { ...prev, [currentMascot]: newXP };
-    });
   };
-  useEffect(() => {
-    if (!currentMascot) return;
-    const interval = setInterval(() => {
-      setPetXP(prev => {
-        const newXP = ((prev[currentMascot] ?? 0) + 1);
-        if (newXP >= 100) {
-          setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
-          // Save XP/level to backend
-          userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
-          return { ...prev, [currentMascot]: 0 };
-        }
-        // Save XP to backend
-        userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
-        return { ...prev, [currentMascot]: newXP };
-      });
-    }, 60000);
-    return () => clearInterval(interval);
-  }, [currentMascot, purchased]);
+  // ...existing code...
 
   // Handle mascot edit (rename)
   const openEditModal = () => {

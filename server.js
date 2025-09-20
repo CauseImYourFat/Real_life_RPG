@@ -211,6 +211,30 @@ app.get('/api/user/tamagotchi', authenticateToken, async (req, res) => {
     }
 });
 
+// Tamagotchi API: Save user tamagotchi data (XP, purchased, mascot)
+app.post('/api/user/tamagotchi', authenticateToken, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { mascotXP, purchased, currentMascot } = req.body;
+        let mongoUserData = await UserData.findOne({ userId });
+        if (!mongoUserData) {
+            return res.status(404).json({ error: 'User data not found' });
+        }
+        // Merge new data
+        mongoUserData.tamagotchi = {
+            ...mongoUserData.tamagotchi,
+            mascotXP: mascotXP || mongoUserData.tamagotchi.mascotXP,
+            purchased: purchased || mongoUserData.tamagotchi.purchased,
+            currentMascot: currentMascot || mongoUserData.tamagotchi.currentMascot
+        };
+        await mongoUserData.save();
+        res.json({ message: 'Tamagotchi data saved' });
+    } catch (error) {
+        console.error('Save tamagotchi error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Tamagotchi API: Update user tamagotchi data (buy, edit, delete, transfer, XP, setCurrent)
 app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
     try {

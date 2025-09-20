@@ -167,6 +167,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   };
 
   // Shop/hive modals (simplified)
+  // Dynamically list food GIFs from dist/assets/food
+  const foodFolder = '/dist/assets/food';
+  const foodFiles = [
+    'bun.gif', 'candy.gif', 'drink.gif', 'fastfood.gif', 'kewto.gif', 'matcha.gif', 'noddle.gif', 'salmon eggs.gif', 'sushi salmon.gif', 'sushi.gif', 'sushi2.gif', 'sushii1.gif', 'tampura.gif', 'tofu.gif', 'wraped sushi.gif'
+  ];
   // XP boost state
   const [xpBoost, setXpBoost] = useState(null); // { food: 'food', expires: Date }
   const [hiveTab, setHiveTab] = useState('pets'); // 'pets' or 'food'
@@ -240,7 +245,13 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         <div style={{ margin: '32px auto 0 auto', textAlign: 'center', color: '#ccc', fontSize: '1.1em', position: 'relative' }}>
           <div style={{ width: 200, height: 200, margin: 'auto', background: 'transparent', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', position: 'relative' }}>
             <img src={getMascotImg(currentMascot, currentAction || 'wake')} alt={currentMascot} style={{ width: 180, height: 180 }} />
-            {/* ...removed boost UI (no XP boost logic)... */}
+            {/* XP boost indicator (right side of pet) */}
+            {xpBoost && xpBoost.expires > Date.now() && (
+              <div style={{ position: 'absolute', right: -10, top: 40, background: '#ffd700', borderRadius: '50%', padding: 8, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <img src={`/assets/food/${xpBoost.food}.gif`} alt="food" style={{ width: 32, height: 32 }} />
+                <span style={{ color: '#222', fontWeight: 700, fontSize: '1em' }}>+10% XP</span>
+              </div>
+            )}
           </div>
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 12 }}>
@@ -317,14 +328,14 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
             {/* Food tab */}
             {shopTab === 'food' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>
-                {['food'].map(foodName => (
+                {foodFiles.map(foodName => (
                   <div key={foodName} style={{ textAlign: 'center' }}>
                     <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
-                      <img src={`/assets/food/${foodName}.gif`} alt={foodName} style={{ width: 48, height: 48 }} />
+                      <img src={`/assets/food/${foodName}`} alt={foodName} style={{ width: 48, height: 48 }} />
                     </div>
-                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.charAt(0).toUpperCase() + foodName.slice(1)}</div>
+                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.replace('.gif','').replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
                     <div style={{ color: '#ffd700', fontSize: '0.95em' }}>1 Gnee! point</div>
-                    <button onClick={() => handleBuyFood(foodName)} disabled={gneePoints < 1} style={{ marginTop: 6, background: gneePoints >= 1 ? '#ffd700' : '#aaa', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: gneePoints >= 1 ? 'pointer' : 'not-allowed' }}>Buy</button>
+                    <button onClick={() => handleBuyFood(foodName.replace('.gif',''))} disabled={gneePoints < 1} style={{ marginTop: 6, background: gneePoints >= 1 ? '#ffd700' : '#aaa', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: gneePoints >= 1 ? 'pointer' : 'not-allowed' }}>Buy</button>
                   </div>
                 ))}
               </div>
@@ -370,14 +381,14 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
             {/* Food tab */}
             {hiveTab === 'food' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>
-                {['food'].map(foodName => (
+                {foodFiles.map(foodName => (
                   <div key={foodName} style={{ textAlign: 'center' }}>
                     <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
-                      <img src={`/assets/food/${foodName}.gif`} alt={foodName} style={{ width: 48, height: 48 }} />
+                      <img src={`/assets/food/${foodName}`} alt={foodName} style={{ width: 48, height: 48 }} />
                     </div>
-                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.charAt(0).toUpperCase() + foodName.slice(1)}</div>
+                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.replace('.gif','').replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
                     <div style={{ color: '#ffd700', fontSize: '0.95em' }}>Use on pet (+10% XP for 6h)</div>
-                    <button onClick={() => handleUseFood(foodName)} style={{ marginTop: 6, background: '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}>Use</button>
+                    <button onClick={() => handleUseFood(foodName.replace('.gif',''))} style={{ marginTop: 6, background: '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}>Use</button>
                   </div>
                 ))}
               </div>

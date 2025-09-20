@@ -31,7 +31,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     });
     async function fetchPetsAndActions() {
       // List pets from asset folder
-      const petFolders = ['white dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
+  const petFolders = ['white-dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
       setShopPets(petFolders);
       // For each pet, list actions from GIF filenames
       const actionsMap = {};

@@ -86,11 +86,12 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
 
   // Save XP/level and currentMascot to backend whenever petXP, purchased, or currentMascot changes
   useEffect(() => {
-  if (Object.keys(purchased).length === 0) return;
-  console.log('[DEBUG] Saving Tamagotchi data:', { petXP, purchased });
-  userDataService.saveTamagotchiData?.(petXP, purchased);
-  console.log('[DEBUG] Updating currentMascot:', currentMascot);
-  userDataService.updateTamagotchi?.({ currentMascot });
+    if (Object.keys(purchased).length === 0) return;
+    // Only save Tamagotchi data, never overwrite user data (skills, health, preferences, profile)
+    console.log('[DEBUG] Saving Tamagotchi data:', { petXP, purchased });
+    userDataService.saveTamagotchiData?.(petXP, purchased);
+    console.log('[DEBUG] Updating currentMascot:', currentMascot);
+    userDataService.updateTamagotchi?.({ currentMascot });
   }, [petXP, purchased, currentMascot]);
 
   // Action buttons for mascot (dynamic)
@@ -245,11 +246,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         <div style={{ margin: '32px auto 0 auto', textAlign: 'center', color: '#ccc', fontSize: '1.1em', position: 'relative' }}>
           <div style={{ width: 200, height: 200, margin: 'auto', background: 'transparent', borderRadius: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', position: 'relative' }}>
             <img src={getMascotImg(currentMascot, currentAction || 'wake')} alt={currentMascot} style={{ width: 180, height: 180 }} />
-            {/* XP boost indicator (right side of pet) */}
+            {/* XP boost indicator (right side of pet, outside main display) */}
             {xpBoost && xpBoost.expires > Date.now() && (
-              <div style={{ position: 'absolute', right: -10, top: 40, background: '#ffd700', borderRadius: '50%', padding: 8, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <img src={`/assets/food/${xpBoost.food}.gif`} alt="food" style={{ width: 32, height: 32 }} />
-                <span style={{ color: '#222', fontWeight: 700, fontSize: '1em' }}>+10% XP</span>
+              <div style={{ position: 'absolute', right: 0, top: 40, borderRadius: '50%', padding: 8, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 6, background: 'none' }}>
+                <img src={`/assets/food/${xpBoost.food}.gif`} alt="food" style={{ width: 32, height: 32, marginRight: 10 }} />
+                <span style={{ color: '#ffd700', fontWeight: 700, fontSize: '1em', background: 'none', padding: 0 }}>+10% XP</span>
               </div>
             )}
           </div>
@@ -363,13 +364,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
                     <div style={{ cursor: 'pointer', position: 'relative' }} onClick={() => handleSelectHiveMascot(type)}>
                       <div style={{ width: 70, height: 70, background: '#222', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8, position: 'relative' }}>
                         <img src={getMascotImg(type, 'wake')} alt={type} style={{ width: 48, height: 48 }} />
-                        {/* XP boost indicator */}
-                        {xpBoost && xpBoost.expires > Date.now() && (
-                          <div style={{ position: 'absolute', right: -10, top: 0, background: '#ffd700', borderRadius: '50%', padding: 4, boxShadow: '0 2px 8px #0002', display: 'flex', alignItems: 'center', gap: 4 }}>
-                            <img src={`/assets/food/${xpBoost.food}.gif`} alt="food" style={{ width: 24, height: 24 }} />
-                            <span style={{ color: '#222', fontWeight: 700, fontSize: '0.95em' }}>+10% XP</span>
-                          </div>
-                        )}
+                        {/* No XP boost indicator in Hive tab */}
                       </div>
                       <div style={{ color: '#fff', fontSize: '1em' }}>{purchased[type].name || type}</div>
                     </div>

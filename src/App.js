@@ -14,6 +14,23 @@ import './styles/App.css';
 import EyesPage from './components/EyesPage';
 
 function App() {
+  // Manual refresh for user data
+  const handleManualRefresh = async () => {
+    setLoading(true);
+    try {
+      const data = await userDataService.loadUserData();
+      setUserData({
+        skills: data.skills || {},
+        health: data.health || {},
+        preferences: data.preferences || {},
+        lastLogin: new Date().toISOString()
+      });
+    } catch (error) {
+      alert('Failed to refresh user data.');
+    } finally {
+      setLoading(false);
+    }
+  };
   // const [showRocket, setShowRocket] = useState(false);
   // Image imports for Webpack
   const [activeTab, setActiveTab] = useState('skills');
@@ -217,7 +234,7 @@ function App() {
         }}
       />
       <header className="app-header">
-        <div className="header-content" style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1.5rem', padding: '0.5em 1em 0.5em 1em'}}>
+  <div className="header-content" style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '1.5rem', padding: '0.5em 1em 0.5em 1em'}}>
           <h1 className="app-title" style={{margin: 0, fontSize: '2em', fontWeight: 'bold', color: '#fff', whiteSpace: 'nowrap'}}>
             Real Life
           </h1>
@@ -233,6 +250,13 @@ function App() {
                 <span className="tab-name">{tab.name}</span>
               </button>
             ))}
+            {/* Manual refresh button for user data */}
+            <button
+              onClick={handleManualRefresh}
+              style={{marginLeft: '1em', background: '#00d4aa', color: '#fff', padding: '0.4em 1em', border: 'none', borderRadius: '12px', fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer'}}
+            >
+              🔄 Refresh Data
+            </button>
           </nav>
           <div style={{marginLeft: 'auto'}}>
             <UserMenu 

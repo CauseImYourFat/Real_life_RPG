@@ -6,7 +6,7 @@ import userDataService from '../services/UserDataService';
 import pixelHeartGif from '../../dist/assets/pixel-heart.gif';
 
 export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
-  // Simple XP/level state for each pet
+  // Simple XP/level state for each pet, loaded from backend
   const [petXP, setPetXP] = useState({}); // { petName: xp }
   const [petLevel, setPetLevel] = useState({}); // { petName: level }
 
@@ -23,44 +23,55 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
 
   // ...existing code...
 
-  // Dynamically detect pets and actions from asset folders
+  // Load pets, mascot, XP, and level from backend on mount
   useEffect(() => {
-    // Load Gnee! points from user data
-    userDataService.getUserData?.().then(userData => {
-      setGneePoints(userData?.gneePoints || 0);
-    });
-    async function fetchPetsAndActions() {
+    async function loadTamaData() {
+      // Load Gnee! points from user data
+      userDataService.getUserData?.().then(userData => {
+        setGneePoints(userData?.gneePoints || 0);
+      });
+      // Load Tamagotchi data from backend
+      const tamaData = await userDataService.loadTamagotchiData?.();
+      setPurchased(tamaData.purchased || {});
+      // XP/level state
+      if (tamaData.mascotXP) {
+        setPetXP(tamaData.mascotXP);
+        // Derive levels from XP (every 100 XP = +1 level)
+        const levels = {};
+        Object.keys(tamaData.mascotXP).forEach(pet => {
+          levels[pet] = Math.floor((tamaData.mascotXP[pet] ?? 0) / 100) + 1;
+        });
+        setPetLevel(levels);
+      }
+      // Restore mascot selection if available
+      if (tamaData.currentMascot) setCurrentMascot(tamaData.currentMascot);
       // List pets from asset folder
-  const petFolders = ['white-dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
+      const petFolders = ['white-dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
       setShopPets(petFolders);
       // For each pet, list actions from GIF filenames
       const actionsMap = {};
       for (const pet of petFolders) {
         let gifs = [];
         try {
-          // Use require.context or static import for Webpack
           gifs = require.context('../../dist/assets/pets/shop/' + pet, false, /\.gif$/).keys();
         } catch (e) {
           gifs = [];
         }
         actionsMap[pet] = gifs.map(f => {
-          // Extract action from filename: petname-action.gif
           const match = f.match(/([a-zA-Z0-9_-]+)-([a-zA-Z0-9_]+)\.gif$/);
           return match ? match[2] : null;
         }).filter(Boolean);
       }
       setPetActionsMap(actionsMap);
     }
-    fetchPetsAndActions();
+    loadTamaData();
   }, []);
 
+  // Save XP/level to backend whenever petXP or purchased changes
   useEffect(() => {
-    // Initialize XP/level for all purchased pets
-    Object.keys(purchased).forEach(pet => {
-      setPetXP(prev => ({ ...prev, [pet]: prev[pet] ?? 0 }));
-      setPetLevel(prev => ({ ...prev, [pet]: prev[pet] ?? 1 }));
-    });
-  }, [purchased]);
+    if (Object.keys(purchased).length === 0) return;
+    userDataService.saveTamagotchiData?.(petXP, purchased);
+  }, [petXP, purchased]);
 
   // Action buttons for mascot (dynamic)
   let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];
@@ -78,8 +89,12 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       const newXP = ((prev[currentMascot] ?? 0) + 0.1);
       if (newXP >= 100) {
         setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+        // Save XP/level to backend
+        userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
         return { ...prev, [currentMascot]: 0 };
       }
+      // Save XP to backend
+      userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
       return { ...prev, [currentMascot]: newXP };
     });
   };
@@ -90,13 +105,17 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         const newXP = ((prev[currentMascot] ?? 0) + 1);
         if (newXP >= 100) {
           setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
+          // Save XP/level to backend
+          userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
           return { ...prev, [currentMascot]: 0 };
         }
+        // Save XP to backend
+        userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
         return { ...prev, [currentMascot]: newXP };
       });
     }, 60000);
     return () => clearInterval(interval);
-  }, [currentMascot]);
+  }, [currentMascot, purchased]);
 
   // Handle mascot edit (rename)
   const openEditModal = () => {
@@ -136,9 +155,9 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     }
   };
   const handleSelectHiveMascot = (type) => {
-    setCurrentMascot(type);
-    userDataService.setCurrentMascot(type);
-    setHiveOpen(false);
+  setCurrentMascot(type);
+  userDataService.updateTamagotchi?.({ currentMascot: type });
+  setHiveOpen(false);
   };
 
   // ...existing code...

@@ -9,7 +9,7 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // Only require fs once at the top of the file
 const fs = require('fs');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const path = require('path');
@@ -189,7 +189,6 @@ app.get('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             mongoUserData = new UserData({
                 userId,
                 tamagotchi: {
-                    mascotXP: {},
                     purchased: {},
                     shop: shopPets,
                     hive: [],
@@ -210,14 +209,6 @@ app.get('/api/user/tamagotchi', authenticateToken, async (req, res) => {
 
 // Tamagotchi API: Update user tamagotchi data (buy, edit, delete, transfer, XP, setCurrent)
 app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
-        // Helper to log mascotXP to file
-        function logMascotXPToFile(msg, obj) {
-            try {
-                fs.appendFileSync('mascotXP.log', `${new Date().toISOString()} ${msg}: ${JSON.stringify(obj)}\n`);
-            } catch (e) {
-                console.error('Failed to write mascotXP log:', e);
-            }
-        }
     try {
         const userId = req.user.userId;
         const { action, mascotType, changes, toUser, amount } = req.body;
@@ -229,13 +220,6 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         let tamagotchi = mongoUserData.tamagotchi || {};
         tamagotchi.purchased = tamagotchi.purchased || {};
         tamagotchi.hive = tamagotchi.hive || [];
-        // Load mascotXP from DB if present, else initialize
-        if (!tamagotchi.mascotXP || typeof tamagotchi.mascotXP !== 'object') {
-            tamagotchi.mascotXP = {};
-        }
-        // Extra logging: show mascotXP before any update
-    console.log(`[BACKEND] mascotXP before update:`, tamagotchi.mascotXP);
-    logMascotXPToFile('mascotXP before update', tamagotchi.mascotXP);
         tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
         tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
 
@@ -266,20 +250,10 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             if (tamagotchi.currentMascot === mascotType) tamagotchi.currentMascot = tamagotchi.hive[0] || '';
         } else if (action === 'setCurrent' && mascotType) {
             tamagotchi.currentMascot = mascotType;
-        } else if (action === 'gainXP' && mascotType && amount) {
-            // Always merge mascotXP, never overwrite
-            tamagotchi.mascotXP = tamagotchi.mascotXP || {};
-            const prevXP = tamagotchi.mascotXP[mascotType] || 0;
-            tamagotchi.mascotXP[mascotType] = prevXP + amount;
-            console.log(`[BACKEND] XP gain for user ${userId}, pet ${mascotType}: ${prevXP} + ${amount} = ${tamagotchi.mascotXP[mascotType]}`);
-            // Extra logging for DB state
-            console.log(`[BACKEND] mascotXP after increment:`, tamagotchi.mascotXP);
-            logMascotXPToFile('mascotXP after increment', tamagotchi.mascotXP);
         }
         // Always merge and retain all fields
         // Only update mascotXP if it was changed in this request
         const dbTama = mongoUserData.tamagotchi || {};
-        dbTama.mascotXP = tamagotchi.mascotXP; // Persist the updated mascotXP
         dbTama.purchased = tamagotchi.purchased;
         dbTama.hive = tamagotchi.hive;
         dbTama.shop = tamagotchi.shop;
@@ -288,11 +262,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         mongoUserData.tamagotchi = dbTama;
         mongoUserData.lastSaved = new Date().toISOString();
         await mongoUserData.save();
-        // Confirm mascotXP after save
-        const confirmUserData = await UserData.findOne({ userId });
-        console.log(`[BACKEND] mascotXP after save:`, confirmUserData.tamagotchi?.mascotXP);
-        logMascotXPToFile('mascotXP after save', confirmUserData.tamagotchi?.mascotXP);
-        res.json(confirmUserData.tamagotchi);
+        res.json(dbTama);
     } catch (error) {
         console.error('Update tamagotchi error:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -330,7 +300,7 @@ app.post('/api/register', async (req, res) => {
             return res.status(409).json({ error: 'Username already exists' });
         }
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
         // Create new user in MongoDB
         const mongoUser = new User({ username, password: hashedPassword, createdAt: new Date().toISOString() });
         await mongoUser.save();
@@ -363,7 +333,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
         // Check password
-        const isValidPassword = await bcrypt.compare(password, mongoUser.password);
+    const isValidPassword = await bcrypt.compare(password, mongoUser.password);
         if (!isValidPassword) {
             return res.status(401).json({ error: 'Invalid username or password' });
         }
@@ -505,13 +475,13 @@ app.put('/api/user/password', authenticateToken, async (req, res) => {
         }
 
         // Verify current password
-        const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
         if (!isValidPassword) {
             return res.status(401).json({ error: 'Current password is incorrect' });
         }
 
         // Hash new password
-        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, 10);
         user.password = hashedNewPassword;
         await user.save();
 

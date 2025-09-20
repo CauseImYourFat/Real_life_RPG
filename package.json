@@ -22,6 +22,7 @@
   "dependencies": {
     "@electron/packager": "^18.4.4",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",
     "copy-webpack-plugin": "^13.0.1",
     "cors": "^2.8.5",

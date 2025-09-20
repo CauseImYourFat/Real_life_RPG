@@ -1,3 +1,19 @@
+## XP Logic Debug & Concepts (2025-09-20)
+
+- XP logic was implemented for Tamagotchi pets with boost from health and skills.
+- XP bar and level logic were designed to update based on mascotXP per pet.
+- Frontend forced XP bar refresh and always used backend mascotXP after each action.
+- Backend patched to always increment mascotXP from DB, merge and persist correctly, and return latest XP to frontend.
+- Extensive debug logging added to both frontend and backend for XP state and updates.
+- Multiple attempts made to resolve XP not accumulating (stuck at 1 XP).
+- Issue persisted due to environment, DB, or state sync problems.
+- Decision: Once all debug and fixes are complete, remove all XP logic and restart from scratch for a clean, maintainable solution.
+## Asset Management Decision (2025-09-20)
+
+- We will use hashed filenames for images and GIFs (for cache busting and production reliability).
+- All assets will remain organized in their respective folders and subfolders for easy management.
+- Hashing will only affect filenames, not folder structure.
+- This decision ensures both browser cache safety and developer asset organization.
 ## Important Note
 
 Never run tests on local development. Always deploy and test directly on the cloud.

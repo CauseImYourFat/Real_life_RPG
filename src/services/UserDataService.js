@@ -71,10 +71,7 @@ class UserDataService {
     return await this.updateTamagotchi({ action: 'setCurrent', mascotType });
   }
 
-  // Gain XP for mascot
-  async gainXP(mascotType, amount) {
-    return await this.updateTamagotchi({ action: 'gainXP', mascotType, amount });
-  }
+  // ...existing code...
 
   // Get available shop pets
   async getShopPets() {

@@ -90,7 +90,7 @@ function App() {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [isAuthenticated, userData]);
+  }, [isAuthenticated]);
 
   const handleLogin = async (username) => {
     setLoading(true);

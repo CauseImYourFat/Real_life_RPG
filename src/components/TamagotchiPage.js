@@ -171,7 +171,7 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   // Dynamically list food GIFs from dist/assets/food
   const foodFolder = '/dist/assets/food';
   const foodFiles = [
-    'bun.gif', 'candy.gif', 'drink.gif', 'fastfood.gif', 'kewto.gif', 'matcha.gif', 'noddle.gif', 'salmon eggs.gif', 'sushi salmon.gif', 'sushi.gif', 'sushi2.gif', 'sushii1.gif', 'tampura.gif', 'tofu.gif', 'wraped sushi.gif'
+  'bun.gif', 'candy.gif', 'drink.gif', 'fastfood.gif', 'kewto.gif', 'matcha.gif', 'noddle.gif', 'salmon eggs.gif', 'sushi salmon.gif', 'sushi.gif', 'sushi2.gif', 'sushii1.gif', 'tempura.gif', 'tofu.gif', 'wraped sushi.gif'
   ];
   // XP boost state
   const [xpBoost, setXpBoost] = useState(null); // { food: 'food', expires: Date }

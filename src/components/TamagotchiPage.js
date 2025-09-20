@@ -9,6 +9,8 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   // Simple XP/level state for each pet, loaded from backend
   const [petXP, setPetXP] = useState({}); // { petName: xp }
   const [petLevel, setPetLevel] = useState({}); // { petName: level }
+  // Track required XP for each pet/level
+  const [petReqXP, setPetReqXP] = useState({}); // { petName: reqXP }
 
   // ...existing code...
   // State hooks for pets, shop, hive, etc.
@@ -36,10 +38,22 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       if (tamaData.mascotXP) {
         setPetXP(tamaData.mascotXP);
         const levels = {};
+        const reqXPs = {};
         Object.keys(tamaData.mascotXP).forEach(pet => {
-          levels[pet] = Math.floor((tamaData.mascotXP[pet] ?? 0) / 100) + 1;
+          // Calculate level and required XP for each pet
+          let xp = tamaData.mascotXP[pet] ?? 0;
+          let level = 1;
+          let reqXP = 100;
+          while (xp >= reqXP) {
+            xp -= reqXP;
+            level++;
+            reqXP = Math.round(reqXP + 0.05 * level * reqXP);
+          }
+          levels[pet] = level;
+          reqXPs[pet] = reqXP;
         });
         setPetLevel(levels);
+        setPetReqXP(reqXPs);
       }
       // Restore mascot selection if available
       if (tamaData.currentMascot) {
@@ -93,14 +107,19 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     setCurrentAction(action);
     if (!currentMascot) return;
     setPetXP(prev => {
-      const newXP = ((prev[currentMascot] ?? 0) + 0.1);
-      if (newXP >= 100) {
-        setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
-        // Save XP/level to backend
+      const currXP = prev[currentMascot] ?? 0;
+      const currLevel = petLevel[currentMascot] ?? 1;
+      const currReqXP = petReqXP[currentMascot] ?? 100;
+      const newXP = currXP + 0.1;
+      if (newXP >= currReqXP) {
+        // Level up
+        const nextLevel = currLevel + 1;
+        const nextReqXP = Math.round(currReqXP + 0.05 * nextLevel * currReqXP);
+        setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: nextLevel }));
+        setPetReqXP(reqPrev => ({ ...reqPrev, [currentMascot]: nextReqXP }));
         userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
         return { ...prev, [currentMascot]: 0 };
       }
-      // Save XP to backend
       userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
       return { ...prev, [currentMascot]: newXP };
     });
@@ -109,20 +128,25 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     if (!currentMascot) return;
     const interval = setInterval(() => {
       setPetXP(prev => {
-        const newXP = ((prev[currentMascot] ?? 0) + 1);
-        if (newXP >= 100) {
-          setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: (lvlPrev[currentMascot] ?? 1) + 1 }));
-          // Save XP/level to backend
+        const currXP = prev[currentMascot] ?? 0;
+        const currLevel = petLevel[currentMascot] ?? 1;
+        const currReqXP = petReqXP[currentMascot] ?? 100;
+        const newXP = currXP + 1;
+        if (newXP >= currReqXP) {
+          // Level up
+          const nextLevel = currLevel + 1;
+          const nextReqXP = Math.round(currReqXP + 0.05 * nextLevel * currReqXP);
+          setPetLevel(lvlPrev => ({ ...lvlPrev, [currentMascot]: nextLevel }));
+          setPetReqXP(reqPrev => ({ ...reqPrev, [currentMascot]: nextReqXP }));
           userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: 0 }, purchased);
           return { ...prev, [currentMascot]: 0 };
         }
-        // Save XP to backend
         userDataService.saveTamagotchiData?.({ ...prev, [currentMascot]: newXP }, purchased);
         return { ...prev, [currentMascot]: newXP };
       });
     }, 60000);
     return () => clearInterval(interval);
-  }, [currentMascot, purchased]);
+  }, [currentMascot, purchased, petLevel, petReqXP]);
 
   // Handle mascot edit (rename)
   const openEditModal = () => {
@@ -212,11 +236,11 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         <div><b>Mood:</b> Happy 😊</div>
         <div><b>Level:</b> {currentMascot ? petLevel[currentMascot] ?? 1 : '--'}</div>
         <div className="progress-bar" style={{ background: '#444', borderRadius: 8, overflow: 'hidden', height: 18, marginTop: 8 }}>
-          <div className="progress" style={{ background: '#00d4aa', height: '100%', width: `${currentMascot ? Math.round((petXP[currentMascot] ?? 0) / 100 * 100) : 0}%` }}></div>
+          <div className="progress" style={{ background: '#00d4aa', height: '100%', width: `${currentMascot ? Math.round((petXP[currentMascot] ?? 0) / (petReqXP[currentMascot] ?? 100) * 100) : 0}%` }}></div>
         </div>
         {currentMascot && (
           <div style={{ fontSize: '1em', color: '#222', marginTop: 4, fontWeight: 600 }}>
-            XP: <span style={{ color: '#444' }}>{(petXP[currentMascot] ?? 0).toFixed(1)}</span> / <span style={{ color: '#888' }}>100</span> XP
+            XP: <span style={{ color: '#444' }}>{(petXP[currentMascot] ?? 0).toFixed(1)}</span> / <span style={{ color: '#888' }}>{petReqXP[currentMascot] ?? 100}</span> XP
           </div>
         )}
         <div style={{ fontSize: '0.95em', color: '#aaa', marginTop: 4 }}>Progress to next evolution</div>

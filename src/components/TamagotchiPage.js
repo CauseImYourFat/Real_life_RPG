@@ -26,7 +26,6 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
   // Load pets, mascot, XP, and level from backend on mount
   useEffect(() => {
     async function loadTamaData() {
-      // Load Gnee! points from user data
       userDataService.getUserData?.().then(userData => {
         setGneePoints(userData?.gneePoints || 0);
       });
@@ -36,7 +35,6 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
       // XP/level state
       if (tamaData.mascotXP) {
         setPetXP(tamaData.mascotXP);
-        // Derive levels from XP (every 100 XP = +1 level)
         const levels = {};
         Object.keys(tamaData.mascotXP).forEach(pet => {
           levels[pet] = Math.floor((tamaData.mascotXP[pet] ?? 0) / 100) + 1;
@@ -44,11 +42,16 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
         setPetLevel(levels);
       }
       // Restore mascot selection if available
-      if (tamaData.currentMascot) setCurrentMascot(tamaData.currentMascot);
+      if (tamaData.currentMascot) {
+        setCurrentMascot(tamaData.currentMascot);
+      } else {
+        // If no mascot selected, pick first purchased pet
+        const pets = Object.keys(tamaData.purchased || {});
+        if (pets.length > 0) setCurrentMascot(pets[0]);
+      }
       // List pets from asset folder
-      const petFolders = ['white-dog', 'Frog', 'Bird', 'plant']; // TODO: automate folder listing if needed
+      const petFolders = ['white-dog', 'Frog', 'Bird', 'plant'];
       setShopPets(petFolders);
-      // For each pet, list actions from GIF filenames
       const actionsMap = {};
       for (const pet of petFolders) {
         let gifs = [];
@@ -67,11 +70,12 @@ export default function TamagotchiPage({ healthData = {}, skillData = {} }) {
     loadTamaData();
   }, []);
 
-  // Save XP/level to backend whenever petXP or purchased changes
+  // Save XP/level and currentMascot to backend whenever petXP, purchased, or currentMascot changes
   useEffect(() => {
     if (Object.keys(purchased).length === 0) return;
     userDataService.saveTamagotchiData?.(petXP, purchased);
-  }, [petXP, purchased]);
+    userDataService.updateTamagotchi?.({ currentMascot });
+  }, [petXP, purchased, currentMascot]);
 
   // Action buttons for mascot (dynamic)
   let petActions = currentMascot && petActionsMap[currentMascot] ? petActionsMap[currentMascot] : [];

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 
-function TamagotchiPage() {
+function TamagotchiPage({ gneePoints, setUserData }) {
   // State variables
   const [petActions] = useState(['wake']);
   const [currentAction, setCurrentAction] = useState('wake');
@@ -13,7 +13,7 @@ function TamagotchiPage() {
   const [petReqXP, setPetReqXP] = useState({});
   const [purchased, setPurchased] = useState({});
   const [shopPets, setShopPets] = useState([]);
-  const [gneePoints, setGneePoints] = useState(0);
+  // gneePoints is now a prop from App.js
   const [xpBoost, setXpBoost] = useState(null);
   const [hiveTab, setHiveTab] = useState('pets');
   const [shopOpen, setShopOpen] = useState(false);
@@ -112,7 +112,7 @@ function TamagotchiPage() {
       setCurrentMascot(type);
     } else if (gneePoints >= 5 && !purchased[type]) {
       await userDataService.buyPet(type);
-      setGneePoints(gneePoints - 5);
+      setUserData(prev => ({ ...prev, preferences: { ...prev.preferences, gneePoints: gneePoints - 5 } }));
       userDataService.updateUserData?.({ gneePoints: gneePoints - 5 });
       setShopOpen(false);
       const tama = await userDataService.getTamagotchi();
@@ -124,7 +124,7 @@ function TamagotchiPage() {
 
   const handleBuyFood = async (foodName) => {
     if (gneePoints >= 1) {
-      setGneePoints(gneePoints - 1);
+      setUserData(prev => ({ ...prev, preferences: { ...prev.preferences, gneePoints: gneePoints - 1 } }));
       userDataService.updateUserData?.({ gneePoints: gneePoints - 1 });
       alert(`You bought ${foodName} for 1 Gnee! point!`);
       setShopOpen(false);
@@ -152,7 +152,7 @@ function TamagotchiPage() {
         setPetXP(tama.mascotXP || {});
         setPetLevel(tama.petLevel || {});
         setPetReqXP(tama.petReqXP || {});
-        setGneePoints(tama.gneePoints || 0);
+  // gneePoints is managed by parent
         setCurrentMascot(tama.currentMascot || null);
         setShopPets(tama.shop || []);
       }

@@ -143,7 +143,22 @@ function TamagotchiPage() {
     return `/assets/pets/shop/${mascot}/${mascotLower}-${action}.gif`;
   };
 
-  // Initial data load (optional: add useEffect for initial fetch)
+  // Initial data load from backend
+  useEffect(() => {
+    async function fetchTamagotchi() {
+      const tama = await userDataService.getTamagotchi();
+      if (tama) {
+        setPurchased(tama.purchased || {});
+        setPetXP(tama.mascotXP || {});
+        setPetLevel(tama.petLevel || {});
+        setPetReqXP(tama.petReqXP || {});
+        setGneePoints(tama.gneePoints || 0);
+        setCurrentMascot(tama.currentMascot || null);
+        setShopPets(tama.shop || []);
+      }
+    }
+    fetchTamagotchi();
+  }, []);
 
   return (
     <div className="container" style={{ maxWidth: 600, margin: '40px auto', padding: 32, background: '#222', borderRadius: 16, color: '#fff' }}>

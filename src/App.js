@@ -1,7 +1,6 @@
 import dragonFireGif from '../dist/assets/dragon-fire.gif';
 import React, { useState, useEffect } from 'react';
 import SkillsPage from './components/SkillsPage';
-import TamagotchiPage from './components/TamagotchiPage';
 import HealthPage from './components/HealthPage';
 import MotivationPage from './components/MotivationPage';
 import ExportPage from './components/ExportPage';
@@ -196,8 +195,7 @@ function App() {
   { id: 'skills', name: 'Skills', icon: '⚔️' },
   { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
   { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
-  { id: 'export', name: 'Data Export', icon: '📊' },
-  { id: 'tamagotchi', name: 'Tamagotchi', icon: '👀' }
+  { id: 'export', name: 'Data Export', icon: '📊' }
   ];
   // Show loading screen
   if (loading) {
@@ -285,12 +283,7 @@ function App() {
         {activeTab === 'export' && (
           <ExportPage userData={userData} />
         )}
-        {activeTab === 'tamagotchi' && (
-          <TamagotchiPage 
-            healthData={userData.health}
-            skillData={userData.skills}
-          />
-        )}
+        // ...existing code...
       </main>
 
       {/* Profile Modal */}

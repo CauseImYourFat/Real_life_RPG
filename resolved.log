@@ -1,0 +1,135 @@
+## [2025-09-19] Dynamic Tamagotchi Pet Action System
+
+**Problem:**
+- Hardcoded pet actions made it difficult to add new pets and actions as the app grew.
+
+**Solution:**
+- Pet actions are now detected automatically by scanning each pet's asset folder for GIF files.
+- Action buttons are generated from the last part of each GIF filename (e.g., frog-jump.gif → jump).
+- This allows each pet to have a unique set of actions, and future pets/actions are supported without code changes.
+
+**Result:**
+- Adding a new pet or action is as simple as adding a new folder and GIF file.
+- The system is scalable and easy to maintain for long-term development.
+
+---
+# resolved.log
+
+## [2025-09-16] Asset/GIF/PNG Detection & Path Issues
+
+**Problem:**
+- Images and GIFs in subfolders (e.g., mascot GIFs, anatomy PNGs) were not detected or loaded correctly in the app and deployment.
+- Hashed filenames (e.g., `donut.201f8ea19380a5a255d4ee652ebd5798.gif`) caused confusion and broken references.
+- Static file serving and asset copying did not include all subfolders/assets.
+
+**Solution:**
+- Updated all code references to use clean asset filenames (no hashes) for GIFs and PNGs.
+- Ensured build/deploy process copies all subfolders and assets.
+- Fixed static file serving in Express to serve assets from both `dist` and `assets`.
+- Validated mascot and anatomy images load correctly after deployment.
+- Confirmed safe deletion of hashed asset files.
+
+**Result:**
+- All images and GIFs in subfolders now load correctly in the app and after deployment.
+- Asset management is simplified; only clean filenames are used in code and folders.
+- Easier future maintenance and troubleshooting.
+
+---
+
+# Solutions Log
+
+## [2025-09-16] Fixing 404 Errors for Username/Password Change
+
+**Problem:**
+- Frontend POST requests to `/api/user/username` and `/api/user/password` returned 404 errors.
+- Backend implemented these endpoints as PUT routes, not POST.
+
+**Solution:**
+- Update frontend code to use `PUT` instead of `POST` for these requests in `UserDataService.js`.
+- Example:
+  ```js
+  await fetch(`${this.baseURL}/api/user/username`, { method: 'PUT', ... })
+  await fetch(`${this.baseURL}/api/user/password`, { method: 'PUT', ... })
+  ```
+- Commit and push the changes.
+
+**Backend Reference:**
+- `server.js` contains:
+  ```js
+  app.put('/api/user/username', authenticateToken, ...)
+  app.put('/api/user/password', authenticateToken, ...)
+  ```
+
+**Result:**
+- Username and password changes now work without 404 errors.
+
+---
+
+## [2025-09-16] Asset Not Found (pixel-heart.gif)
+
+**Problem:**
+- Mascot image `/assets/pixel-heart.gif` was not showing up in deployment/GitHub.
+
+**Solution:**
+- Add `assets/pixel-heart.gif` to git, commit, and push to repository:
+  ```sh
+  git add assets/pixel-heart.gif
+  git commit -m "Add pixel-heart.gif mascot asset"
+  git push
+  ```
+
+**Result:**
+- Mascot image now appears correctly in the app.
+
+---
+
+## [2025-09-16] Gnee!! Point System & Donut Animation
+
+**Problem:**
+- Needed a fun, geeky way to reward users for every meaningful action in the app.
+- Wanted a visible counter and a celebratory animation.
+
+**Solution:**
+- Updated header to "Real Life" and added Gnee.png mascot.
+- Added a Gnee!!'s Points counter styled as a geek badge.
+- Incremented counter on every app change (add skill, health/anatomy, share progress, etc.).
+- Showed donut.gif near the top right of the click location for 1 second when a point is earned.
+
+**Result:**
+- Users now see their Gnee!! points and get a donut celebration for every achievement.
+
+---
+
+## [2025-09-19] Deployment & Static Hosting
+
+**Problem:**
+- Needed a reliable, zero-gap mobile-optimized deployment for static hosting providers.
+
+**Solution:**
+- Provided step-by-step instructions for Hostinger, Netlify, GitHub Pages, etc.
+- Ensured all files (index.html, dist, README.md) are included and accessible.
+- Validated mobile optimization and instant loading.
+
+**Result:**
+- App is ready for static hosting with no server/database required.
+- Mobile experience is perfect and cross-browser compatible.
+
+---
+
+
+## [2025-09-19] Tamagotchi Pet Action Unlock Logic
+
+**Problem:**
+- New users were confused why only one action was available for each pet.
+
+**Solution:**
+- All shop pets (Frog, white dog, Bird, plant) start with only the "wake" action.
+- Every 5 levels gained by a pet unlocks a new action (e.g., "sleep", "eat", "jump", etc.).
+- This keeps progression clear and rewarding for users.
+
+**Result:**
+- Users see only "wake" at first, and unlock more actions as they level up their pet.
+- Logic is easy to understand for first-time users and maintainers.
+
+---
+

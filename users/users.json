@@ -1,0 +1,12 @@
+{
+  "users": {
+    "CauseImYourFat": {
+      "password": "942496ab22e007662338ea6ecc1745d3d138319160868f6b308d931b7766f6f8",
+      "sessionToken": "2add53bca4a006bdd5fa35a5c4582c73e746c71dade0e3ce8ad28963092736b0",
+      "createdAt": "2025-09-14T11:19:54.688Z",
+      "lastLogin": "2025-09-14T12:21:45.886Z"
+    }
+  },
+  "createdAt": "2025-09-14T00:00:00.000Z",
+  "info": "This file stores user authentication data. Each user's personal data is stored in their individual folder."
+}

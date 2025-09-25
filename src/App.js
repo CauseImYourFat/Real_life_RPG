@@ -286,7 +286,7 @@ function App() {
           <ExportPage userData={userData} />
         )}
         {activeTab === 'tamagotchi' && (
-          <TamagotchiPage />
+          <TamagotchiPage userData={userData} setUserData={setUserData} />
         )}
       </main>
 

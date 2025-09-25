@@ -3,17 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 
-function TamagotchiPage({ gneePoints, setUserData }) {
-  // State variables
+function TamagotchiPage({ userData, setUserData }) {
+  // Use backend data from userData.tamagotchi
+  const tamagotchi = userData.tamagotchi || {};
+  const gneePoints = userData.preferences?.gneePoints || userData.gneePoints || 0;
+  const petXP = tamagotchi.mascotXP || {};
+  const petLevel = tamagotchi.petLevel || {};
+  const petReqXP = tamagotchi.petReqXP || {};
+  const purchased = tamagotchi.purchased || {};
+  const shopPets = tamagotchi.shop || [];
+  const currentMascot = tamagotchi.currentMascot || null;
   const [petActions] = useState(['wake']);
   const [currentAction, setCurrentAction] = useState('wake');
-  const [currentMascot, setCurrentMascot] = useState(null);
-  const [petXP, setPetXP] = useState({});
-  const [petLevel, setPetLevel] = useState({});
-  const [petReqXP, setPetReqXP] = useState({});
-  const [purchased, setPurchased] = useState({});
-  const [shopPets, setShopPets] = useState([]);
-  // gneePoints is now a prop from App.js
   const [xpBoost, setXpBoost] = useState(null);
   const [hiveTab, setHiveTab] = useState('pets');
   const [shopOpen, setShopOpen] = useState(false);
@@ -143,22 +144,7 @@ function TamagotchiPage({ gneePoints, setUserData }) {
     return `/assets/pets/shop/${mascot}/${mascotLower}-${action}.gif`;
   };
 
-  // Initial data load from backend
-  useEffect(() => {
-    async function fetchTamagotchi() {
-      const tama = await userDataService.getTamagotchi();
-      if (tama) {
-        setPurchased(tama.purchased || {});
-        setPetXP(tama.mascotXP || {});
-        setPetLevel(tama.petLevel || {});
-        setPetReqXP(tama.petReqXP || {});
-  // gneePoints is managed by parent
-        setCurrentMascot(tama.currentMascot || null);
-        setShopPets(tama.shop || []);
-      }
-    }
-    fetchTamagotchi();
-  }, []);
+  // No need for initial fetch, all data comes from props
 
   return (
     <div className="container" style={{ maxWidth: 600, margin: '40px auto', padding: 32, background: '#222', borderRadius: 16, color: '#fff' }}>

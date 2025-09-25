@@ -34,6 +34,31 @@ class APIGateway {
       res.json(userService.getUser(req.params.id));
     });
 
+    // User data sync endpoints for frontend
+    this.app.get('/api/user/data', (req, res) => {
+      // For demo: use a fixed userId or get from session/auth
+      const userId = req.query.userId || Object.keys(userService.users)[0];
+      const user = userService.getUser(userId);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      res.json({
+        skills: user.skills || {},
+        health: user.health || {},
+        preferences: user.preferences || {},
+        profile: user.profile || {}
+      });
+    });
+    this.app.post('/api/user/data', (req, res) => {
+      // For demo: use a fixed userId or get from session/auth
+      const userId = req.body.userId || Object.keys(userService.users)[0];
+      const user = userService.getUser(userId);
+      if (!user) return res.status(404).json({ error: 'User not found' });
+      user.skills = req.body.skills || user.skills;
+      user.health = req.body.health || user.health;
+      user.preferences = req.body.preferences || user.preferences;
+      user.profile = req.body.profile || user.profile;
+      res.json({ message: 'User data updated successfully' });
+    });
+
     // Pet endpoints
     this.app.post('/pet', (req, res) => {
       const { userId, petData } = req.body;

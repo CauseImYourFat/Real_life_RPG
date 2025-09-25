@@ -11,6 +11,7 @@ import SettingsPage from './components/SettingsPage';
 import userDataService from './services/UserDataService';
 import './styles/App.css';
 import EyesPage from './components/EyesPage';
+import TamagotchiPage from './components/TamagotchiPage';
 
 function App() {
   // Manual refresh for user data
@@ -192,10 +193,11 @@ function App() {
   };
 
   const tabs = [
-  { id: 'skills', name: 'Skills', icon: '⚔️' },
-  { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
-  { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
-  { id: 'export', name: 'Data Export', icon: '📊' }
+    { id: 'skills', name: 'Skills', icon: '⚔️' },
+    { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
+    { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
+    { id: 'export', name: 'Data Export', icon: '📊' },
+    { id: 'tamagotchi', name: 'Tamagotchi', icon: '👀' }
   ];
   // Show loading screen
   if (loading) {
@@ -283,7 +285,9 @@ function App() {
         {activeTab === 'export' && (
           <ExportPage userData={userData} />
         )}
-        // ...existing code...
+        {activeTab === 'tamagotchi' && (
+          <TamagotchiPage />
+        )}
       </main>
 
       {/* Profile Modal */}

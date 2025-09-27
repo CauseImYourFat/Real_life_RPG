@@ -297,13 +297,70 @@ function App() {
         {activeTab === 'export' && (
           <ExportPage userData={userData} />
         )}
-        {activeTab === 'tamagotchi' && (
+        {activeTab === 'tamagotchi' && userData && userData.skills && userData.health ? (
           <TamagotchiPage userData={userData} setUserData={setUserData} />
-        )}
+        ) : activeTab === 'tamagotchi' ? (
+          <div style={{ color: '#fff', textAlign: 'center', marginTop: 64 }}>
+            <h2>Tamagotchi</h2>
+            <p>Loading Tamagotchi data...</p>
+          </div>
+        ) : null}
         {activeTab === 'tamagot' && (
-          <div style={{ maxWidth: 800, margin: '40px auto', background: '#222', color: '#fff', borderRadius: 16, padding: 32, fontFamily: 'monospace', whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
-            <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>TAMAGOTCHI_LOG.md</h2>
-            <pre>{tamagotchiLog}</pre>
+          <div style={{ maxWidth: 800, margin: '40px auto', background: '#222', color: '#fff', borderRadius: 16, padding: 32 }}>
+            <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi System Guide</h2>
+            <p style={{ fontSize: '1.1em', marginBottom: 24 }}>
+              Welcome to the Tamagotchi System! This dashboard summarizes all features, modules, and architecture as described in <b>TAMAGOTCHI_LOG.md</b>.<br />
+              Use this as a guide to understand, test, and verify your Tamagotchi implementation.
+            </p>
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ color: '#ffd700' }}>Core Modules & Services</h3>
+              <ul style={{ lineHeight: '1.7em' }}>
+                <li>Pet Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>User Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Shop Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Health/Skills Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Asset Registry <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Event Bus <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Notification Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Backup/Restore Service <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>API Gateway <span style={{ color: '#00d4aa' }}>✓</span></li>
+              </ul>
+            </div>
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ color: '#ffd700' }}>Gameplay & Inventory</h3>
+              <ul style={{ lineHeight: '1.7em' }}>
+                <li>Shop: Daily Gnee! claim, buy pets/food, 30 Gnee pet cost <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Hive: Inventory tabs for pets and food <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Food: Permanent buffs, inventory persistence <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Pet Actions: Unlocks, XP, levels, asset registry <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Health Impact: Pet performance scales with health <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Buy/Sell: Monetization logic, hive resale <span style={{ color: '#00d4aa' }}>✓</span></li>
+              </ul>
+            </div>
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ color: '#ffd700' }}>Admin & Developer Functions</h3>
+              <ul style={{ lineHeight: '1.7em' }}>
+                <li>Admin panel, audit logging, bulk actions <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Role-based UI, feature flags <span style={{ color: '#00d4aa' }}>✓</span></li>
+              </ul>
+            </div>
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ color: '#ffd700' }}>Frontend Sync & UI Assurance</h3>
+              <ul style={{ lineHeight: '1.7em' }}>
+                <li>Event-driven UI updates <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Feedback/status indicators <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Error handling & recovery <span style={{ color: '#00d4aa' }}>✓</span></li>
+                <li>Testing & QA <span style={{ color: '#00d4aa' }}>✓</span></li>
+              </ul>
+            </div>
+            <div style={{ marginBottom: 32 }}>
+              <h3 style={{ color: '#ffd700' }}>Quick Links</h3>
+              <ul style={{ lineHeight: '1.7em' }}>
+                <li><button onClick={() => setActiveTab('tamagotchi')} style={{ background: '#ffd700', color: '#222', borderRadius: 8, padding: '4px 16px', fontWeight: 600, cursor: 'pointer' }}>Go to Tamagotchi</button></li>
+                <li><button onClick={() => setActiveTab('health')} style={{ background: '#ffd700', color: '#222', borderRadius: 8, padding: '4px 16px', fontWeight: 600, cursor: 'pointer' }}>Go to Health</button></li>
+                <li><button onClick={() => setActiveTab('skills')} style={{ background: '#ffd700', color: '#222', borderRadius: 8, padding: '4px 16px', fontWeight: 600, cursor: 'pointer' }}>Go to Skills</button></li>
+              </ul>
+            </div>
           </div>
         )}
       </main>

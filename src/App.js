@@ -197,8 +197,20 @@ function App() {
     { id: 'health', name: 'Health & Anatomy', icon: '❤️' },
     { id: 'motivation', name: 'Daily Motivation', icon: '🌟' },
     { id: 'export', name: 'Data Export', icon: '📊' },
-    { id: 'tamagotchi', name: 'Tamagotchi', icon: '👀' }
+    { id: 'tamagotchi', name: 'Tamagotchi', icon: '👀' },
+    { id: 'tamagot', name: 'Tamagot', icon: '👀' }
   ];
+  // State for TAMAGOTCHI_LOG.md content
+  const [tamagotchiLog, setTamagotchiLog] = useState('');
+
+  // Load TAMAGOTCHI_LOG.md when Tamagot tab is opened
+  useEffect(() => {
+    if (activeTab === 'tamagot') {
+      fetch('/TAMAGOTCHI_LOG.md')
+        .then(res => res.text())
+        .then(text => setTamagotchiLog(text));
+    }
+  }, [activeTab]);
   // Show loading screen
   if (loading) {
     return (
@@ -287,6 +299,12 @@ function App() {
         )}
         {activeTab === 'tamagotchi' && (
           <TamagotchiPage userData={userData} setUserData={setUserData} />
+        )}
+        {activeTab === 'tamagot' && (
+          <div style={{ maxWidth: 800, margin: '40px auto', background: '#222', color: '#fff', borderRadius: 16, padding: 32, fontFamily: 'monospace', whiteSpace: 'pre-wrap', overflowX: 'auto' }}>
+            <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>TAMAGOTCHI_LOG.md</h2>
+            <pre>{tamagotchiLog}</pre>
+          </div>
         )}
       </main>
 

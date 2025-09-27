@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import userDataService from '../services/UserDataService';
 
 function TamagotchiPage({ userData, setUserData }) {
   // Use backend data from userData.tamagotchi
   const tamagotchi = userData.tamagotchi || {};
-  const gneePoints = userData.preferences?.gneePoints || userData.gneePoints || 0;
+  const gneePoints = tamagotchi.gneePoints ?? userData.preferences?.gneePoints ?? userData.gneePoints ?? 0;
   const petXP = tamagotchi.mascotXP || {};
   const petLevel = tamagotchi.petLevel || {};
   const petReqXP = tamagotchi.petReqXP || {};
   const purchased = tamagotchi.purchased || {};
-  const shopPets = tamagotchi.shop || [];
   const currentMascot = tamagotchi.currentMascot || null;
+  const [shopPets, setShopPets] = useState([]);
   const [petActions] = useState(['wake']);
   const [currentAction, setCurrentAction] = useState('wake');
   const [xpBoost, setXpBoost] = useState(null);
@@ -20,6 +20,8 @@ function TamagotchiPage({ userData, setUserData }) {
   const [hiveOpen, setHiveOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+  const [lastClaimDate, setLastClaimDate] = useState(userData.preferences?.lastGneeClaim || tamagotchi.lastGneeClaim || null);
+  const [foodInventory, setFoodInventory] = useState(tamagotchi.foodInventory || []);
 
   // Food files
   const foodFiles = [
@@ -38,8 +40,43 @@ function TamagotchiPage({ userData, setUserData }) {
   const reloadUserData = async () => {
     const updated = await userDataService.loadUserData();
     setUserData(updated);
+    // Update local food inventory and last claim date
+    setFoodInventory(updated.tamagotchi?.foodInventory || []);
+    setLastClaimDate(updated.tamagotchi?.lastGneeClaim || null);
   };
 
+  // Dynamically load all pets from assets folder
+  useEffect(() => {
+    async function fetchShopPets() {
+      // Fetch from backend API that lists all pet folders
+      try {
+        const response = await fetch('/api/shop/pets');
+        if (response.ok) {
+          const pets = await response.json();
+          setShopPets(pets);
+        } else {
+          setShopPets(['white dog', 'Frog', 'Bird', 'plant']); // fallback
+        }
+      } catch {
+        setShopPets(['white dog', 'Frog', 'Bird', 'plant']);
+      }
+    }
+    fetchShopPets();
+  }, []);
+
+  // Daily Gnee! point claim logic
+  const canClaimGnee = () => {
+    if (!lastClaimDate) return true;
+    const last = new Date(lastClaimDate);
+    const now = new Date();
+    return now.getDate() !== last.getDate() || now - last > 24 * 60 * 60 * 1000;
+  };
+  const handleClaimGnee = async () => {
+    if (!canClaimGnee()) return;
+    // Update backend: add 1 Gnee point and set last claim date
+    await userDataService.updateTamagotchi({ action: 'claimGnee', amount: 1 });
+    await reloadUserData();
+  };
   const handleAction = async (action) => {
     setCurrentAction(action);
     if (!currentMascot) return;
@@ -52,9 +89,8 @@ function TamagotchiPage({ userData, setUserData }) {
     if (!alreadyPicked) {
       await userDataService.buyPet(type);
       setShopOpen(false);
-    } else if (gneePoints >= 5 && !purchased[type]) {
-      await userDataService.buyPet(type);
-      await userDataService.updateUserData?.({ gneePoints: gneePoints - 5 });
+    } else if (gneePoints >= 30 && !purchased[type]) {
+      await userDataService.buyPet(type, 30); // pass cost to backend
       setShopOpen(false);
     }
     await reloadUserData();
@@ -62,13 +98,20 @@ function TamagotchiPage({ userData, setUserData }) {
 
   const handleBuyFood = async (foodName) => {
     if (gneePoints >= 1) {
-      await userDataService.updateUserData?.({ gneePoints: gneePoints - 1 });
-      alert(`You bought ${foodName} for 1 Gnee! point!`);
+      // Add food to inventory and deduct point
+      await userDataService.updateTamagotchi({ action: 'buyFood', foodName });
       setShopOpen(false);
       await reloadUserData();
     }
   };
 
+  // Use food: apply effect and remove from inventory
+  const handleUseFood = async (foodName) => {
+    if (!foodInventory.includes(foodName)) return;
+    await userDataService.updateTamagotchi({ action: 'useFood', foodName });
+    alert(`Your pet gets a permanent buff from ${foodName}!`);
+    await reloadUserData();
+  };
   const handleRename = async () => {
     await userDataService.editPet(currentMascot, { name: renameValue });
     setEditModalOpen(false);
@@ -98,6 +141,11 @@ function TamagotchiPage({ userData, setUserData }) {
               <img src="/assets/point/gnee-point.gif" alt="Gnee!" style={{ width: 32, height: 32, verticalAlign: 'middle', marginRight: 8 }} />
               Gnee! points: <span style={{ color: '#fff', fontWeight: 700 }}>{gneePoints}</span>
             </div>
+            {/* Daily Gnee! point claim */}
+            <div style={{ textAlign: 'center', marginBottom: 12 }}>
+              <button onClick={handleClaimGnee} disabled={!canClaimGnee()} style={{ background: canClaimGnee() ? '#ffd700' : '#aaa', color: '#222', padding: '6px 18px', border: 'none', borderRadius: 12, fontWeight: 600, cursor: canClaimGnee() ? 'pointer' : 'not-allowed', marginBottom: 8 }}>Claim daily Gnee! point</button>
+              <div style={{ color: '#aaa', fontSize: '0.9em' }}>{canClaimGnee() ? 'Available now!' : 'Already claimed today.'}</div>
+            </div>
             {/* Shop tabs */}
             <div style={{ display: 'flex', justifyContent: 'center', gap: 16, marginBottom: 18 }}>
               <button onClick={() => setShopTab('pets')} style={{ background: shopTab === 'pets' ? '#ffd700' : '#444', color: shopTab === 'pets' ? '#222' : '#fff', padding: '6px 18px', border: 'none', borderRadius: 12, fontWeight: 600, cursor: 'pointer' }}>Pets</button>
@@ -110,14 +158,14 @@ function TamagotchiPage({ userData, setUserData }) {
                   const alreadyPicked = Object.keys(purchased).length > 0;
                   const isPicked = purchased[type];
                   const locked = alreadyPicked && !isPicked;
-                  const canBuy = !isPicked && (gneePoints >= 5 || !alreadyPicked);
+                  const canBuy = !isPicked && (gneePoints >= 30 || !alreadyPicked);
                   return (
                     <div key={type} style={{ textAlign: 'center', opacity: locked && !canBuy ? 0.4 : 1 }}>
                       <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
                         <img src={getMascotImg(type, 'wake')} alt={type} style={{ width: 48, height: 48 }} />
                       </div>
                       <div style={{ color: '#fff', fontSize: '1em' }}>{type}</div>
-                      <div style={{ color: '#ffd700', fontSize: '0.95em' }}>{isPicked ? 'Owned' : (!alreadyPicked ? 'Free' : '5 Gnee! points')}</div>
+                      <div style={{ color: '#ffd700', fontSize: '0.95em' }}>{isPicked ? 'Owned' : (!alreadyPicked ? 'Free' : '30 Gnee! points')}</div>
                       <button onClick={() => canBuy && handleBuyPet(type)} disabled={!canBuy} style={{ marginTop: 6, background: canBuy ? '#ffd700' : '#aaa', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: canBuy ? 'pointer' : 'not-allowed' }}>{isPicked ? 'Owned' : (!alreadyPicked ? 'Get Free' : 'Buy')}</button>
                     </div>
                   );
@@ -174,14 +222,14 @@ function TamagotchiPage({ userData, setUserData }) {
             {/* Food tab */}
             {hiveTab === 'food' && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 24, justifyItems: 'center' }}>
-                {foodFiles.map(foodName => (
+                {foodInventory.map(foodName => (
                   <div key={foodName} style={{ textAlign: 'center' }}>
                     <div style={{ width: 70, height: 70, background: '#fff', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px #0002', marginBottom: 8 }}>
-                      <img src={`/assets/food/${foodName}`} alt={foodName} style={{ width: 48, height: 48 }} />
+                      <img src={`/assets/food/${foodName}.gif`} alt={foodName} style={{ width: 48, height: 48 }} />
                     </div>
-                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.replace('.gif','').replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
-                    <div style={{ color: '#ffd700', fontSize: '0.95em' }}>Use on pet (+10% XP for 6h)</div>
-                    <button onClick={() => handleUseFood(foodName.replace('.gif',''))} style={{ marginTop: 6, background: '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}>Use</button>
+                    <div style={{ color: '#fff', fontSize: '1em' }}>{foodName.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
+                    <div style={{ color: '#ffd700', fontSize: '0.95em' }}>Permanent effect</div>
+                    <button onClick={() => handleUseFood(foodName)} style={{ marginTop: 6, background: '#ffd700', color: '#222', padding: '4px 16px', border: 'none', borderRadius: 12, fontWeight: 600, boxShadow: '0 2px 8px #0002', cursor: 'pointer' }}>Use</button>
                   </div>
                 ))}
               </div>

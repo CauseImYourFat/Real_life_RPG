@@ -1,3 +1,15 @@
+// API: List all pet folders in dist/assets/pets/shop (excluding 'food')
+app.get('/api/shop/pets', async (req, res) => {
+    try {
+        const petsDir = path.join(__dirname, 'dist/assets/pets/shop');
+        const folders = fs.readdirSync(petsDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory() && dirent.name !== 'food')
+            .map(dirent => dirent.name);
+        res.json(folders);
+    } catch (err) {
+        res.status(500).json({ error: 'Failed to list pets', details: err.message });
+    }
+});
 // ...existing code...
 // ...existing code...
 // ...existing code...
@@ -239,7 +251,7 @@ app.post('/api/user/tamagotchi', authenticateToken, async (req, res) => {
 app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
     try {
         const userId = req.user.userId;
-        const { action, mascotType, changes, toUser, amount } = req.body;
+        const { action, mascotType, changes, toUser, amount, foodName } = req.body;
         let mongoUserData = await UserData.findOne({ userId });
         if (!mongoUserData) {
             return res.status(404).json({ error: 'User data not found' });
@@ -250,6 +262,7 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         tamagotchi.hive = tamagotchi.hive || [];
         tamagotchi.shop = tamagotchi.shop || ['white dog', 'Frog', 'Bird', 'plant'];
         tamagotchi.gneePoints = typeof tamagotchi.gneePoints === 'number' ? tamagotchi.gneePoints : 0;
+        tamagotchi.foodInventory = tamagotchi.foodInventory || [];
 
         if (action === 'buy' && mascotType) {
             if (!tamagotchi.purchased[mascotType]) {
@@ -278,6 +291,20 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
             if (tamagotchi.currentMascot === mascotType) tamagotchi.currentMascot = tamagotchi.hive[0] || '';
         } else if (action === 'setCurrent' && mascotType) {
             tamagotchi.currentMascot = mascotType;
+        } else if (action === 'claimGnee') {
+            // Daily claim: add Gnee point and set last claim date
+            tamagotchi.gneePoints = (tamagotchi.gneePoints || 0) + (amount || 1);
+            tamagotchi.lastGneeClaim = new Date().toISOString();
+        } else if (action === 'buyFood' && foodName) {
+            // Add food to inventory and deduct 1 Gnee point
+            if ((tamagotchi.gneePoints || 0) >= 1) {
+                tamagotchi.gneePoints -= 1;
+                tamagotchi.foodInventory.push(foodName);
+            }
+        } else if (action === 'useFood' && foodName) {
+            // Remove food from inventory and apply permanent effect
+            tamagotchi.foodInventory = tamagotchi.foodInventory.filter(f => f !== foodName);
+            tamagotchi[`buff_${foodName}`] = true; // Mark buff as permanent
         }
         // Always merge and retain all fields
         // Only update mascotXP if it was changed in this request
@@ -287,6 +314,12 @@ app.put('/api/user/tamagotchi', authenticateToken, async (req, res) => {
         dbTama.shop = tamagotchi.shop;
         dbTama.gneePoints = tamagotchi.gneePoints;
         dbTama.currentMascot = tamagotchi.currentMascot;
+        dbTama.foodInventory = tamagotchi.foodInventory;
+        dbTama.lastGneeClaim = tamagotchi.lastGneeClaim;
+        // Persist permanent buffs
+        Object.keys(tamagotchi).forEach(k => {
+          if (k.startsWith('buff_')) dbTama[k] = tamagotchi[k];
+        });
         mongoUserData.tamagotchi = dbTama;
         mongoUserData.lastSaved = new Date().toISOString();
         await mongoUserData.save();

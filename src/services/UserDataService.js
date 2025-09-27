@@ -35,7 +35,7 @@ class UserDataService {
   }
 
   // Buy pet (add to hive/shop)
-  async buyPet(mascotType) {
+  async buyPet(mascotType, cost = 30) {
     // Get user data for Gnee! points and purchased pets
     const tama = await this.getTamagotchi();
     const purchased = tama?.purchased || {};
@@ -44,11 +44,25 @@ class UserDataService {
     if (!alreadyPicked) {
       // First pet is free
       return await this.updateTamagotchi({ action: 'buy', mascotType });
-    } else if (gneePoints >= 5 && !purchased[mascotType]) {
+    } else if (gneePoints >= cost && !purchased[mascotType]) {
       // Deduct Gnee! points and buy pet
-      return await this.updateTamagotchi({ action: 'buy', mascotType, gneePoints: gneePoints - 5 });
+      return await this.updateTamagotchi({ action: 'buy', mascotType, gneePoints: gneePoints - cost });
     }
     return false;
+  }
+  // Claim daily Gnee point
+  async claimDailyGnee() {
+    return await this.updateTamagotchi({ action: 'claimGnee', amount: 1 });
+  }
+
+  // Buy food: add to inventory
+  async buyFood(foodName) {
+    return await this.updateTamagotchi({ action: 'buyFood', foodName });
+  }
+
+  // Use food: apply effect and remove from inventory
+  async useFood(foodName) {
+    return await this.updateTamagotchi({ action: 'useFood', foodName });
   }
 
   // Edit pet (rename, change asset, etc)

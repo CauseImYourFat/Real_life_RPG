@@ -1,101 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import userDataService from '../services/UserDataService';
 
-// TamagotPage: Full-featured Tamagotchi game tab
-function TamagotPage({ userData, setUserData }) {
-  // State for pets, food, hive, shop, buffs, health
-  const [pets, setPets] = useState([]);
-  const [food, setFood] = useState([]);
-  const [gneePoints, setGneePoints] = useState(0);
-  const [currentMascot, setCurrentMascot] = useState(null);
+// Standalone TamagotPage: does not sync with global app state or backend
+function TamagotPage() {
+  // Local state only
+  const [pets, setPets] = useState(() => JSON.parse(localStorage.getItem('tamagot_pets')) || []);
+  const [food, setFood] = useState(() => JSON.parse(localStorage.getItem('tamagot_food')) || []);
+  const [gneePoints, setGneePoints] = useState(() => Number(localStorage.getItem('tamagot_gneePoints')) || 0);
+  const [currentMascot, setCurrentMascot] = useState(() => localStorage.getItem('tamagot_currentMascot') || null);
   const [shopOpen, setShopOpen] = useState(false);
   const [hiveOpen, setHiveOpen] = useState(false);
-  const [buffs, setBuffs] = useState([]);
+  const [buffs, setBuffs] = useState(() => JSON.parse(localStorage.getItem('tamagot_buffs')) || []);
   const [healthPercent, setHealthPercent] = useState(100);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Load initial data from backend
+  // Persist local state to localStorage
   useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      try {
-        const data = await userDataService.getTamagotchi();
-        setPets(data.purchased ? Object.keys(data.purchased) : []);
-        setFood(data.hive ? data.hive.filter(i => i.type === 'food') : []);
-        setGneePoints(data.gneePoints || 0);
-        setCurrentMascot(data.currentMascot || null);
-        setBuffs(data.buffs || []);
-        setHealthPercent(userData.health?.overallPercent || 100);
-      } catch (e) {
-        setError('Failed to load Tamagotchi data');
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadData();
-  }, [userData]);
+    localStorage.setItem('tamagot_pets', JSON.stringify(pets));
+    localStorage.setItem('tamagot_food', JSON.stringify(food));
+    localStorage.setItem('tamagot_gneePoints', gneePoints);
+    localStorage.setItem('tamagot_currentMascot', currentMascot);
+    localStorage.setItem('tamagot_buffs', JSON.stringify(buffs));
+  }, [pets, food, gneePoints, currentMascot, buffs]);
 
   // Shop: buy pet/food
-  const handleBuyPet = async (petType) => {
-    setLoading(true);
-    try {
-      await userDataService.buyPet(petType);
-      setGneePoints(gneePoints - 30);
-      setPets([...pets, petType]);
-    } catch (e) {
-      setError('Failed to buy pet');
-    } finally {
-      setLoading(false);
-    }
+  const handleBuyPet = (petType) => {
+    if (gneePoints < 30) return setError('Not enough Gnee! points');
+    setPets([...pets, petType]);
+    setGneePoints(gneePoints - 30);
+    setError(null);
   };
-  const handleBuyFood = async (foodType) => {
-    setLoading(true);
-    try {
-      await userDataService.buyFood(foodType);
-      setGneePoints(gneePoints - 1);
-      setFood([...food, { type: foodType }]);
-    } catch (e) {
-      setError('Failed to buy food');
-    } finally {
-      setLoading(false);
-    }
+  const handleBuyFood = (foodType) => {
+    if (gneePoints < 1) return setError('Not enough Gnee! points');
+    setFood([...food, { type: foodType }]);
+    setGneePoints(gneePoints - 1);
+    setError(null);
   };
 
   // Hive: sell item
-  const handleSellItem = async (itemType, index) => {
-    setLoading(true);
-    try {
-      await userDataService.sellItem(itemType, index);
-      if (itemType === 'pet') {
-        setPets(pets.filter((_, i) => i !== index));
-        setGneePoints(gneePoints + 15); // 50% resale
-      } else {
-        setFood(food.filter((_, i) => i !== index));
-        setGneePoints(gneePoints + 0.5);
-      }
-    } catch (e) {
-      setError('Failed to sell item');
-    } finally {
-      setLoading(false);
+  const handleSellItem = (itemType, index) => {
+    if (itemType === 'pet') {
+      setPets(pets.filter((_, i) => i !== index));
+      setGneePoints(gneePoints + 15); // 50% resale
+    } else {
+      setFood(food.filter((_, i) => i !== index));
+      setGneePoints(gneePoints + 0.5);
     }
+    setError(null);
   };
 
   // Buff: use food
-  const handleUseFood = async (foodIndex) => {
-    setLoading(true);
-    try {
-      await userDataService.useFoodBuff(food[foodIndex]);
-      setBuffs([...buffs, { type: 'xp', value: 20, duration: 12 }]);
-      setFood(food.filter((_, i) => i !== foodIndex));
-    } catch (e) {
-      setError('Failed to use food');
-    } finally {
-      setLoading(false);
-    }
+  const handleUseFood = (foodIndex) => {
+    setBuffs([...buffs, { type: 'xp', value: 20, duration: 12 }]);
+    setFood(food.filter((_, i) => i !== foodIndex));
+    setError(null);
   };
 
-  // Health impact
+  // Health impact (local only)
   const getPetPerformance = () => {
     if (healthPercent < 100) {
       return `Pet performance reduced by ${100 - healthPercent}%`;
@@ -105,11 +66,9 @@ function TamagotPage({ userData, setUserData }) {
 
   // UI
   if (loading) return <div style={{ color: '#fff', textAlign: 'center', marginTop: 64 }}>Loading Tamagotchi...</div>;
-  if (error) return <div style={{ color: 'red', textAlign: 'center', marginTop: 64 }}>{error}</div>;
-
   return (
     <div style={{ maxWidth: 900, margin: '40px auto', background: '#222', color: '#fff', borderRadius: 16, padding: 32 }}>
-      <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Game</h2>
+      <h2 style={{ color: '#ffd700', textAlign: 'center', marginTop: 0 }}>Tamagotchi Game (Standalone)</h2>
       <div style={{ marginBottom: 24, textAlign: 'center' }}>
         <span style={{ fontWeight: 600 }}>Gnee! Points:</span> <span style={{ color: '#ffd700', fontWeight: 700 }}>{gneePoints}</span>
         <button onClick={() => setShopOpen(true)} style={{ marginLeft: 24, background: '#ffd700', color: '#222', borderRadius: 8, padding: '4px 16px', fontWeight: 600, cursor: 'pointer' }}>Open Shop</button>
@@ -122,6 +81,7 @@ function TamagotPage({ userData, setUserData }) {
       <div style={{ marginBottom: 24 }}>
         <span style={{ fontWeight: 600 }}>Buffs:</span> {buffs.length === 0 ? 'None' : buffs.map((buff, i) => <span key={i} style={{ color: '#ffd700', marginLeft: 8 }}>{buff.type} +{buff.value}% ({buff.duration}h)</span>)}
       </div>
+      {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: 16 }}>{error}</div>}
       {/* Shop Modal */}
       {shopOpen && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

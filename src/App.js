@@ -307,7 +307,7 @@ function App() {
           </div>
         ) : null}
         {activeTab === 'tamagot' && (
-          <TamagotPage userData={userData} setUserData={setUserData} />
+          <TamagotPage />
         )}
       </main>
 
